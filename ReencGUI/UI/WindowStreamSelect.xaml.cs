@@ -46,6 +46,12 @@ namespace ReencGUI.UI
             }
         }
 
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            WindowUtil.SetWindowDarkMode(this);
+        }
+
         private void Button_Confirm_Click(object sender, RoutedEventArgs e)
         {
             selectedStreams = (from x in checkBoxes

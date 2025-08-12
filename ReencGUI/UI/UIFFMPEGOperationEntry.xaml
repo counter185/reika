@@ -7,9 +7,9 @@
              mc:Ignorable="d" Padding="0,10" >
     <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Vertical">
-            <Label x:Name="Label_Primary" Foreground="White" Content="Primary text" FontSize="22" Margin="0,-5"/>
-            <Label x:Name="Label_Secondary" Foreground="#D0D0D0" Content="Secondary text" FontSize="12" Margin="0,-2"/>
-            <Label x:Name="Label_Secondary2" Foreground="#D0D0D0" Content="Secondary text 2" FontSize="12" Margin="0,-2"/>
+            <Label x:Name="Label_Primary" Foreground="White" Content="Primary text" FontSize="18" Margin="0,-5"/>
+            <Label x:Name="Label_Secondary" Foreground="#D0D0D0" Content="Secondary text" FontSize="12" Margin="0,-6"/>
+            <Label x:Name="Label_Secondary2" Foreground="#D0D0D0" Content="Secondary text 2" FontSize="12" Margin="0,-6"/>
             <ProgressBar x:Name="ProgressBar_Operation" MinWidth="250" Height="10" Margin="0,5,0,0" Minimum="0" Maximum="100" Value="0"/>
         </StackPanel>
     </StackPanel>

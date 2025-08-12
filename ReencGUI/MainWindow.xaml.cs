@@ -31,8 +31,8 @@ namespace ReencGUI
 
         public static MainWindow instance;
 
-        List<FFMPEG.CodecInfo> decoders;
-        List<FFMPEG.CodecInfo> encoders;
+        public List<FFMPEG.CodecInfo> decoders;
+        public List<FFMPEG.CodecInfo> encoders;
 
         Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
         bool encoding = false;
@@ -44,6 +44,12 @@ namespace ReencGUI
 
             decoders = FFMPEG.GetAvailableDecoders();
             encoders = FFMPEG.GetAvailableEncoders();
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            WindowUtil.SetWindowDarkMode(this);
         }
 
         private void Window_Drop(object sender, DragEventArgs e)

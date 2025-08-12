@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CreateFilePreset.cs" />
     <Compile Include="StreamTarget.cs" />
     <Compile Include="UI\UIFFMPEGOperationEntry.xaml.cs">
       <DependentUpon>UIFFMPEGOperationEntry.xaml</DependentUpon>

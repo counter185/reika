@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="WindowCreateFile" Height="480" Width="789">
+        Title="WindowCreateFile" Height="480" Width="871">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -18,6 +18,11 @@
             <ListBox x:Name="Panel_Streams" Background="Transparent" BorderBrush="#404040"/>
         </ScrollViewer>
         <local:UIInputFieldWithName x:Name="Input_OutFileName" Margin="10,56,36,0" InputFieldName="Output file" Height="18" VerticalAlignment="Top" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+        <DockPanel Margin="10,80,10,0" Grid.Column="1" Height="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White"/>
+            <ComboBox x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged"/>
+        </DockPanel>
         <local:UIInputFieldWithName x:Name="Input_VcodecName" Margin="10,125,36,0" InputFieldName="Video codec" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
         <Button x:Name="Button_VcodecSelect" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top"/>
         <local:UIInputFieldWithName x:Name="Input_Vbitrate" Margin="10,148,62,0" InputFieldName="Video bitrate" Height="21" VerticalAlignment="Top" Grid.Column="1"/>

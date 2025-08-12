@@ -12,5 +12,20 @@ namespace ReencGUI
         {
             return (ulong)(ms + seconds * 1000 + minutes * 60 * 1000 + hours * 60 * 60 * 1000);
         }
+
+        public static ulong CalculateBitsPerSecondForSize(ulong sizeInBytes, ulong durationMS)
+        {
+            if (durationMS == 0)
+            {
+                return 0;
+            }
+            ulong sizeInBits = sizeInBytes * 8;
+            return sizeInBits / (ulong)Math.Ceiling(durationMS / 1000.0);
+        }
+        
+        public static ulong Megabytes(ulong mb)
+        {
+            return mb * 1024 * 1024; //convert megabytes to bytes
+        }
     }
 }

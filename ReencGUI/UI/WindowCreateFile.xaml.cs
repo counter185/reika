@@ -21,11 +21,14 @@ namespace ReencGUI.UI
     /// </summary>
     public partial class WindowCreateFile : Window
     {
+
         List<StreamTarget> streamTargets = new List<StreamTarget>();
+        List<CreateFilePreset> presets = new List<CreateFilePreset>();
 
         public WindowCreateFile()
         {
             InitializeComponent();
+            LoadPresets();
         }
         public WindowCreateFile(IEnumerable<StreamTarget> streams) : this()
         {
@@ -33,6 +36,36 @@ namespace ReencGUI.UI
             {
                 AddStream(stream);
             }
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            WindowUtil.SetWindowDarkMode(this);
+        }
+
+        void LoadPresets()
+        {
+            presets.Add(new Discord10MBPreset());
+
+            foreach (var preset in presets)
+            {
+                Combo_Preset.Items.Add(preset.name);
+            }
+        }
+
+        void ApplyPreset(CreateFilePreset preset)
+        {
+            if (preset is DynamicCreateFilePreset dynamicPreset)
+            {
+                dynamicPreset.Recalculate(this);
+            }
+            Input_VcodecName.InputField.Text = (from x in preset.vcodecs
+                                                where MainWindow.instance.encoders.Any(y=>y.ID == x)
+                                                select x).First();
+            Input_Vbitrate.InputField.Text = preset.vbitrate;
+            Input_AcodecName.InputField.Text = preset.acodec;
+            Input_Abitrate.InputField.Text = preset.abitrate;
         }
 
         void CreateStreamsList()
@@ -48,6 +81,13 @@ namespace ReencGUI.UI
         {
             streamTargets.Add(target);
             CreateStreamsList();
+        }
+
+        public ulong GetDuration()
+        {
+            //todo: -ss and -to
+            return streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS))
+                .Max();
         }
 
         public void RunEncode()
@@ -66,7 +106,7 @@ namespace ReencGUI.UI
             var distinctFiles = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
             Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
 
-            ulong duration = streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS)).Max();
+            ulong duration = GetDuration();
 
             ffmpegArgs.Add("-y");
 
@@ -124,6 +164,16 @@ namespace ReencGUI.UI
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
             RunEncode();
+        }
+
+        private void Combo_Preset_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = Combo_Preset.SelectedIndex;
+
+            if (index >= 0 && index < presets.Count)
+            {
+                ApplyPreset(presets[index]);
+            }
         }
     }
 }
