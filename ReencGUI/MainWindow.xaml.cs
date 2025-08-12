@@ -133,6 +133,10 @@ namespace ReencGUI
                     Console.WriteLine($"FFMPEG exited with code {exit}");
                     Dispatcher.Invoke(() =>
                     {
+                        if (exit != 0)
+                        {
+                            MessageBox.Show($"FFMPEG Error: exit code {exit}", "Error");
+                        }
                         Panel_Operations.Items.Remove(next.uiQueueEntry);
                         encoding = false;
                         ProcessNextEncode();

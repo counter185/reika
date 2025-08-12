@@ -97,8 +97,20 @@ namespace ReencGUI.UI
             Panel_Streams.Items.Clear();
             foreach (var stream in streamTargets)
             {
-                Panel_Streams.Items.Add(new UIStreamEntry(stream));
+                UIStreamEntry streamEntry = new UIStreamEntry(stream);
+                streamEntry.MouseRightButtonDown += (s, e) =>
+                {
+                    streamTargets.Remove(stream);
+                    CreateStreamsList();
+                };
+                Panel_Streams.Items.Add(streamEntry);
             }
+
+            Input_VcodecName.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
+            Input_Vbitrate.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
+
+            Input_AcodecName.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
+            Input_Abitrate.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
         }
 
         public void AddStream(StreamTarget target)

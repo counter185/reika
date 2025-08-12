@@ -59,6 +59,7 @@ namespace ReencGUI.UI
 
         int GetPriorityForID(string id)
         {
+            //video
             if (id.Contains("hevc") || id.Contains("265"))
             {
                 return 4;
@@ -72,6 +73,24 @@ namespace ReencGUI.UI
                 return 2;
             }
             if (id.Contains("av1"))
+            {
+                return 1;
+            }
+
+            //audio
+            if (id.Contains("opus"))
+            {
+                return 4;
+            }
+            if (id.Contains("flac"))
+            {
+                return 3;
+            }
+            if (id.Contains("mp3") || id.Contains("aac"))
+            {
+                return 2;
+            }
+            if (id.Contains("vorbis"))
             {
                 return 1;
             }
