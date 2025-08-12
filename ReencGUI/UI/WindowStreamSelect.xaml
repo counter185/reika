@@ -1,0 +1,21 @@
+﻿<Window x:Class="ReencGUI.UI.WindowStreamSelect"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReencGUI.UI"
+        mc:Ignorable="d"
+        Style="{StaticResource ReencWindowStyle}"
+        Title="WindowStreamSelect" Height="450" Width="427">
+    <DockPanel Margin="10" LastChildFill="True">
+        <Label DockPanel.Dock="Top" Content="Select streams" Foreground="White" FontSize="30"/>
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+            <Button x:Name="Button_SelectAll" DockPanel.Dock="Left" Padding="10,0" Margin="0,0,10,0" MinHeight="30" Content="Select all" Click="Button_SelectAll_Click"/>
+            <Button x:Name="Button_Confirm" DockPanel.Dock="Right" Padding="10,0" MinHeight="30"  Content="Confirm" Click="Button_Confirm_Click"/>
+        </DockPanel>
+        <ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ListBox x:Name="Panel_StreamList" Background="Transparent" BorderBrush="#404040">
+            </ListBox>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

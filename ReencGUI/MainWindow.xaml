@@ -1,0 +1,16 @@
+﻿<Window x:Class="ReencGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReencGUI"
+        mc:Ignorable="d"
+        Style="{StaticResource ReencWindowStyle}"
+        Title="ReencGUI" Height="450" Width="800" AllowDrop="True" Drop="Window_Drop">
+    <DockPanel Margin="10" LastChildFill="True">
+        <ListBox x:Name="Panel_Operations" DockPanel.Dock="Right" Width="250" Background="Transparent" BorderBrush="#404040" />
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left" >
+            <Label Content="ReencGUI" FontSize="40" Foreground="White"/>
+        </StackPanel>
+    </DockPanel>
+</Window>

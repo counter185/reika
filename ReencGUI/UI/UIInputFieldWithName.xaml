@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="ReencGUI.UI.UIInputFieldWithName"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReencGUI.UI"
+             mc:Ignorable="d">
+    <DockPanel LastChildFill="True">
+        <Label DockPanel.Dock="Left" MinWidth="70" VerticalContentAlignment="Center" Padding="0" Content="{Binding InputFieldName, FallbackValue=Text}" Foreground="White"/>
+        <TextBox Name="InputField" Margin="20,0,0,0" DockPanel.Dock="Right" MinWidth="200"/>
+    </DockPanel>
+</UserControl>
