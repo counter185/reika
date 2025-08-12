@@ -185,5 +185,15 @@ namespace ReencGUI.UI
                 Input_VcodecName.InputField.Text = pickEnc.result;
             }
         }
+
+        private void Button_AcodecSelect_Click(object sender, RoutedEventArgs e)
+        {
+            WindowPickEncoder pickEnc = new WindowPickEncoder(FFMPEG.CodecType.Audio);
+            pickEnc.ShowDialog();
+            if (pickEnc.result != null)
+            {
+                Input_AcodecName.InputField.Text = pickEnc.result;
+            }
+        }
     }
 }

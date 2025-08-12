@@ -36,7 +36,7 @@
         <Button x:Name="Button_Start" Grid.Column="2" Content="Start" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Height="33" Width="127" Click="Button_Start_Click"/>
         <Button x:Name="Button_OutFileSelect" Content="..." Margin="0,56,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top"/>
         <local:UIInputFieldWithName x:Name="Input_AcodecName" Margin="10,125,36,0" InputFieldName="Audio codec" Height="18" VerticalAlignment="Top" Grid.Column="2"/>
-        <Button x:Name="Button_VcodecSelect_Kopiuj" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top"/>
+        <Button x:Name="Button_AcodecSelect" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_AcodecSelect_Click"/>
         <local:UIInputFieldWithName x:Name="Input_Abitrate" Margin="10,148,62,0" InputFieldName="Audio bitrate" Height="21" VerticalAlignment="Top" Grid.Column="2"/>
         <ComboBox x:Name="Combo_AbitrateUnits" FontSize="11" Margin="0,149,10,0" SelectedIndex="1" Grid.Column="2" HorizontalAlignment="Right" Width="52" Grid.ColumnSpan="1" Height="20" VerticalAlignment="Top">
             <ComboBoxItem Content="bps"/>
