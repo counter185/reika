@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="ReencGUI.UI.UIEncoderEntry"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReencGUI.UI"
+             mc:Ignorable="d" >
+    <StackPanel Orientation="Vertical" Margin="10,5">
+        <Label x:Name="Text_Primary" Margin="0,-5" Content="Primary text" FontSize="18" Foreground="White"/>
+        <Label x:Name="Text_Secondary" Margin="0,-2" Content="Secondary text" FontSize="12" Foreground="#a0a0a0"/>
+    </StackPanel>
+</UserControl>

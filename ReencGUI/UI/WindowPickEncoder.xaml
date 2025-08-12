@@ -1,0 +1,14 @@
+﻿<Window x:Class="ReencGUI.UI.WindowPickEncoder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReencGUI.UI"
+        mc:Ignorable="d"
+        Style="{StaticResource ReencWindowStyle}"
+        Title="Choose encoder" Height="496" Width="425">
+    <DockPanel Margin="10" LastChildFill="True">
+        <Label DockPanel.Dock="Top" Padding="0,10" Content="Choose encoder" Foreground="White" FontSize="30"/>
+        <ListBox DockPanel.Dock="Bottom" x:Name="Panel_Encoders" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch"/>
+    </DockPanel>
+</Window>

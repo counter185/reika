@@ -27,5 +27,11 @@ namespace ReencGUI
         {
             return mb * 1024 * 1024; //convert megabytes to bytes
         }
+
+        public static string SanitizeForXAML(string input)
+        {
+            if (input == null) return null;
+            return input.Replace("_", "__");
+        }
     }
 }

@@ -57,6 +57,9 @@
     </ApplicationDefinition>
     <Compile Include="CreateFilePreset.cs" />
     <Compile Include="StreamTarget.cs" />
+    <Compile Include="UI\UIEncoderEntry.xaml.cs">
+      <DependentUpon>UIEncoderEntry.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\UIFFMPEGOperationEntry.xaml.cs">
       <DependentUpon>UIFFMPEGOperationEntry.xaml</DependentUpon>
     </Compile>
@@ -68,6 +71,9 @@
     </Compile>
     <Compile Include="UI\WindowCreateFile.xaml.cs">
       <DependentUpon>WindowCreateFile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WindowPickEncoder.xaml.cs">
+      <DependentUpon>WindowPickEncoder.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\WindowStreamSelect.xaml.cs">
       <DependentUpon>WindowStreamSelect.xaml</DependentUpon>
@@ -87,6 +93,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\UIEncoderEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\UIFFMPEGOperationEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,6 +110,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WindowCreateFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WindowPickEncoder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
