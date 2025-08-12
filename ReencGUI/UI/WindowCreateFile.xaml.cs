@@ -47,6 +47,30 @@ namespace ReencGUI.UI
         void LoadPresets()
         {
             presets.Add(new Discord10MBPreset());
+            presets.Add(new CreateFilePreset
+            {
+                name = "H265: Quality",
+                vbitrate = "12000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H265: Moderate",
+                vbitrate = "8000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H265: File size",
+                vbitrate = "4000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
 
             foreach (var preset in presets)
             {

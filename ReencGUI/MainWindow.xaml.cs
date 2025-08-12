@@ -64,13 +64,15 @@ namespace ReencGUI
             {
                 string fileName = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
                 FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(fileName);
-                new WindowCreateFile(from x in media.streams
-                                     select new StreamTarget
-                                     {
-                                         mediaInfo = media,
-                                         streamInfo = x,
-                                         indexInStream = media.streams.IndexOf(x)
-                                     }).Show();
+                WindowCreateFile wd = new WindowCreateFile(from x in media.streams
+                                                           select new StreamTarget
+                                                           {
+                                                               mediaInfo = media,
+                                                               streamInfo = x,
+                                                               indexInStream = media.streams.IndexOf(x)
+                                                           });
+                wd.Input_OutFileName.InputField.Text = fileName + ".reenc.mp4";
+                wd.Show();
             }
             catch (Exception ex)
             {

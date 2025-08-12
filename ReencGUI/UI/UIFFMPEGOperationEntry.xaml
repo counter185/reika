@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReencGUI.UI"
              mc:Ignorable="d" Padding="0,10" >
-    <StackPanel Orientation="Horizontal">
-        <StackPanel Orientation="Vertical">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
             <Label x:Name="Label_Primary" Foreground="White" Content="Primary text" FontSize="18" Margin="0,-5"/>
             <Label x:Name="Label_Secondary" Foreground="#D0D0D0" Content="Secondary text" FontSize="12" Margin="0,-6"/>
             <Label x:Name="Label_Secondary2" Foreground="#D0D0D0" Content="Secondary text 2" FontSize="12" Margin="0,-6"/>
-            <ProgressBar x:Name="ProgressBar_Operation" MinWidth="250" Height="10" Margin="0,5,0,0" Minimum="0" Maximum="100" Value="0"/>
         </StackPanel>
-    </StackPanel>
+        <ProgressBar DockPanel.Dock="Bottom" x:Name="ProgressBar_Operation" Height="10" Margin="0,5,0,0" Minimum="0" Maximum="100" Value="0"/>
+    </DockPanel>
 </UserControl>
