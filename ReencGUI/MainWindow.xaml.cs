@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,6 +44,7 @@ namespace ReencGUI
         Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
         Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
         bool encoding = false;
+        volatile bool doingOtherOp = false;
 
         public MainWindow()
         {
@@ -57,6 +59,10 @@ namespace ReencGUI
             {
                 if (MessageBox.Show("FFMPEG not found. Download it now?", "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
+                    EnqueueOtherOperation((entry) => FFMPEG.DownloadLatest(entry));
+                } else
+                {
+                    Application.Current.Shutdown();
                 }
             }
         }
@@ -93,12 +99,22 @@ namespace ReencGUI
             {
                 MessageBox.Show($"Error processing file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
+
         }
 
         public void EnqueueOtherOperation(Action<UIFFMPEGOperationEntry> action)
         {
-
+            UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
+            entry.Label_Primary.Content = $"In queue";
+            entry.Label_Secondary.Content = "";
+            entry.Label_Secondary2.Content = "";
+            Panel_Operations.Items.Add(entry);
+            otherOpsQueue.Enqueue(new OtherOperation
+            {
+                action = action,
+                uiQueueEntry = entry
+            });
+            ProcessNextOtherOperation();
         }
 
         public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration)
@@ -162,6 +178,24 @@ namespace ReencGUI
                         ProcessNextEncode();
                     });
                 });
+            }
+        }
+        public void ProcessNextOtherOperation()
+        {
+            if (!doingOtherOp && otherOpsQueue.Any())
+            {
+                doingOtherOp = true;
+                OtherOperation next = otherOpsQueue.Dequeue();
+                next.uiQueueEntry.Label_Primary.Content = $"Processing";
+                new Thread(() =>
+                {
+                    next.action(next.uiQueueEntry);
+                    doingOtherOp = false;
+                    Dispatcher.Invoke(() =>
+                    {
+                        Panel_Operations.Items.Remove(next.uiQueueEntry);
+                    });
+                }).Start();
             }
         }
     }

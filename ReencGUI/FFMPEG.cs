@@ -105,6 +105,7 @@ namespace ReencGUI
                             entry.ExtractToFile(Path.Combine("ffmpeg", entry.Name));
                         }
                         zip.Dispose();
+                        File.Delete("ffmpeg.zip");
                         return true;
                     }
                     downloadMatches = downloadMatches.NextMatch();
@@ -119,6 +120,10 @@ namespace ReencGUI
 
         public static List<string> RunCommandAndGetOutput(string command, IEnumerable<string> args)
         {
+            if (File.Exists($"ffmpeg\\{command}.exe"))
+            {
+                command = $"ffmpeg\\{command}.exe";
+            }
             List<string> output = new List<string>();
             try
             {
