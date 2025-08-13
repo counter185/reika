@@ -198,5 +198,10 @@ namespace ReencGUI
                 }).Start();
             }
         }
+
+        private void Button_NewEmpty_Click(object sender, RoutedEventArgs e)
+        {
+            new WindowCreateFile().Show();
+        }
     }
 }

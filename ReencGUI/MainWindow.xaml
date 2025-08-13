@@ -17,7 +17,7 @@
             <Label DockPanel.Dock="Top" Content="reika" FontSize="40" Foreground="White"/>
             <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Vertical" DockPanel.Dock="Bottom">
                 <Label DockPanel.Dock="Bottom" Content="Drop a file here to reencode..." Foreground="#808080"/>
-                <Button Content="New file" Margin="0,10" Width="100"/>
+                <Button x:Name="Button_NewEmpty" Content="New file" Margin="0,10" Width="100" Click="Button_NewEmpty_Click"/>
             </StackPanel>
         </DockPanel>
     </DockPanel>
