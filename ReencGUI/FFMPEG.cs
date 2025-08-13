@@ -89,13 +89,33 @@ namespace ReencGUI
 
                         Console.WriteLine("Downloading FFMPEG release from: " + urlNow);
                         client.Headers.Add("User-Agent", "ReencGUI/1.0");
-                        client.DownloadFile(urlNow, "ffmpeg.zip");
+
+                        bool downloadDone = false;
+                        client.DownloadProgressChanged += (sender, e) =>
+                        {
+                            progressCallback.Dispatcher.Invoke(() =>
+                            {
+                                progressCallback.Label_Secondary.Content = $"{(double)e.BytesReceived/Utils.Megabytes(1):.02}MB / {(double)e.TotalBytesToReceive/Utils.Megabytes(1):.02}MB";
+                                progressCallback.ProgressBar_Operation.Value = e.ProgressPercentage;
+                            });
+                        };
+                        client.DownloadFileCompleted += (sender, e) =>
+                        {
+                            downloadDone = true;
+                        };
+                        client.DownloadFileAsync(new Uri(urlNow), "ffmpeg.zip");
+
+                        while (!downloadDone)
+                        {
+                            Thread.Sleep(100);
+                        }
 
                         progressCallback.Dispatcher.Invoke(() =>
                         {
                             progressCallback.Label_Primary.Content = "Extracting FFMPEG";
                             progressCallback.Label_Secondary.Content = "";
                         });
+
 
                         Console.WriteLine("Extracting FFMPEG release...");
                         ZipArchive zip = ZipFile.OpenRead("ffmpeg.zip");
