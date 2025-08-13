@@ -8,6 +8,10 @@ using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Threading;
+using System.Net;
+using System.IO.Compression;
+using ReencGUI.UI;
+using System.Windows.Threading;
 
 namespace ReencGUI
 {
@@ -46,6 +50,71 @@ namespace ReencGUI
             public string resolution;   //hz for audio, width x height for video
             public List<string> fullRawData = new List<string>();
             public List<string> otherData = new List<string>();
+        }
+
+        public static bool DownloadLatest(UIFFMPEGOperationEntry progressCallback)
+        {
+            progressCallback.Dispatcher.Invoke(() =>
+            {
+                progressCallback.Label_Primary.Content = "Finding latest FFMPEG release";
+                progressCallback.Label_Secondary.Content = "";
+            });
+            string releasesURL = "https://api.github.com/repos/GyanD/codexffmpeg/releases";
+            WebClient client = new WebClient();
+            client.Headers.Add("User-Agent", "ReencGUI/1.0");
+            client.Headers.Add("Accept", "application/json");
+            try
+            {
+                //json parsers are for the weak
+                string jsons = client.DownloadString(releasesURL);
+                string nextUrl = Regex.Match(jsons, @"""url"":\s*""(https://api\.github\.com/repos/GyanD/codexffmpeg/releases/[0-9]+)""").Groups[1].Value;
+
+                client.Headers.Add("User-Agent", "ReencGUI/1.0");
+                string jsonss = client.DownloadString(nextUrl);
+
+                Match downloadMatches = Regex.Match(jsonss,
+                    @"""browser_download_url"":\s*""([^""]+)""");
+                while (downloadMatches.Success)
+                {
+                    string urlNow = downloadMatches.Groups[1].Value;
+                    if (urlNow.Contains("ffmpeg") && urlNow.Contains("full") 
+                        && urlNow.Contains("build") && urlNow.Contains(".zip")
+                        && !urlNow.Contains("shared"))
+                    {
+                        progressCallback.Dispatcher.Invoke(() =>
+                        {
+                            progressCallback.Label_Primary.Content = "Downloading FFMPEG";
+                            progressCallback.Label_Secondary.Content = "";
+                        });
+
+                        Console.WriteLine("Downloading FFMPEG release from: " + urlNow);
+                        client.Headers.Add("User-Agent", "ReencGUI/1.0");
+                        client.DownloadFile(urlNow, "ffmpeg.zip");
+
+                        progressCallback.Dispatcher.Invoke(() =>
+                        {
+                            progressCallback.Label_Primary.Content = "Extracting FFMPEG";
+                            progressCallback.Label_Secondary.Content = "";
+                        });
+
+                        Console.WriteLine("Extracting FFMPEG release...");
+                        ZipArchive zip = ZipFile.OpenRead("ffmpeg.zip");
+                        Directory.CreateDirectory("ffmpeg");
+                        foreach (ZipArchiveEntry entry in zip.Entries.Where(x=>x.Name.EndsWith(".exe")))
+                        {
+                            entry.ExtractToFile(Path.Combine("ffmpeg", entry.Name));
+                        }
+                        zip.Dispose();
+                        return true;
+                    }
+                    downloadMatches = downloadMatches.NextMatch();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error downloading FFMPEG releases: " + ex.Message);
+            }
+            return false;
         }
 
         public static List<string> RunCommandAndGetOutput(string command, IEnumerable<string> args)

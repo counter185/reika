@@ -1,6 +1,7 @@
 ﻿using ReencGUI.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +29,11 @@ namespace ReencGUI
             public ulong outputDuration;
             public UIFFMPEGOperationEntry uiQueueEntry;
         }
+        struct OtherOperation
+        {
+            public Action<UIFFMPEGOperationEntry> action;
+            public UIFFMPEGOperationEntry uiQueueEntry;
+        }
 
         public static MainWindow instance;
 
@@ -35,6 +41,7 @@ namespace ReencGUI
         public List<FFMPEG.CodecInfo> encoders;
 
         Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
+        Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
         bool encoding = false;
 
         public MainWindow()
@@ -44,6 +51,14 @@ namespace ReencGUI
 
             decoders = FFMPEG.GetAvailableDecoders();
             encoders = FFMPEG.GetAvailableEncoders();
+
+            if (!File.Exists("ffmpeg\\ffmpeg.exe")
+                || !File.Exists("ffmpeg\\ffprobe.exe"))
+            {
+                if (MessageBox.Show("FFMPEG not found. Download it now?", "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                }
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -79,6 +94,11 @@ namespace ReencGUI
                 MessageBox.Show($"Error processing file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
+        }
+
+        public void EnqueueOtherOperation(Action<UIFFMPEGOperationEntry> action)
+        {
+
         }
 
         public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration)
