@@ -177,8 +177,15 @@ namespace ReencGUI
                                 output.Add(e.Data);
                             }
                         };
-                        Thread.Sleep(100);
-                        process.WaitForExit();
+                        bool exited = false;
+                        process.Exited += (sender, e) =>
+                        {
+                            exited = true;
+                        };
+                        while (!exited)
+                        {
+                            Thread.Sleep(100);
+                        }
                     }
                 }
             }
@@ -222,11 +229,6 @@ namespace ReencGUI
             {
                 throw new Exception("Error running FFMPEG command: " + ex.Message, ex);
             }
-        }
-
-        private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         public static List<string> RunFFMPEGCommandlineForOutput(IEnumerable<string> args)

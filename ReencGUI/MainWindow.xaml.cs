@@ -85,15 +85,21 @@ namespace ReencGUI
             {
                 string fileName = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
                 FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(fileName);
-                WindowCreateFile wd = new WindowCreateFile(from x in media.streams
-                                                           select new StreamTarget
-                                                           {
-                                                               mediaInfo = media,
-                                                               streamInfo = x,
-                                                               indexInStream = media.streams.IndexOf(x)
-                                                           });
-                wd.Input_OutFileName.InputField.Text = fileName + ".reenc.mp4";
-                wd.Show();
+                if (media != null)
+                {
+                    WindowCreateFile wd = new WindowCreateFile(from x in media.streams
+                                                               select new StreamTarget
+                                                               {
+                                                                   mediaInfo = media,
+                                                                   streamInfo = x,
+                                                                   indexInStream = media.streams.IndexOf(x)
+                                                               });
+                    wd.Input_OutFileName.InputField.Text = fileName + ".reenc.mp4";
+                    wd.Show();
+                } else
+                {
+                    MessageBox.Show("Failed to identify file.\nCheck if ffmpeg is installed.", "Invalid File", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
