@@ -1,6 +1,7 @@
 ﻿using ReencGUI.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -140,6 +141,28 @@ namespace ReencGUI
             ProcessNextEncode();
         }
 
+        public void EncodeFailed(string details1, string details2, 
+            Action<UIFFMPEGFailedReencode> onRetry, Action<UIFFMPEGFailedReencode> onViewLog)
+        {
+            UIFFMPEGFailedReencode failedReencode = new UIFFMPEGFailedReencode();
+            failedReencode.Label_Secondary.Content = details1;
+            failedReencode.Label_Secondary2.Content = details2;
+            failedReencode.Button_Retry.Click += (s, e) =>
+            {
+                onRetry(failedReencode);
+                Panel_Operations.Items.Remove(failedReencode);
+            };
+            failedReencode.Button_ViewLog.Click += (s, e) =>
+            {
+                onViewLog(failedReencode);
+            };
+            failedReencode.MouseRightButtonDown += (s, e) =>
+            {
+                Panel_Operations.Items.Remove(failedReencode);
+            };
+            Panel_Operations.Items.Add(failedReencode);
+        }
+
         public void ProcessNextEncode()
         {
             if (!encoding && encodeQueue.Any())
@@ -148,6 +171,7 @@ namespace ReencGUI
                 EncodeOperation next = encodeQueue.Dequeue();
                 next.uiQueueEntry.Label_Primary.Content = $"Encoding";
 
+                List<string> logLines = new List<string>();
                 FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
                 {
                     if (line != null)
@@ -156,28 +180,43 @@ namespace ReencGUI
 
                         Match match = Regex.Match(line, @"([^\s]+)=\s*([^\s]+)");
                         Dictionary<string, string> logOutputKVs = new Dictionary<string, string>();
+                        bool anyFound = false;
                         while (match.Success)
                         {
+                            anyFound = true;
                             string key = match.Groups[1].Value;
                             string value = match.Groups[2].Value;
                             logOutputKVs[key] = value;
                             match = match.NextMatch();
                         }
 
-                        Dispatcher.Invoke(() =>
+                        if (anyFound)
                         {
-                            next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
-                        });
+                            Dispatcher.Invoke(() =>
+                            {
+                                next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
+                            });
+                        } else
+                        {
+                            logLines.Add(line);
+                        }
                     }
                 },
                 (exit) =>
                 {
-                    Console.WriteLine($"FFMPEG exited with code {exit}");
+                    Console.WriteLine($"FFMPEG exited with code {exit:X}");
                     Dispatcher.Invoke(() =>
                     {
                         if (exit != 0)
                         {
-                            MessageBox.Show($"FFMPEG Error: exit code {exit}", "Error");
+                            EncodeFailed($"Exit code {exit:X}", "", 
+                                (el) => { 
+                                    EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration);
+                                }, 
+                                (el) => { 
+                                    File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
+                                    Process.Start("notepad.exe", "ffmpeg_log.txt");
+                                });
                         }
                         Panel_Operations.Items.Remove(next.uiQueueEntry);
                         encoding = false;

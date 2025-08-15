@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="ReencGUI.UI.UIFFMPEGFailedReencode"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReencGUI.UI"
+             mc:Ignorable="d">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+            <Label x:Name="Label_Primary" Foreground="White" Content="Encode failed" FontSize="18" Margin="0,-5"/>
+            <Label x:Name="Label_Secondary" Foreground="#D0D0D0" Content="Secondary text" FontSize="12" Margin="0,-6"/>
+            <Label x:Name="Label_Secondary2" Foreground="#D0D0D0" Content="Secondary text 2" FontSize="12" Margin="0,-6"/>
+        </StackPanel>
+        <DockPanel Margin="5" LastChildFill="False">
+            <Button x:Name="Button_Retry" DockPanel.Dock="Left" Style="{StaticResource ReencButtonStyle}" Content="Retry" Padding="16,4"/>
+            <Button x:Name="Button_ViewLog" DockPanel.Dock="Right" Style="{StaticResource ReencButtonStyle}" Content="View log" Padding="16,2"/>
+        </DockPanel>
+    </DockPanel>
+</UserControl>
