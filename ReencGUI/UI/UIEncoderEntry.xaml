@@ -7,6 +7,6 @@
              mc:Ignorable="d" >
     <StackPanel Orientation="Vertical" Margin="10,5">
         <Label x:Name="Text_Primary" Margin="0,-5" Content="Primary text" FontSize="18" Foreground="White"/>
-        <Label x:Name="Text_Secondary" Margin="0,-2" Content="Secondary text" FontSize="12" Foreground="#a0a0a0"/>
+        <TextBlock x:Name="Text_Secondary" Margin="4" Text="Secondary text" FontSize="12" Foreground="#a0a0a0" TextWrapping="Wrap"/>
     </StackPanel>
 </UserControl>

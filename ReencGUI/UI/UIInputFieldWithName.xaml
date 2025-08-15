@@ -7,6 +7,6 @@
              mc:Ignorable="d">
     <DockPanel LastChildFill="True">
         <Label DockPanel.Dock="Left" MinWidth="70" VerticalContentAlignment="Center" Padding="0" Content="{Binding InputFieldName, FallbackValue=Text}" Foreground="White"/>
-        <TextBox Name="InputField" Margin="20,0,0,0" DockPanel.Dock="Right" MinWidth="200"/>
+        <TextBox Style="{DynamicResource ReencTextBoxStyle}" Name="InputField" Margin="20,0,0,0" DockPanel.Dock="Right" MinWidth="100"/>
     </DockPanel>
 </UserControl>

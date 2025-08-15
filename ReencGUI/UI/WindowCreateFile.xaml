@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="WindowCreateFile" Height="480" Width="871">
+        Title="Create file" Height="480" Width="871">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -24,7 +24,7 @@
             <ComboBox x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged"/>
         </DockPanel>
         <local:UIInputFieldWithName x:Name="Input_VcodecName" Margin="10,125,36,0" InputFieldName="Video codec" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
-        <Button x:Name="Button_VcodecSelect" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_VcodecSelect_Click"/>
+        <Button x:Name="Button_VcodecSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_VcodecSelect_Click"/>
         <local:UIInputFieldWithName x:Name="Input_Vbitrate" Margin="10,148,62,0" InputFieldName="Video bitrate" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
         <local:UIInputFieldWithName x:Name="Input_TrimFrom" Margin="10,199,13,0" InputFieldName="Trim from (HH:MM:SS)" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
         <ComboBox x:Name="Combo_VbitrateUnits" FontSize="11" Margin="0,149,10,0" SelectedIndex="1" Grid.Column="1" HorizontalAlignment="Right" Width="52" Grid.ColumnSpan="1" Height="20" VerticalAlignment="Top">
@@ -33,10 +33,10 @@
             <ComboBoxItem Content="Mbps" />
             <ComboBoxItem Content="crf" />
         </ComboBox>
-        <Button x:Name="Button_Start" Grid.Column="2" Content="Start" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Height="33" Width="127" Click="Button_Start_Click"/>
-        <Button x:Name="Button_OutFileSelect" Content="..." Margin="0,56,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top"/>
+        <Button x:Name="Button_Start" Style="{DynamicResource ReencButtonStyle}" Grid.Column="2" Content="Start" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Height="33" Width="127" Click="Button_Start_Click"/>
+        <Button x:Name="Button_OutFileSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,56,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top"/>
         <local:UIInputFieldWithName x:Name="Input_AcodecName" Margin="10,125,36,0" InputFieldName="Audio codec" Height="18" VerticalAlignment="Top" Grid.Column="2"/>
-        <Button x:Name="Button_AcodecSelect" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_AcodecSelect_Click"/>
+        <Button x:Name="Button_AcodecSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_AcodecSelect_Click"/>
         <local:UIInputFieldWithName x:Name="Input_Abitrate" Margin="10,148,62,0" InputFieldName="Audio bitrate" Height="21" VerticalAlignment="Top" Grid.Column="2"/>
         <ComboBox x:Name="Combo_AbitrateUnits" FontSize="11" Margin="0,149,10,0" SelectedIndex="1" Grid.Column="2" HorizontalAlignment="Right" Width="52" Grid.ColumnSpan="1" Height="20" VerticalAlignment="Top">
             <ComboBoxItem Content="bps"/>
@@ -45,6 +45,8 @@
             <ComboBoxItem Content="crf" />
         </ComboBox>
         <local:UIInputFieldWithName x:Name="Input_TrimTo" Margin="10,199,10,0" InputFieldName="Trim to (HH:MM:SS)" Height="21" VerticalAlignment="Top" Grid.Column="2"/>
-        <Label x:Name="Label_LogOutput" Grid.Column="1" Content="" Foreground="#808080" FontSize="9" Margin="10,0,10,48" Grid.ColumnSpan="2" Height="22" VerticalAlignment="Bottom"/>
+        <Label  Grid.Column="1" Foreground="#808080" FontSize="9" Margin="10,0,10,48" Grid.ColumnSpan="2" Height="37" VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" FontStyle="Italic">
+            <TextBlock x:Name="Label_FullCommand" TextWrapping="Wrap" Text=""/>
+        </Label>
     </Grid>
 </Window>

@@ -36,6 +36,33 @@ namespace ReencGUI.UI
             {
                 AddStream(stream);
             }
+
+            UpdateCommandLabel();
+            Control[] updateLogOnChange = new Control[]
+            {
+                Input_VcodecName.InputField,
+                Input_Vbitrate.InputField,
+                Input_AcodecName.InputField,
+                Input_Abitrate.InputField,
+                Input_OutFileName.InputField,
+                Input_TrimFrom.InputField,
+                Input_TrimTo.InputField,
+                Combo_Preset,
+                Combo_VbitrateUnits,
+                Combo_AbitrateUnits
+            };
+
+            foreach (Control c in updateLogOnChange)
+            {
+                if (c is TextBox textBox)
+                {
+                    textBox.TextChanged += (s, e) => UpdateCommandLabel();
+                }
+                else if (c is ComboBox comboBox)
+                {
+                    comboBox.SelectionChanged += (s, e) => UpdateCommandLabel();
+                }
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -128,7 +155,14 @@ namespace ReencGUI.UI
 
         public void RunEncode()
         {
+            ulong duration = GetDuration();
+            List<string> args = MakeFFMPEGArgs();
+            MainWindow.instance.EnqueueEncodeOperation(args, duration);
+            Close();
+        }
 
+        private List<string> MakeFFMPEGArgs()
+        {
             string outputFileName = Input_OutFileName.InputField.Text;
             string vcodec = Input_VcodecName.InputField.Text;
             string vbitrate = Input_Vbitrate.InputField.Text;
@@ -143,7 +177,6 @@ namespace ReencGUI.UI
             Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
 
             ulong duration = GetDuration();
-
             ffmpegArgs.Add("-y");
 
             int i = 0;
@@ -193,8 +226,12 @@ namespace ReencGUI.UI
                 ffmpegArgs.Add(trimTo);
             }
             ffmpegArgs.Add($"\"{outputFileName}\"");
-            MainWindow.instance.EnqueueEncodeOperation(ffmpegArgs, duration);
-            Close();
+            return ffmpegArgs;
+        }
+
+        void UpdateCommandLabel()
+        {
+            Label_FullCommand.Text = "ffmpeg " + string.Join(" ", MakeFFMPEGArgs());
         }
 
         private void Button_Start_Click(object sender, RoutedEventArgs e)

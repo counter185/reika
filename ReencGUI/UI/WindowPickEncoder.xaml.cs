@@ -109,7 +109,7 @@ namespace ReencGUI.UI
             {
                 UIEncoderEntry entry = new UIEncoderEntry();
                 entry.Text_Primary.Content = Utils.SanitizeForXAML(enc.ID);
-                entry.Text_Secondary.Content = Utils.SanitizeForXAML(enc.Name);
+                entry.Text_Secondary.Text = Utils.SanitizeForXAML(enc.Name);
                 entry.Background = GetGradientForCodecID(enc.ID);
                 entry.MouseDoubleClick += (s, e) =>
                 {
