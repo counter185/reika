@@ -155,10 +155,17 @@ namespace ReencGUI.UI
 
         public void RunEncode()
         {
-            ulong duration = GetDuration();
-            List<string> args = MakeFFMPEGArgs();
-            MainWindow.instance.EnqueueEncodeOperation(args, duration);
-            Close();
+            if (streamTargets.Any())
+            {
+                ulong duration = GetDuration();
+                List<string> args = MakeFFMPEGArgs();
+                MainWindow.instance.EnqueueEncodeOperation(args, duration);
+                Close();
+            }
+            else
+            {
+                MessageBox.Show("No streams to encode", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private List<string> MakeFFMPEGArgs()
@@ -266,6 +273,27 @@ namespace ReencGUI.UI
             if (pickEnc.result != null)
             {
                 Input_AcodecName.InputField.Text = pickEnc.result;
+            }
+        }
+
+        private void Panel_Streams_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (string file in files)
+                {
+                    FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(file);
+                    if (media != null)
+                    {
+                        WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
+                        pickStreams.ShowDialog();
+                        foreach (var stm in pickStreams.selectedStreams)
+                        {
+                            AddStream(stm);
+                        }
+                    }
+                }
             }
         }
     }
