@@ -7,21 +7,24 @@
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
         Title="reika" Height="450" Width="800" AllowDrop="True" Drop="Window_Drop">
-    <DockPanel Margin="10" LastChildFill="True">
-        <DockPanel DockPanel.Dock="Right" LastChildFill="True">
-            <Label Content="Queue" DockPanel.Dock="Top" Foreground="White"/>
-            <ListBox x:Name="Panel_Operations" DockPanel.Dock="Bottom" Width="250" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" />
-        </DockPanel>
-        
-        <DockPanel DockPanel.Dock="Left" LastChildFill="True" >
-            <Label DockPanel.Dock="Top" Content="reika" FontSize="40" Foreground="White"/>
-            <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Vertical" DockPanel.Dock="Bottom">
-                <Label DockPanel.Dock="Bottom" Content="Drop a file here to start..." Foreground="#808080"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_NewEmpty" Content="New file" Margin="10" Padding="8" Width="100" Click="Button_NewEmpty_Click"/>
-                    <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_QuickReenc" Content="Quick reencode" Margin="10" Padding="8" Width="100" Click="Button_QuickReenc_Click"/>
+    <Grid>
+        <Label Content="レイカ" Foreground="#0aFFFFFF" FontSize="160" Margin="-20,-40"/>
+        <DockPanel Margin="10" LastChildFill="True">
+            <DockPanel DockPanel.Dock="Right" LastChildFill="True">
+                <Label Content="Queue" DockPanel.Dock="Top" Foreground="White"/>
+                <ListBox x:Name="Panel_Operations" DockPanel.Dock="Bottom" Width="250" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" />
+            </DockPanel>
+
+            <DockPanel DockPanel.Dock="Left" LastChildFill="True" >
+                <Label DockPanel.Dock="Top" Content="reika" FontSize="40" Foreground="White"/>
+                <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Vertical" DockPanel.Dock="Bottom">
+                    <Label DockPanel.Dock="Bottom" Content="Drop a file here to start..." Foreground="#808080"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_NewEmpty" Content="New file" Margin="10" Padding="8" Width="100" Click="Button_NewEmpty_Click"/>
+                        <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_QuickReenc" Content="Quick reencode" Margin="10" Padding="8" Width="100" Click="Button_QuickReenc_Click"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </DockPanel>
         </DockPanel>
-    </DockPanel>
+    </Grid>
 </Window>

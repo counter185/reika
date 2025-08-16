@@ -58,7 +58,10 @@ namespace ReencGUI
             if (!File.Exists("ffmpeg\\ffmpeg.exe")
                 || !File.Exists("ffmpeg\\ffprobe.exe"))
             {
-                if (MessageBox.Show("FFMPEG not found. Download it now?", "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show("FFMPEG not found. Download it now?" +
+                    "\n\n*At least 500MB of free space is required" +
+                    "\n*FFMPEG will be downloaded from github.com/GyanD/codexffmpeg/releases", 
+                    "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     downloadingFFMPEG = true;
                     EnqueueOtherOperation((entry) => {
