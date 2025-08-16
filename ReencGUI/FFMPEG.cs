@@ -390,7 +390,9 @@ namespace ReencGUI
             return ParseFFProbeMediaInfo(RunFFProbeCommandlineForOutput(new string[] { $"\"{fileName}\"" }));
         }
 
-        public static BitmapImage ExtractThumbnail(string filename)
+        static List<string> createdThumbnails = new List<string>();
+
+        public static BitmapImage ExtractThumbnail(string filename, string timestamp = "00:00:01.000")
         {
             //todo: specific stream selection
             Random r = new Random();
@@ -399,13 +401,52 @@ namespace ReencGUI
             {
                 "-y",
                 "-i", $"\"{filename}\"",
-                "-ss", "00:00:01.000",
+                "-ss", timestamp,
                 "-frames:v", "1",
                 $"\"{tempFile}\""
             };
-            string argstr = string.Join(" ", args);
             RunCommandAndGetOutput("ffmpeg", args);
-            return new BitmapImage(new Uri(tempFile)); ;
+            createdThumbnails.Add(tempFile);
+            return new BitmapImage(new Uri(tempFile));
+        }
+
+        public static void ExtractThumbnailAsync(string filename, string timestamp, Action<Uri> callback)
+        {
+            Task.Run(() =>
+            {
+                Random r = new Random();
+                string tempFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"thumbnail_{r.Next(1000000)}.jpg");
+                string[] args = new string[]
+                {
+                    "-y",
+                    "-i", $"\"{filename}\"",
+                    "-ss", timestamp,
+                    "-frames:v", "1",
+                    $"\"{tempFile}\""
+                };
+                RunCommandAndGetOutput("ffmpeg", args);
+                createdThumbnails.Add(tempFile);
+                if (callback != null)
+                {
+                    callback(new Uri(tempFile));
+                }
+            });
+        }
+
+        public static void CleanupThumbnails()
+        {
+            foreach (string thumbnail in createdThumbnails)
+            {
+                try
+                {
+                    File.Delete(thumbnail);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting thumbnail {thumbnail}: {ex.Message}");
+                }
+            }
+            createdThumbnails.Clear();
         }
     }
 }

@@ -74,6 +74,13 @@ namespace ReencGUI
             WindowUtil.SetWindowDarkMode(this);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            FFMPEG.CleanupThumbnails();
+            instance = null;
+        }
+
         private void Window_Drop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -247,6 +254,11 @@ namespace ReencGUI
         private void Button_NewEmpty_Click(object sender, RoutedEventArgs e)
         {
             new WindowCreateFile().Show();
+        }
+
+        private void Button_QuickReenc_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

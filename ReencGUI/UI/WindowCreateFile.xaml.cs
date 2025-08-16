@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -24,6 +25,12 @@ namespace ReencGUI.UI
 
         List<StreamTarget> streamTargets = new List<StreamTarget>();
         List<CreateFilePreset> presets = new List<CreateFilePreset>();
+
+        string fromThumbnailTimestampNow = null;
+        volatile bool fetchingFromThumbnail = false;
+        
+        string toThumbnailTimestampNow = null;
+        volatile bool fetchingToThumbnail = false;
 
         public WindowCreateFile()
         {
@@ -52,6 +59,17 @@ namespace ReencGUI.UI
                 Combo_AbitrateUnits
             };
 
+            Input_TrimFrom.InputField.TextChanged += (s, e) =>
+            {
+                Image_FromThumb.Source = null;
+                FetchFromTimeThumbnail();
+            };
+            Input_TrimTo.InputField.TextChanged += (s, e) =>
+            {
+                Image_ToThumb.Source = null;
+                FetchToTimeThumbnail();
+            };
+
             foreach (Control c in updateLogOnChange)
             {
                 if (c is TextBox textBox)
@@ -69,6 +87,67 @@ namespace ReencGUI.UI
         {
             base.OnSourceInitialized(e);
             WindowUtil.SetWindowDarkMode(this);
+        }
+
+        void FetchFromTimeThumbnail()
+        {
+            string timestamp = Input_TrimFrom.InputField.Text;
+            if (!fetchingFromThumbnail && fromThumbnailTimestampNow != timestamp)
+            {
+                FFMPEG.MediaInfo targetMedia = streamTargets.Where(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video).FirstOrDefault()?.mediaInfo;
+                if (targetMedia != null && ValidateTimestamp(timestamp))
+                {
+                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            fetchingFromThumbnail = false;
+                            fromThumbnailTimestampNow = timestamp;
+                            try
+                            {
+                                Image_FromThumb.Source = new BitmapImage(uri);
+                            } catch (Exception ex)
+                            {
+                                Console.WriteLine($"Failed to load thumbnail for '{timestamp}': {ex.Message}");
+                            }
+                            FetchFromTimeThumbnail();
+                        });
+                    });
+                }
+            }
+        }
+
+        void FetchToTimeThumbnail()
+        {
+            string timestamp = Input_TrimTo.InputField.Text;
+            if (!fetchingToThumbnail && toThumbnailTimestampNow != timestamp)
+            {
+                FFMPEG.MediaInfo targetMedia = streamTargets.Where(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video).FirstOrDefault()?.mediaInfo;
+                if (targetMedia != null && ValidateTimestamp(timestamp))
+                {
+                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            fetchingToThumbnail = false;
+                            toThumbnailTimestampNow = timestamp;
+                            try
+                            {
+                                Image_ToThumb.Source = new BitmapImage(uri);
+                            } catch (Exception ex)
+                            {
+                                Console.WriteLine($"Failed to load thumbnail for '{timestamp}': {ex.Message}");
+                            }
+                            FetchToTimeThumbnail();
+                        });
+                    });
+                }
+            }
+        }
+
+        bool ValidateTimestamp(string timestamp)
+        {
+            return Regex.IsMatch(timestamp, @"^(?:\d{2}:)?(?:\d{2}:)?(\d{2})(\.\d{1,3})?$");
         }
 
         void LoadPresets()
