@@ -42,6 +42,8 @@ namespace ReencGUI
         public List<FFMPEG.CodecInfo> decoders;
         public List<FFMPEG.CodecInfo> encoders;
 
+        volatile bool downloadingFFMPEG = false;
+
         Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
         Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
         bool encoding = false;
@@ -52,22 +54,41 @@ namespace ReencGUI
             instance = this;
             InitializeComponent();
 
-            decoders = FFMPEG.GetAvailableDecoders();
-            encoders = FFMPEG.GetAvailableEncoders();
 
             if (!File.Exists("ffmpeg\\ffmpeg.exe")
                 || !File.Exists("ffmpeg\\ffprobe.exe"))
             {
                 if (MessageBox.Show("FFMPEG not found. Download it now?", "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    EnqueueOtherOperation((entry) => FFMPEG.DownloadLatest(entry));
+                    downloadingFFMPEG = true;
+                    EnqueueOtherOperation((entry) => {
+                        if (FFMPEG.DownloadLatest(entry))
+                        {
+                            ReloadEncoders();
+                            downloadingFFMPEG = false;
+                        } else
+                        {
+                            MessageBox.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Application.Current.Shutdown();
+                        }
+                    });
                 } else
                 {
-                    Application.Current.Shutdown();
+                    try
+                    {
+                        FFMPEG.RunFFMPEGCommandlineForOutput(new string[]{ "-version"});
+                        FFMPEG.RunFFProbeCommandlineForOutput(new string[]{ "-version"});
+                        ReloadEncoders();
+                    } catch (Exception)
+                    {
+                        MessageBox.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Application.Current.Shutdown();
+                    }
+                    
                 }
             } else
             {
-                EnqueueOtherOperation((entry) => TestEncoders(entry));
+                ReloadEncoders();
             }
         }
 
@@ -86,6 +107,12 @@ namespace ReencGUI
 
         private void Window_Drop(object sender, DragEventArgs e)
         {
+            if (downloadingFFMPEG)
+            {
+                MessageBox.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 return;
@@ -164,6 +191,16 @@ namespace ReencGUI
                     Console.WriteLine($"Encoder {enc.ID} is compatible");
                 }
             }
+        }
+
+        private void ReloadEncoders()
+        {
+            decoders = FFMPEG.GetAvailableDecoders();
+            encoders = FFMPEG.GetAvailableEncoders();
+            Dispatcher.Invoke(() =>
+            {
+                EnqueueOtherOperation((entry) => TestEncoders(entry));
+            });
         }
 
         public void EnqueueOtherOperation(Action<UIFFMPEGOperationEntry> action)
@@ -297,13 +334,23 @@ namespace ReencGUI
                     {
                         Panel_Operations.Items.Remove(next.uiQueueEntry);
                     });
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProcessNextOtherOperation();
+                    });
                 }).Start();
             }
         }
 
         private void Button_NewEmpty_Click(object sender, RoutedEventArgs e)
         {
-            new WindowCreateFile().Show();
+            if (!downloadingFFMPEG)
+            {
+                new WindowCreateFile().Show();
+            } else
+            {
+                MessageBox.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void Button_QuickReenc_Click(object sender, RoutedEventArgs e)

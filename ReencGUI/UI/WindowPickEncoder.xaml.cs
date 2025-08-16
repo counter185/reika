@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -57,42 +58,47 @@ namespace ReencGUI.UI
             return null;
         }
 
-        int GetPriorityForID(string id)
+        int GetPriorityForID(FFMPEG.CodecType type, string id)
         {
             //video
-            if (id.Contains("hevc") || id.Contains("265"))
+            if (type == FFMPEG.CodecType.Video)
             {
-                return 4;
-            }
-            if (id.Contains("264"))
+                List<KeyValuePair<string, int>> videoKeywordPriorities = new List<KeyValuePair<string, int>>()
             {
-                return 3;
-            }
-            if (id.Contains("vp"))
-            {
-                return 2;
-            }
-            if (id.Contains("av1"))
-            {
-                return 1;
+                new KeyValuePair<string, int>("hevc", 5),
+                new KeyValuePair<string, int>("h265", 5),
+                new KeyValuePair<string, int>("264", 4),
+                new KeyValuePair<string, int>("h26", 3),
+                new KeyValuePair<string, int>("vp", 2),
+                new KeyValuePair<string, int>("av1", 1),
+            };
+                foreach (var kvp in videoKeywordPriorities)
+                {
+                    if (id.Contains(kvp.Key))
+                    {
+                        return kvp.Value;
+                    }
+                }
             }
 
             //audio
-            if (id.Contains("opus"))
+            if (type == FFMPEG.CodecType.Audio)
             {
-                return 4;
-            }
-            if (id.Contains("flac"))
+                List<KeyValuePair<string, int>> audioKeywordPriorities = new List<KeyValuePair<string, int>>()
             {
-                return 3;
-            }
-            if (id.Contains("mp3") || id.Contains("aac"))
-            {
-                return 2;
-            }
-            if (id.Contains("vorbis"))
-            {
-                return 1;
+                new KeyValuePair<string, int>("opus", 4),
+                new KeyValuePair<string, int>("flac", 3),
+                new KeyValuePair<string, int>("mp3", 2),
+                new KeyValuePair<string, int>("aac", 2),
+                new KeyValuePair<string, int>("vorbis", 1),
+            };
+                foreach (var kvp in audioKeywordPriorities)
+                {
+                    if (id.Contains(kvp.Key))
+                    {
+                        return kvp.Value;
+                    }
+                }
             }
 
             return 0;
@@ -103,7 +109,7 @@ namespace ReencGUI.UI
             InitializeComponent();
             var validEncs = (from x in MainWindow.instance.encoders
                              where x.Type == type
-                             select x).OrderByDescending(x=>GetPriorityForID(x.ID)).ToList();
+                             select x).OrderByDescending(x=>GetPriorityForID(type, x.ID)).ToList();
 
             foreach (var enc in validEncs)
             {
@@ -119,6 +125,12 @@ namespace ReencGUI.UI
 
                 Panel_Encoders.Items.Add(entry);
             }
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            WindowUtil.SetWindowDarkMode(this);
         }
     }
 }
