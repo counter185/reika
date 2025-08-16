@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -404,6 +405,21 @@ namespace ReencGUI.UI
                         }
                     }
                 }
+            }
+        }
+
+        private void Button_OutFileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Video Files|*.mp4;*.mkv;*.avi;*.mov;*.flv;*.webm;*.wmv|All Files|*.*",
+                Title = "reika: save output file",
+                OverwritePrompt = true,
+            };
+            saveFileDialog.ShowDialog();
+            if (!string.IsNullOrEmpty(saveFileDialog.FileName))
+            {
+                Input_OutFileName.InputField.Text = saveFileDialog.FileName;
             }
         }
     }
