@@ -65,6 +65,9 @@ namespace ReencGUI
                 {
                     Application.Current.Shutdown();
                 }
+            } else
+            {
+                EnqueueOtherOperation((entry) => TestEncoders(entry));
             }
         }
 
@@ -114,6 +117,53 @@ namespace ReencGUI
                 MessageBox.Show($"Error processing file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+
+        private void TestEncoders(UIFFMPEGOperationEntry progressCallback)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                progressCallback.Label_Primary.Content = "Testing HW encoders";
+                progressCallback.Label_Secondary.Content = "";
+                progressCallback.Label_Secondary2.Content = "";
+            });
+            string[] hwEncKeywords = new string[]
+            {
+                "nvenc", "amf", "qsv"
+            };
+            var targetEncoders = encoders.Where(x => hwEncKeywords.Any(y => x.ID.Contains(y))).ToList();
+            int i = 0;
+            foreach (var enc in targetEncoders)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    progressCallback.Label_Secondary.Content = Utils.SanitizeForXAML(enc.ID);
+                    progressCallback.ProgressBar_Operation.Value = 100 * ((double)(i++) / targetEncoders.Count);
+                });
+                string[] args =
+                {
+                    "-loglevel", "error",
+                    "-f", "lavfi",
+                    "-i", "color=black:s=640x360",
+                    "-vframes", "1",
+                    "-an",
+                    "-c:v", enc.ID,
+                    "-f", "null",
+                    "-"
+                };
+                List<string> output = FFMPEG.RunFFMPEGCommandlineForOutput(args);
+                if (output.Any(x=>x.ToLower().Contains("error")))
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        encoders.Remove(enc);
+                        Console.WriteLine($"Encoder {enc.ID} is not compatible");
+                    });
+                } else
+                {
+                    Console.WriteLine($"Encoder {enc.ID} is compatible");
+                }
+            }
         }
 
         public void EnqueueOtherOperation(Action<UIFFMPEGOperationEntry> action)
