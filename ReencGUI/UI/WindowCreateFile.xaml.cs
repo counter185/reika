@@ -58,6 +58,7 @@ namespace ReencGUI.UI
                 Input_OutFileName.InputField,
                 Input_TrimFrom.InputField,
                 Input_TrimTo.InputField,
+                Input_OtherArgs.InputField,
                 Combo_Preset,
                 Combo_VbitrateUnits,
                 Combo_AbitrateUnits
@@ -334,6 +335,8 @@ namespace ReencGUI.UI
             string trimFrom = Input_TrimFrom.InputField.Text;
             string trimTo = Input_TrimTo.InputField.Text;
 
+            string otherArgs = Input_OtherArgs.InputField.Text;
+
             List<string> ffmpegArgs = new List<string>();
             var distinctFiles = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
             Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
@@ -386,6 +389,10 @@ namespace ReencGUI.UI
             {
                 ffmpegArgs.Add("-to");
                 ffmpegArgs.Add(trimTo);
+            }
+            if (otherArgs != "")
+            {
+                ffmpegArgs.Add(otherArgs);
             }
             ffmpegArgs.Add($"\"{outputFileName}\"");
             return ffmpegArgs;

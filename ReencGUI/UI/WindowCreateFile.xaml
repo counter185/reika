@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="reika: create file" Height="480" Width="871">
+        Title="reika: create file" MinHeight="457" Height="534" MinWidth="871" Width="871">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -50,7 +50,8 @@
         <Label  Grid.Column="1" Foreground="#808080" FontSize="9" Margin="10,0,10,48" Grid.ColumnSpan="2" Height="37" VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" FontStyle="Italic">
             <TextBlock x:Name="Label_FullCommand" TextWrapping="Wrap" Text=""/>
         </Label>
-        <Image x:Name="Image_FromThumb" Grid.Column="1" Margin="10,230,10,107"/>
-        <Image x:Name="Image_ToThumb" Grid.Column="2" Margin="10,230,10,107"/>
+        <Image x:Name="Image_FromThumb" Grid.Column="1" Margin="10,230,10,147"/>
+        <Image x:Name="Image_ToThumb" Grid.Column="2" Margin="10,230,10,147"/>
+        <local:UIInputFieldWithName x:Name="Input_OtherArgs" Margin="10,0,10,115" InputFieldName="Custom FFMPEG Args..." Grid.Column="1" Grid.ColumnSpan="2" Height="18" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>
