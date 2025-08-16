@@ -34,7 +34,8 @@ namespace ReencGUI.UI
             Image_Thumbnail.Visibility = Visibility.Collapsed;
             if (streamTarget.streamInfo.mediaType == FFMPEG.CodecType.Video)
             {
-                FFMPEG.ExtractThumbnailAsync(streamTarget.mediaInfo.fileName, "01", (uri)=>
+                ulong durationMS = Utils.LengthToMS(streamTarget.mediaInfo.dH, streamTarget.mediaInfo.dM, streamTarget.mediaInfo.dS, streamTarget.mediaInfo.dMS);
+                FFMPEG.ExtractThumbnailAsync(streamTarget.mediaInfo.fileName, durationMS == 0 ? "00" : "01", (uri)=>
                 {
                     if (uri != null)
                     {
