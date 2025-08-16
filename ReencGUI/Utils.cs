@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -14,6 +15,48 @@ namespace ReencGUI
             return (ulong)(ms + seconds * 1000 + minutes * 60 * 1000 + hours * 60 * 60 * 1000);
         }
 
+        public static ulong ParseDuration(string s)
+        {
+            var match = Regex.Match(s, @"^(?:(\d{2}):)?(?:(\d{2}):)?(\d{2})(\.\d{1,3})?$");
+            if (match.Success)
+            {
+                List<string> groups = new List<string>();
+                foreach (Group group in match.Groups)
+                {
+                    string value = group.Value;
+                    if (value != null && value.Length > 0)
+                    {
+                        groups.Add(value);
+                    }
+                }
+                groups = groups.Skip(1).ToList();
+                if (!groups.Last().StartsWith("."))
+                {
+                    groups.Add(".000");
+                }
+                groups.Reverse();
+                ulong denom = 1;
+                ulong ret = 0;
+                foreach (string group in groups)
+                {
+                    if (group.StartsWith("."))
+                    {
+                        denom = 1000;
+                        ret += ulong.Parse(group.Substring(1));
+                    } else
+                    {
+                        ret += ulong.Parse(group) * denom;
+                        denom *= 60;
+                    }
+                }
+                return ret;
+            } 
+            else
+            {
+                throw new ArgumentException("invalid duration format");
+            }
+        }
+
         public static ulong CalculateBitsPerSecondForSize(ulong sizeInBytes, ulong durationMS)
         {
             if (durationMS == 0)
@@ -24,9 +67,9 @@ namespace ReencGUI
             return sizeInBits / (ulong)Math.Ceiling(durationMS / 1000.0);
         }
         
-        public static ulong Megabytes(ulong mb)
+        public static ulong Megabytes(double mb)
         {
-            return mb * 1024 * 1024; //convert megabytes to bytes
+            return (ulong)(mb * 1024 * 1024); //convert megabytes to bytes
         }
 
         public static string SanitizeForXAML(string input)

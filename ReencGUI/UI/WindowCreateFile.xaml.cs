@@ -283,9 +283,29 @@ namespace ReencGUI.UI
 
         public ulong GetDuration()
         {
-            //todo: -ss and -to
-            return streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS))
+            ulong wholeDuration = streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS))
                 .Max();
+
+            ulong ret = wholeDuration;
+
+            try
+            {
+                ulong ss = Utils.ParseDuration(Input_TrimFrom.InputField.Text);
+                ret -= ss;
+            }
+            catch (Exception) { }   //invalid -ss
+
+            try
+            {
+                ulong to = Utils.ParseDuration(Input_TrimTo.InputField.Text);
+                if (to <= wholeDuration)
+                {
+                    ret -= (wholeDuration - to);
+                }
+            }
+            catch (Exception) { }   //invalid -to
+
+            return ret;
         }
 
         public void RunEncode()

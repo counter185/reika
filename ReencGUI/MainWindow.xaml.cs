@@ -330,7 +330,10 @@ namespace ReencGUI
                         newP.StandardInput.WriteLine("q");
                         newP.StandardInput.Flush();
                         Thread.Sleep(1000);
-                        newP.Kill();
+                        try
+                        {
+                            newP.Kill();
+                        } catch (Exception) { } //who cares
                     }
                 };
             }

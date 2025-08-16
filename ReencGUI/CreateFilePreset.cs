@@ -33,7 +33,7 @@ namespace ReencGUI
         }
         public override void Recalculate(WindowCreateFile session)
         {
-            ulong bps = Utils.CalculateBitsPerSecondForSize(Utils.Megabytes(10), session.GetDuration());
+            ulong bps = Utils.CalculateBitsPerSecondForSize(Utils.Megabytes(9.7), session.GetDuration() + 1000); //+1s to be safe
             if (bps > 128000)
             {
                 bps -= 128000; //reserve 128kbps for audio
