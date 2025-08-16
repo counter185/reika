@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace ReencGUI
 {
@@ -32,6 +33,21 @@ namespace ReencGUI
         {
             if (input == null) return null;
             return input.Replace("_", "__");
+        }
+
+        public static BitmapImage LoadToMemFromUri(Uri uri)
+        {
+            if (uri != null)
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = uri;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
+            }
+            return null;
         }
     }
 }

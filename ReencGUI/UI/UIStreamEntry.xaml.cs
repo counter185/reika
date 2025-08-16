@@ -21,6 +21,7 @@ namespace ReencGUI.UI
     public partial class UIStreamEntry : UserControl
     {
         public StreamTarget streamTarget;
+        public Uri thumbnailUri = null;
 
         public UIStreamEntry(StreamTarget streamTarget)
         {
@@ -30,20 +31,21 @@ namespace ReencGUI.UI
             Label_Secondary.Content = $"{streamTarget.streamInfo.resolution} {streamTarget.streamInfo.bitrate}";
             Label_Details.Content = $"{streamTarget.streamInfo.encoderID} ({streamTarget.streamInfo.encoderName})";
             Label_Duration.Content = $"{streamTarget.mediaInfo.dH:D2}:{streamTarget.mediaInfo.dM:D2}:{streamTarget.mediaInfo.dS:D2}.{streamTarget.mediaInfo.dMS:D3}";
+            Image_Thumbnail.Visibility = Visibility.Collapsed;
             if (streamTarget.streamInfo.mediaType == FFMPEG.CodecType.Video)
             {
-                try
+                FFMPEG.ExtractThumbnailAsync(streamTarget.mediaInfo.fileName, "01", (uri)=>
                 {
-                    Image_Thumbnail.Source = FFMPEG.ExtractThumbnail(streamTarget.mediaInfo.fileName);
-                }
-                catch (Exception)
-                {
-                    Image_Thumbnail.Visibility = Visibility.Collapsed;
-                }
-            }
-            else
-            {
-                Image_Thumbnail.Visibility = Visibility.Collapsed;
+                    if (uri != null)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            thumbnailUri = uri;
+                            Image_Thumbnail.Source = Utils.LoadToMemFromUri(uri);
+                            Image_Thumbnail.Visibility = Visibility.Visible;
+                        });
+                    }
+                });
             }
         }
     }

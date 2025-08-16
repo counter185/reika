@@ -400,14 +400,15 @@ namespace ReencGUI
             string[] args = new string[]
             {
                 "-y",
-                "-i", $"\"{filename}\"",
                 "-ss", timestamp,
+                "-i", $"\"{filename}\"",
                 "-frames:v", "1",
                 $"\"{tempFile}\""
             };
             RunCommandAndGetOutput("ffmpeg", args);
-            createdThumbnails.Add(tempFile);
-            return new BitmapImage(new Uri(tempFile));
+            Uri uri = new Uri(tempFile);
+            createdThumbnails.Add(uri.LocalPath);
+            return new BitmapImage(uri);
         }
 
         public static void ExtractThumbnailAsync(string filename, string timestamp, Action<Uri> callback)
@@ -419,16 +420,21 @@ namespace ReencGUI
                 string[] args = new string[]
                 {
                     "-y",
-                    "-i", $"\"{filename}\"",
                     "-ss", timestamp,
+                    "-i", $"\"{filename}\"",
                     "-frames:v", "1",
                     $"\"{tempFile}\""
                 };
-                RunCommandAndGetOutput("ffmpeg", args);
-                createdThumbnails.Add(tempFile);
+                var output = RunCommandAndGetOutput("ffmpeg", args);
+                Uri uri = new Uri(tempFile);
+                createdThumbnails.Add(uri.LocalPath);
+                if (!File.Exists(tempFile))
+                {
+                    Console.WriteLine($"Output: {string.Join("\n", output)}");
+                }
                 if (callback != null)
                 {
-                    callback(new Uri(tempFile));
+                    callback(uri);
                 }
             });
         }
@@ -447,6 +453,24 @@ namespace ReencGUI
                 }
             }
             createdThumbnails.Clear();
+        }
+        public static void ManualDeleteThumbnail(string thumbnailPath)
+        {
+            if (createdThumbnails.Contains(thumbnailPath))
+            {
+                try
+                {
+                    File.Delete(thumbnailPath);
+                    createdThumbnails.Remove(thumbnailPath);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting thumbnail {thumbnailPath}: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{thumbnailPath} was not tracked for deletion.");
+            }
         }
     }
 }

@@ -24,6 +24,7 @@ namespace ReencGUI.UI
     {
 
         List<StreamTarget> streamTargets = new List<StreamTarget>();
+        List<UIStreamEntry> streamEntries = new List<UIStreamEntry>();
         List<CreateFilePreset> presets = new List<CreateFilePreset>();
 
         string fromThumbnailTimestampNow = null;
@@ -31,6 +32,8 @@ namespace ReencGUI.UI
         
         string toThumbnailTimestampNow = null;
         volatile bool fetchingToThumbnail = false;
+
+        List<string> disposeUrisOnClose = new List<string>();
 
         public WindowCreateFile()
         {
@@ -66,7 +69,7 @@ namespace ReencGUI.UI
             };
             Input_TrimTo.InputField.TextChanged += (s, e) =>
             {
-                Image_ToThumb.Source = null;
+                Image_ToThumb.Source = null;   
                 FetchToTimeThumbnail();
             };
 
@@ -89,6 +92,29 @@ namespace ReencGUI.UI
             WindowUtil.SetWindowDarkMode(this);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            AddCurrentStreamListThumbnailsToDeletionTargets();
+            GC.Collect();
+            foreach (string uri in disposeUrisOnClose)
+            {
+                FFMPEG.ManualDeleteThumbnail(uri);
+            }
+        }
+
+        void AddCurrentStreamListThumbnailsToDeletionTargets()
+        {
+            foreach (UIStreamEntry prevEntry in streamEntries)
+            {
+                if (prevEntry.thumbnailUri != null)
+                {
+                    disposeUrisOnClose.Add(prevEntry.thumbnailUri.LocalPath);
+                }
+            }
+        }
+
+        //todo clean these two methods
         void FetchFromTimeThumbnail()
         {
             string timestamp = Input_TrimFrom.InputField.Text;
@@ -105,7 +131,8 @@ namespace ReencGUI.UI
                             fromThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_FromThumb.Source = new BitmapImage(uri);
+                                Image_FromThumb.Source = Utils.LoadToMemFromUri(uri);
+                                disposeUrisOnClose.Add(uri.LocalPath);
                             } catch (Exception ex)
                             {
                                 Console.WriteLine($"Failed to load thumbnail for '{timestamp}': {ex.Message}");
@@ -133,7 +160,8 @@ namespace ReencGUI.UI
                             toThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_ToThumb.Source = new BitmapImage(uri);
+                                Image_ToThumb.Source = Utils.LoadToMemFromUri(uri);
+                                disposeUrisOnClose.Add(uri.LocalPath);
                             } catch (Exception ex)
                             {
                                 Console.WriteLine($"Failed to load thumbnail for '{timestamp}': {ex.Message}");
@@ -200,6 +228,8 @@ namespace ReencGUI.UI
 
         void CreateStreamsList()
         {
+            AddCurrentStreamListThumbnailsToDeletionTargets();
+            streamEntries.Clear();
             Panel_Streams.Items.Clear();
             foreach (var stream in streamTargets)
             {
@@ -210,6 +240,7 @@ namespace ReencGUI.UI
                     CreateStreamsList();
                 };
                 Panel_Streams.Items.Add(streamEntry);
+                streamEntries.Add(streamEntry);
             }
 
             Input_VcodecName.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
