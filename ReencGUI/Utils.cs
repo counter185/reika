@@ -39,15 +39,27 @@ namespace ReencGUI
         {
             if (uri != null)
             {
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = uri;
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                return bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = uri;
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error loading image from URI: {uri}. Exception: {ex.Message}");
+                }
             }
             return null;
+        }
+
+        public static string EncodeUTF8ForCommandLine(string a)
+        {
+            return Encoding.Default.GetString(Encoding.UTF8.GetBytes(a));
         }
     }
 }

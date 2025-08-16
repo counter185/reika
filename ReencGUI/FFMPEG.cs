@@ -154,6 +154,8 @@ namespace ReencGUI
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
+                    StandardErrorEncoding = Encoding.UTF8,
+                    StandardOutputEncoding = Encoding.UTF8,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -207,6 +209,8 @@ namespace ReencGUI
                     FileName = command,
                     Arguments = string.Join(" ", args),
                     RedirectStandardOutput = true,
+                    StandardErrorEncoding = Encoding.UTF8,
+                    StandardOutputEncoding = Encoding.UTF8,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     UseShellExecute = false,
