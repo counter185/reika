@@ -156,7 +156,7 @@ namespace ReencGUI
             });
             string[] hwEncKeywords = new string[]
             {
-                "nvenc", "amf", "qsv"
+                "nvenc", "amf", "qsv", "vaapi"
             };
             var targetEncoders = encoders.Where(x => hwEncKeywords.Any(y => x.ID.Contains(y))).ToList();
             int i = 0;
@@ -266,7 +266,7 @@ namespace ReencGUI
                 next.uiQueueEntry.Label_Primary.Content = $"Encoding";
 
                 List<string> logLines = new List<string>();
-                FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
+                Process newP = FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
                 {
                     if (line != null)
                     {
@@ -317,6 +317,22 @@ namespace ReencGUI
                         ProcessNextEncode();
                     });
                 });
+                bool cancelling = false;
+                next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
+                {
+                    if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    {
+                        cancelling = true;
+                        Dispatcher.Invoke(() =>
+                        {
+                            next.uiQueueEntry.Label_Primary.Content = $"Cancelling...";
+                        });
+                        newP.StandardInput.WriteLine("q");
+                        newP.StandardInput.Flush();
+                        Thread.Sleep(1000);
+                        newP.Kill();
+                    }
+                };
             }
         }
         public void ProcessNextOtherOperation()

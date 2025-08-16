@@ -184,6 +184,14 @@ namespace ReencGUI.UI
             presets.Add(new Discord10MBPreset());
             presets.Add(new CreateFilePreset
             {
+                name = "H264: Moderate",
+                vbitrate = "12000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
                 name = "H265: Quality",
                 vbitrate = "12000k",
                 vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
@@ -204,6 +212,22 @@ namespace ReencGUI.UI
                 vbitrate = "4000k",
                 vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
                 acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H266: 2mpbs",
+                vbitrate = "2000k",
+                vcodecs = new List<string> { "libvvenc" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "VP9 YouTube quality",
+                vbitrate = "2000k",
+                vcodecs = new List<string> { "vp9_qsv", "libvpx-vp9", "vp9" },
+                acodec = "libopus",
                 abitrate = ""
             });
 

@@ -69,6 +69,7 @@ namespace ReencGUI.UI
                 new KeyValuePair<string, int>("h265", 5),
                 new KeyValuePair<string, int>("264", 4),
                 new KeyValuePair<string, int>("h26", 3),
+                new KeyValuePair<string, int>("x26", 3),
                 new KeyValuePair<string, int>("vp", 2),
                 new KeyValuePair<string, int>("av1", 1),
             };

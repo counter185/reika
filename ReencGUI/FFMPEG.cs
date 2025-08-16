@@ -153,6 +153,7 @@ namespace ReencGUI
                     Arguments = string.Join(" ", args),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -195,7 +196,7 @@ namespace ReencGUI
             }
             return output;
         }
-        public static void RunCommandWithAsyncOutput(string command, IEnumerable<string> args, 
+        public static Process RunCommandWithAsyncOutput(string command, IEnumerable<string> args, 
             Action<string> outputLineCallback,
             Action<int> exitCallback = null)
         {
@@ -207,6 +208,7 @@ namespace ReencGUI
                     Arguments = string.Join(" ", args),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    RedirectStandardInput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -224,11 +226,13 @@ namespace ReencGUI
                         exitCallback(process.ExitCode);
                     }
                 };
+                return process;
             }
             catch (Exception ex)
             {
                 throw new Exception("Error running FFMPEG command: " + ex.Message, ex);
             }
+            return null;
         }
 
         public static List<string> RunFFMPEGCommandlineForOutput(IEnumerable<string> args)
