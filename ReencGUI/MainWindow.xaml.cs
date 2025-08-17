@@ -93,6 +93,9 @@ namespace ReencGUI
             {
                 ReloadEncoders();
             }
+
+            AppData.GetAppDataPath();
+            AppData.GetAppDataSubdir("presets");
         }
 
         protected override void OnSourceInitialized(EventArgs e)

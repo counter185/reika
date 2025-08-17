@@ -17,9 +17,11 @@
         <ListBox x:Name="Panel_Streams" Margin="10,56,10,10" Background="Transparent" BorderBrush="#404040" AllowDrop="True" Drop="Panel_Streams_Drop"/>
         <local:UIInputFieldWithName x:Name="Input_OutFileName" Margin="10,56,36,0" InputFieldName="Output file" Height="18" VerticalAlignment="Top" Grid.Column="1" Grid.ColumnSpan="2"/>
 
-        <DockPanel Margin="10,80,10,0" Grid.Column="1" Height="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
-            <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White"/>
-            <ComboBox x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged"/>
+        <DockPanel Margin="10,80,10,0" Grid.Column="1" MinHeight="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White" VerticalContentAlignment="Center"/>
+            <Button DockPanel.Dock="Right" x:Name="Button_SavePreset" Style="{DynamicResource ReencButtonStyle}" Content="Save" Margin="5,0,0,0" Padding="4,0" Click="Button_SavePreset_Click"/>
+            <Button DockPanel.Dock="Right" x:Name="Button_LoadPreset" Style="{DynamicResource ReencButtonStyle}" Content="Load" Margin="5,0,0,0" Padding="4,0" Click="Button_LoadPreset_Click"/>
+            <ComboBox DockPanel.Dock="Right" x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged"/>
         </DockPanel>
         <local:UIInputFieldWithName x:Name="Input_VcodecName" Margin="10,125,36,0" InputFieldName="Video codec" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
         <Button x:Name="Button_VcodecSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_VcodecSelect_Click"/>

@@ -40,6 +40,7 @@ namespace ReencGUI.UI
                 {
                     Content = new UIStreamEntry(st),
                     VerticalContentAlignment = VerticalAlignment.Center,
+                    IsChecked = true
                 };
                 Panel_StreamList.Items.Add(cb);
                 checkBoxes.Add(cb);

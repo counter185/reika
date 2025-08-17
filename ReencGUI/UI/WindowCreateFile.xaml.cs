@@ -36,6 +36,9 @@ namespace ReencGUI.UI
 
         List<string> disposeUrisOnClose = new List<string>();
 
+        bool videoAvailable = false;
+        bool audioAvailable = false;
+
         public WindowCreateFile()
         {
             InitializeComponent();
@@ -182,6 +185,25 @@ namespace ReencGUI.UI
 
         void LoadPresets()
         {
+            try
+            {
+                foreach (string file in Directory.GetFiles(AppData.GetAppDataSubdir("presets"), "*.reikapreset"))
+                {
+                    CreateFilePreset preset = CreateFilePreset.Load(file);
+                    if (preset != null)
+                    {
+                        presets.Add(preset);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to load preset: {file}");
+                    }
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine($"Failed to load presets: {e.Message}");
+            }
+
             presets.Add(new Discord10MBPreset());
             presets.Add(new CreateFilePreset
             {
@@ -269,11 +291,13 @@ namespace ReencGUI.UI
                 streamEntries.Add(streamEntry);
             }
 
-            Input_VcodecName.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
-            Input_Vbitrate.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
+            videoAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
+            Input_VcodecName.InputField.IsEnabled = videoAvailable;
+            Input_Vbitrate.InputField.IsEnabled = videoAvailable;
 
-            Input_AcodecName.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
-            Input_Abitrate.InputField.IsEnabled = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
+            audioAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
+            Input_AcodecName.InputField.IsEnabled = audioAvailable;
+            Input_Abitrate.InputField.IsEnabled = audioAvailable;
         }
 
         public void AddStream(StreamTarget target)
@@ -324,13 +348,48 @@ namespace ReencGUI.UI
             }
         }
 
-        private List<string> MakeFFMPEGArgs()
+        CreateFilePreset PresetFromCurrentData()
         {
-            string outputFileName = Input_OutFileName.InputField.Text;
             string vcodec = Input_VcodecName.InputField.Text;
             string vbitrate = Input_Vbitrate.InputField.Text;
             string acodec = Input_AcodecName.InputField.Text;
             string abitrate = Input_Abitrate.InputField.Text;
+
+            string trimFrom = Input_TrimFrom.InputField.Text;
+            string trimTo = Input_TrimTo.InputField.Text;
+
+            string otherArgs = Input_OtherArgs.InputField.Text;
+            CreateFilePreset preset = new CreateFilePreset
+            {
+                name = "Custom preset",
+                vcodecs = new List<string> { vcodec },
+                vbitrate = vbitrate,
+                acodec = acodec,
+                abitrate = abitrate,
+                otherArgs = otherArgs
+            };
+            return preset;
+        }
+
+        private List<string> MakeFFMPEGArgs()
+        {
+            string outputFileName = Input_OutFileName.InputField.Text;
+
+            string vcodec = "";
+            string vbitrate = "";
+            if (videoAvailable)
+            {
+                vcodec = Input_VcodecName.InputField.Text;
+                vbitrate = Input_Vbitrate.InputField.Text;
+            }
+
+            string acodec = "";
+            string abitrate = "";
+            if (audioAvailable)
+            {
+                acodec = Input_AcodecName.InputField.Text;
+                abitrate = Input_Abitrate.InputField.Text;
+            }
 
             string trimFrom = Input_TrimFrom.InputField.Text;
             string trimTo = Input_TrimTo.InputField.Text;
@@ -446,14 +505,29 @@ namespace ReencGUI.UI
                 foreach (string file in files)
                 {
                     FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(file);
-                    if (media != null)
+                    if (media != null && media.streams.Count != 0)
                     {
-                        WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
-                        pickStreams.ShowDialog();
-                        foreach (var stm in pickStreams.selectedStreams)
+                        if (media.streams.Count == 1)
                         {
-                            AddStream(stm);
+                            AddStream(new StreamTarget
+                            {
+                                mediaInfo = media,
+                                streamInfo = media.streams[0],
+                                indexInStream = 0
+                            });
                         }
+                        else
+                        {
+                            WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
+                            pickStreams.ShowDialog();
+                            foreach (var stm in pickStreams.selectedStreams)
+                            {
+                                AddStream(stm);
+                            }
+                        }
+                    } else
+                    {
+                        MessageBox.Show($"Failed to get media info for file: {file}\nThe file might not be a valid media file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -471,6 +545,52 @@ namespace ReencGUI.UI
             if (!string.IsNullOrEmpty(saveFileDialog.FileName))
             {
                 Input_OutFileName.InputField.Text = saveFileDialog.FileName;
+            }
+        }
+
+        private void Button_SavePreset_Click(object sender, RoutedEventArgs e)
+        {
+            CreateFilePreset preset = PresetFromCurrentData();
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "reika Preset|*.reikapreset",
+                Title = "reika: save preset",
+                OverwritePrompt = true,
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    preset.Save(saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save preset: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+        }
+
+        private void Button_LoadPreset_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "reika Preset|*.reikapreset",
+                Title = "reika: load preset",
+                Multiselect = false,
+            };
+            openFileDialog.ShowDialog();
+            if (!string.IsNullOrEmpty(openFileDialog.FileName))
+            {
+                CreateFilePreset preset = CreateFilePreset.Load(openFileDialog.FileName);
+                if (preset != null)
+                {
+                    ApplyPreset(preset);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to load preset.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
     }
