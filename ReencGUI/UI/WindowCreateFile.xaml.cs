@@ -14,7 +14,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ReencGUI.UI
 {
@@ -77,6 +76,9 @@ namespace ReencGUI.UI
                 Image_ToThumb.Source = null;   
                 FetchToTimeThumbnail();
             };
+
+            Input_Vbitrate.InputField.TextChanged += (s, e) => EstimateFileSize();
+            Input_Abitrate.InputField.TextChanged += (s, e) => EstimateFileSize();
 
             foreach (Control c in updateLogOnChange)
             {
@@ -192,6 +194,7 @@ namespace ReencGUI.UI
                     CreateFilePreset preset = CreateFilePreset.Load(file);
                     if (preset != null)
                     {
+                        preset.name = System.IO.Path.GetFileNameWithoutExtension(file);
                         presets.Add(preset);
                     }
                     else
@@ -253,6 +256,15 @@ namespace ReencGUI.UI
                 acodec = "libopus",
                 abitrate = ""
             });
+            /*presets.Add(new CreateFilePreset
+            {
+                name = "PSP",
+                vbitrate = "1000k",
+                vcodecs = new List<string> { "h264_nvenc", "h264_amf", "libx264" },
+                acodec = "aac",
+                abitrate = "128k",
+                otherArgs = "-profile:v main -vf \"scale=480:272,setsar=1:1\""
+            });*/
 
             foreach (var preset in presets)
             {
@@ -298,8 +310,36 @@ namespace ReencGUI.UI
             audioAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
             Input_AcodecName.InputField.IsEnabled = audioAvailable;
             Input_Abitrate.InputField.IsEnabled = audioAvailable;
+
+            EstimateFileSize();
         }
 
+        void EstimateFileSize()
+        {
+            ulong durationMS = GetDuration();
+            double durationS = durationMS / 1000.0;
+            ulong vbitrate = 12000000;//safe default estimate 12mbps
+            try
+            {
+                vbitrate = Utils.ParseBitrate(Input_Vbitrate.InputField.Text);
+            }
+            catch (Exception) { }
+
+            ulong abitrate = 128000; //safe default estimate 128kbps
+            try
+            {
+                abitrate = Utils.ParseBitrate(Input_Abitrate.InputField.Text);
+            }
+            catch (Exception) { }
+
+            ulong videoSize = (ulong)(videoAvailable ? vbitrate * durationS / 8 : 0);
+            ulong audioSize = (ulong)(audioAvailable ? abitrate * durationS / 8 : 0);
+
+            ulong estimatedFileSize = videoSize + audioSize;
+
+            Label_EstFileSize.Content = $"Estimated file size: {Utils.ByteCountToFriendlyString(estimatedFileSize)}" +
+                $"\n({Utils.ByteCountToFriendlyString(videoSize)} video, {Utils.ByteCountToFriendlyString(audioSize)} audio)";
+        }
         public void AddStream(StreamTarget target)
         {
             streamTargets.Add(target);

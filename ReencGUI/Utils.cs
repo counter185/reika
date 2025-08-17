@@ -57,6 +57,44 @@ namespace ReencGUI
             }
         }
 
+        public static ulong ParseBitrate(string ffbitrate)
+        {
+            Match match = Regex.Match(ffbitrate, @"^(\d+)([kKmMgG]?)$");
+            if (match.Success)
+            {
+                Dictionary<string, ulong> denoms = new Dictionary<string, ulong>
+                {
+                    { "k", 1000 },
+                    { "m", 1000000 },
+                    { "g", 1000000000 }
+                };
+                return ulong.Parse(match.Groups[1].Value)
+                    * (match.Groups.Count > 2 ? denoms[match.Groups[2].Value.ToLower()] : 1);
+            } else
+            {
+                throw new ArgumentException("Invalid bitrate format");
+            }
+        }
+
+        public static string ByteCountToFriendlyString(ulong byteCount)
+        {
+            if (byteCount < 1024)
+            {
+                return $"{byteCount} B";
+            }
+            else if (byteCount < 1024 * 1024)
+            {
+                return $"{Math.Round(byteCount / 1024.0, 2)} KB";
+            }
+            else if (byteCount < 1024 * 1024 * 1024)
+            {
+                return $"{Math.Round(byteCount / (1024.0 * 1024.0), 2)} MB";
+            }
+            else
+            {
+                return $"{Math.Round(byteCount / (1024.0 * 1024.0 * 1024.0), 2)} GB";
+            }
+        }
         public static ulong CalculateBitsPerSecondForSize(ulong sizeInBytes, ulong durationMS)
         {
             if (durationMS == 0)
