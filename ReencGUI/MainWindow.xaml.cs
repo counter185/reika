@@ -387,7 +387,7 @@ namespace ReencGUI
 
         private void Button_QuickReenc_Click(object sender, RoutedEventArgs e)
         {
-
+            new WindowQuickReencode().Show();
         }
     }
 }

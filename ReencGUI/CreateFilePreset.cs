@@ -1,6 +1,7 @@
 ﻿using ReencGUI.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,7 +78,10 @@ namespace ReencGUI
 
     public abstract class DynamicCreateFilePreset : CreateFilePreset
     {
+        //used for windowcreatefile
         public abstract void Recalculate(WindowCreateFile session);
+        //used for quick reencode
+        public abstract void Recalculate(FFMPEG.MediaInfo singleMedia);
     }
 
     public class Discord10MBPreset : DynamicCreateFilePreset
@@ -85,20 +89,118 @@ namespace ReencGUI
         public Discord10MBPreset()
         {
             name = "Discord 10MB";
-            vcodecs = new List<string> { "h264_nvenc", "h264_amf", "libx264" };
+            vcodecs = new List<string> { /*"h264_nvenc", "h264_amf",*/ "libx264" }; //harware h264 overshoots 10mb way too often
             vbitrate = "10000k";
             acodec = "aac";
             abitrate = "128k";
         }
-        public override void Recalculate(WindowCreateFile session)
+        void RecalcFromTime(ulong time)
         {
-            ulong bps = Utils.CalculateBitsPerSecondForSize(Utils.Megabytes(9.7), session.GetDuration() + 1000); //+1s to be safe
+            ulong bps = Utils.CalculateBitsPerSecondForSize(Utils.Megabytes(9.7), time + 1000); //+1s to be safe
             if (bps > 128000)
             {
                 bps -= 128000; //reserve 128kbps for audio
             }
 
             vbitrate = $"{Math.Max(1, bps / 1000)}k"; //convert to kbps
+        }
+
+        public override void Recalculate(WindowCreateFile session)
+        {
+            RecalcFromTime(session.GetDuration());
+        }
+
+        public override void Recalculate(FFMPEG.MediaInfo singleMedia)
+        {
+            RecalcFromTime(singleMedia.Duration);
+        }
+    }
+
+    public static class PresetManager
+    {
+        public static List<CreateFilePreset> LoadPresets()
+        {
+            var presets = new List<CreateFilePreset>();
+            try
+            {
+                foreach (string file in Directory.GetFiles(AppData.GetAppDataSubdir("presets"), "*.reikapreset"))
+                {
+                    CreateFilePreset preset = CreateFilePreset.Load(file);
+                    if (preset != null)
+                    {
+                        preset.name = System.IO.Path.GetFileNameWithoutExtension(file);
+                        presets.Add(preset);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to load preset: {file}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to load presets: {e.Message}");
+            }
+
+            presets.Add(new Discord10MBPreset());
+            presets.Add(new CreateFilePreset
+            {
+                name = "H264: Moderate",
+                vbitrate = "12000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H265: Quality",
+                vbitrate = "12000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H265: Moderate",
+                vbitrate = "8000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H265: File size",
+                vbitrate = "4000k",
+                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "H266: 2mpbs",
+                vbitrate = "2000k",
+                vcodecs = new List<string> { "libvvenc" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "VP9 YouTube quality",
+                vbitrate = "2000k",
+                vcodecs = new List<string> { "vp9_qsv", "libvpx-vp9", "vp9" },
+                acodec = "libopus",
+                abitrate = ""
+            });
+            /*presets.Add(new CreateFilePreset
+            {
+                name = "PSP",
+                vbitrate = "1000k",
+                vcodecs = new List<string> { "h264_nvenc", "h264_amf", "libx264" },
+                acodec = "aac",
+                abitrate = "128k",
+                otherArgs = "-profile:v main -vf \"scale=480:272,setsar=1:1\""
+            });*/
+            return presets;
         }
     }
 }

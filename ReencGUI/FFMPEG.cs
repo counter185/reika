@@ -39,6 +39,8 @@ namespace ReencGUI
             public int dH, dM, dS, dMS;
             public string overallBitrate;
             public List<StreamInfo> streams = new List<StreamInfo>();
+
+            public ulong Duration { get => Utils.LengthToMS(dH, dM, dS, dMS); }
         }
 
         public class StreamInfo

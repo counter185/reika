@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReencGUI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="reika: quick reencode" Height="450" Width="800">
+        Title="reika: quick reencode" Height="450" Width="800" AllowDrop="True" Drop="Window_Drop">
     <Grid>
         <DockPanel Margin="10" LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Quick reencode" FontSize="25" Foreground="White"/>
