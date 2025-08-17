@@ -30,6 +30,7 @@ namespace ReencGUI
             public IEnumerable<string> ffmpegArgs;
             public ulong outputDuration;
             public UIFFMPEGOperationEntry uiQueueEntry;
+            public Action<UIFFMPEGOperationEntry, int> onFinished;
         }
         struct OtherOperation
         {
@@ -225,7 +226,7 @@ namespace ReencGUI
             ProcessNextOtherOperation();
         }
 
-        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration)
+        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration, Action<UIFFMPEGOperationEntry, int> onFinished = null)
         {
             UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
             entry.Label_Primary.Content = $"In queue";
@@ -237,7 +238,8 @@ namespace ReencGUI
             {
                 ffmpegArgs = args,
                 outputDuration = outputDuration,
-                uiQueueEntry = entry
+                uiQueueEntry = entry,
+                onFinished = onFinished
             });
             ProcessNextEncode();
         }
@@ -271,6 +273,7 @@ namespace ReencGUI
                 encoding = true;
                 EncodeOperation next = encodeQueue.Dequeue();
                 next.uiQueueEntry.Label_Primary.Content = $"Encoding";
+                bool cancelling = false;
 
                 List<string> logLines = new List<string>();
                 Process newP = FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
@@ -318,13 +321,16 @@ namespace ReencGUI
                                     File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
                                     Process.Start("notepad.exe", "ffmpeg_log.txt");
                                 });
+                        } else if (!cancelling)
+                        {
+                            next.onFinished?.Invoke(next.uiQueueEntry, exit);
                         }
                         Panel_Operations.Items.Remove(next.uiQueueEntry);
                         encoding = false;
                         ProcessNextEncode();
                     });
                 });
-                bool cancelling = false;
+                
                 next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
                 {
                     if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)

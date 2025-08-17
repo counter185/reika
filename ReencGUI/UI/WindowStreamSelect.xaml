@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="Select streams" Height="450" Width="427">
+        Title="reika: select streams" Height="450" Width="427">
     <DockPanel Margin="10" LastChildFill="True">
         <Label DockPanel.Dock="Top" Content="Select streams" Foreground="White" FontSize="30"/>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">

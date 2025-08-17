@@ -28,9 +28,10 @@ namespace ReencGUI.UI
             this.streamTarget = streamTarget;
             InitializeComponent();
             Label_Primary.Content = $"{streamTarget.streamInfo.mediaType.ToString()} Stream (#{streamTarget.indexInStream})";
-            Label_Secondary.Content = $"{streamTarget.streamInfo.resolution} {streamTarget.streamInfo.bitrate}";
-            Label_Details.Content = $"{streamTarget.streamInfo.encoderID} ({streamTarget.streamInfo.encoderName})";
+            Label_Secondary.Content = $"{streamTarget.streamInfo.resolution}";
+            Label_Details.Content = $"{streamTarget.streamInfo.encoderID} {streamTarget.streamInfo.bitrate} {streamTarget.streamInfo.encoderName}";
             Label_Duration.Content = $"{streamTarget.mediaInfo.dH:D2}:{streamTarget.mediaInfo.dM:D2}:{streamTarget.mediaInfo.dS:D2}.{streamTarget.mediaInfo.dMS:D3}";
+            Label_FileName.Content = System.IO.Path.GetFileName(streamTarget.mediaInfo.fileName);
             Image_Thumbnail.Visibility = Visibility.Collapsed;
             if (streamTarget.streamInfo.mediaType == FFMPEG.CodecType.Video)
             {

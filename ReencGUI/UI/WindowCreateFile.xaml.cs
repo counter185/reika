@@ -380,7 +380,26 @@ namespace ReencGUI.UI
             {
                 ulong duration = GetDuration();
                 List<string> args = MakeFFMPEGArgs();
-                MainWindow.instance.EnqueueEncodeOperation(args, duration);
+                Action<UIFFMPEGOperationEntry, int> onFinishAction = null;
+                if (Check_DeleteMedia.IsChecked == true)
+                {
+                    onFinishAction = (ui, exit) =>
+                    {
+                        var files = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
+                        foreach (var file in files)
+                        {
+                            try
+                            {
+                                File.Delete(file);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Failed to delete file {file}: {ex.Message}");
+                            }
+                        }
+                    };
+                }
+                MainWindow.instance.EnqueueEncodeOperation(args, duration, onFinishAction);
                 Close();
             }
             else
@@ -561,9 +580,12 @@ namespace ReencGUI.UI
                         {
                             WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
                             pickStreams.ShowDialog();
-                            foreach (var stm in pickStreams.selectedStreams)
+                            if (pickStreams.selectedStreams != null)
                             {
-                                AddStream(stm);
+                                foreach (var stm in pickStreams.selectedStreams)
+                                {
+                                    AddStream(stm);
+                                }
                             }
                         }
                     } else
