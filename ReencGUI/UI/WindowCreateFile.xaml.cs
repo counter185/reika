@@ -284,6 +284,7 @@ namespace ReencGUI.UI
             Input_Vbitrate.InputField.Text = preset.vbitrate;
             Input_AcodecName.InputField.Text = preset.acodec;
             Input_Abitrate.InputField.Text = preset.abitrate;
+            Input_OtherArgs.InputField.Text = preset.otherArgs;
         }
 
         void CreateStreamsList()

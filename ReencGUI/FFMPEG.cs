@@ -398,6 +398,32 @@ namespace ReencGUI
             return ParseFFProbeMediaInfo(RunFFProbeCommandlineForOutput(new string[] { $"\"{fileName}\"" }));
         }
 
+        public static string GetFFMPEGVersion()
+        {
+            var output = RunFFMPEGCommandlineForOutput(new string[] { "-version" });
+            if (output.Count > 0)
+            {
+                var matchingLines = output.Where(x => x.Contains("ffmpeg version "));
+                if (matchingLines.Any()) {
+                    string versionLine = matchingLines.First();
+                    Match versionMatch = Regex.Match(versionLine, @"version ([^\s]+)");
+                    if (versionMatch.Success)
+                    {
+                        return "ffmpeg version " + versionMatch.Groups[1].Value;
+                    } else
+                    {
+                        return versionLine;
+                    }
+                } else
+                {
+                    return "";
+                }
+            } else
+            {
+                return "";
+            }
+        }
+
         static List<string> createdThumbnails = new List<string>();
 
         public static BitmapImage ExtractThumbnail(string filename, string timestamp = "00:00:01.000")

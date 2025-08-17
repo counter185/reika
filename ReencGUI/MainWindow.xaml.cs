@@ -206,6 +206,7 @@ namespace ReencGUI
             Dispatcher.Invoke(() =>
             {
                 EnqueueOtherOperation((entry) => TestEncoders(entry));
+                Label_FFMPEGVersion.Text = FFMPEG.GetFFMPEGVersion();
             });
         }
 

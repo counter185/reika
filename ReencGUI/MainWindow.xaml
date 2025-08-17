@@ -6,17 +6,22 @@
         xmlns:local="clr-namespace:ReencGUI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="reika" Height="450" Width="800" AllowDrop="True" Drop="Window_Drop">
+        Title="reika" Height="450" Width="800" MinHeight="304" MinWidth="678" AllowDrop="True" Drop="Window_Drop">
     <Grid>
-        <Label Content="レイカ" Foreground="#0aFFFFFF" FontSize="160" Margin="-20,-40"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="523*"/>
+            <ColumnDefinition Width="277*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="レイカ" Foreground="#0aFFFFFF" FontSize="160" Margin="-20,-40,-20,-40" Grid.ColumnSpan="2"/>
+        <DockPanel Grid.Column="1" LastChildFill="True" Margin="5,5">
+            <Label Content="Queue" DockPanel.Dock="Top" Foreground="White"/>
+            <ListBox x:Name="Panel_Operations" DockPanel.Dock="Bottom" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" Margin="0" />
+        </DockPanel>
         <DockPanel Margin="10" LastChildFill="True">
-            <DockPanel DockPanel.Dock="Right" LastChildFill="True">
-                <Label Content="Queue" DockPanel.Dock="Top" Foreground="White"/>
-                <ListBox x:Name="Panel_Operations" DockPanel.Dock="Bottom" Width="250" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" />
-            </DockPanel>
 
             <DockPanel DockPanel.Dock="Left" LastChildFill="True" >
                 <Label DockPanel.Dock="Top" Content="reika" FontSize="40" Foreground="White"/>
+                <TextBlock x:Name="Label_FFMPEGVersion" Text="Getting FFMPEG version..." DockPanel.Dock="Bottom" Foreground="#FF808080" Padding="5,0" FontStyle="Italic" FontSize="11"/>
                 <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Vertical" DockPanel.Dock="Bottom">
                     <Label DockPanel.Dock="Bottom" Content="Drop a file here to start..." Foreground="#808080"/>
                     <StackPanel Orientation="Horizontal">
