@@ -12,6 +12,7 @@ using System.Net;
 using System.IO.Compression;
 using ReencGUI.UI;
 using System.Windows.Threading;
+using Microsoft.Win32;
 
 namespace ReencGUI
 {
@@ -54,6 +55,29 @@ namespace ReencGUI
             public List<string> otherData = new List<string>();
         }
 
+        public static bool MachineShouldUseEssentialBuild()
+        {
+            try
+            {
+                //check for windows 7 or 8
+                var currentVersionReg = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "6.1")?.ToString();
+                var match = Regex.Match(currentVersionReg, @"(\d+)\.(\d+)");
+                if (match.Success)
+                {
+                    int major = int.Parse(match.Groups[1].Value);
+                    int minor = int.Parse(match.Groups[2].Value);
+                    
+                    return major < 6 || (major == 6 && minor < 3);
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error checking Windows version: " + ex.Message);
+                return false;
+            }
+        }
+
         public static bool DownloadLatest(UIFFMPEGOperationEntry progressCallback)
         {
             progressCallback.Dispatcher.Invoke(() =>
@@ -79,7 +103,7 @@ namespace ReencGUI
                 while (downloadMatches.Success)
                 {
                     string urlNow = downloadMatches.Groups[1].Value;
-                    if (urlNow.Contains("ffmpeg") && urlNow.Contains("full") 
+                    if (urlNow.Contains("ffmpeg") && urlNow.Contains(MachineShouldUseEssentialBuild() ? "essential" : "full") 
                         && urlNow.Contains("build") && urlNow.Contains(".zip")
                         && !urlNow.Contains("shared"))
                     {

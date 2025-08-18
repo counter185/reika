@@ -1,6 +1,7 @@
 ﻿using ReencGUI.UI;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace ReencGUI
                         } else
                         {
                             MessageBox.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                            Application.Current.Shutdown();
+                            Environment.Exit(-1);
                         }
                     });
                 } else
@@ -86,7 +87,7 @@ namespace ReencGUI
                     } catch (Exception)
                     {
                         MessageBox.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Application.Current.Shutdown();
+                        Environment.Exit(-1);
                     }
                     
                 }
@@ -106,11 +107,22 @@ namespace ReencGUI
             WindowUtil.SetWindowDarkMode(this);
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            base.OnClosed(e);
+            base.OnClosing(e);
+            if (encodeQueue.Count > 0 || otherOpsQueue.Count > 0 || encoding || doingOtherOp)
+            {
+                if (MessageBox.Show("Operations are still in queue." +
+                    "\nClosing reika will not stop any running encode operations." +
+                    "\nClose anyway?", "Confirm close", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
             FFMPEG.CleanupThumbnails();
             instance = null;
+            Environment.Exit(0);
         }
 
         private void Window_Drop(object sender, DragEventArgs e)

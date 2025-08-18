@@ -15,13 +15,17 @@ namespace ReencGUI
 
         public static void SetWindowDarkMode(Window w)
         {
-            WindowInteropHelper helper = new WindowInteropHelper(w);
-            if (helper.Handle != IntPtr.Zero)
+            try
             {
-                int attribute = 20; // DWMWA_USE_IMMERSIVE_DARK_MODE
-                int value = 1; // Enable dark mode
-                DwmSetWindowAttribute(helper.Handle, attribute, ref value, sizeof(int));
+                WindowInteropHelper helper = new WindowInteropHelper(w);
+                if (helper.Handle != IntPtr.Zero)
+                {
+                    int attribute = 20; // DWMWA_USE_IMMERSIVE_DARK_MODE
+                    int value = 1; // Enable dark mode
+                    DwmSetWindowAttribute(helper.Handle, attribute, ref value, sizeof(int));
+                }
             }
+            catch (Exception) { }
         }
     }
 }
