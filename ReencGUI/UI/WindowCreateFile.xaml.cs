@@ -422,16 +422,36 @@ namespace ReencGUI.UI
                 ffmpegArgs.Add("-b:a");
                 ffmpegArgs.Add(abitrate);
             }
+
+            bool onlyOneMediaFileAndIsMP4 = distinctFiles.Count == 1 && distinctFiles[0].ToLower().EndsWith(".mp4");
+
             if (trimFrom != "")
             {
-                ffmpegArgs.Add("-ss");
-                ffmpegArgs.Add(trimFrom);
+                if (onlyOneMediaFileAndIsMP4)
+                {
+                    ffmpegArgs.Insert(0, "-ss");
+                    ffmpegArgs.Insert(1, trimFrom);
+                }
+                else
+                {
+                    ffmpegArgs.Add("-ss");
+                    ffmpegArgs.Add(trimFrom);
+                }
             }
             if (trimTo != "")
             {
-                ffmpegArgs.Add("-to");
-                ffmpegArgs.Add(trimTo);
+                if (onlyOneMediaFileAndIsMP4)
+                {
+                    ffmpegArgs.Insert(0, "-to");
+                    ffmpegArgs.Insert(1, trimTo);
+                }
+                else
+                {
+                    ffmpegArgs.Add("-to");
+                    ffmpegArgs.Add(trimTo);
+                }
             }
+
             if (otherArgs != "")
             {
                 ffmpegArgs.Add(otherArgs);
