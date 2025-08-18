@@ -163,9 +163,10 @@ namespace ReencGUI
             });
             string[] hwEncKeywords = new string[]
             {
-                "nvenc", "amf", "qsv", "vaapi"
+                "nvenc", "amf", "qsv", "vaapi", "_mf", "_vulkan", "d3d1"
             };
             var targetEncoders = encoders.Where(x => hwEncKeywords.Any(y => x.ID.Contains(y))).ToList();
+            List<string> compatible = new List<string>(), incompatible = new List<string>();
             int i = 0;
             foreach (var enc in targetEncoders)
             {
@@ -178,26 +179,29 @@ namespace ReencGUI
                 {
                     "-loglevel", "error",
                     "-f", "lavfi",
-                    "-i", "color=black:s=640x360",
-                    "-vframes", "1",
-                    "-an",
-                    "-c:v", enc.ID,
+                    "-i", (enc.Type == FFMPEG.CodecType.Video ? "color=black:s=640x360" : "sine=frequency=1000:duration=1"),
+                    (enc.Type == FFMPEG.CodecType.Video ? "-vframes 1" : ""),
+                    (enc.Type == FFMPEG.CodecType.Video ? "-an" : ""),
+                    (enc.Type == FFMPEG.CodecType.Video ? "-c:v" : "-c:a"), enc.ID,
                     "-f", "null",
                     "-"
                 };
                 List<string> output = FFMPEG.RunFFMPEGCommandlineForOutput(args);
                 if (output.Any(x=>x.ToLower().Contains("error")))
                 {
+                    incompatible.Add(enc.ID);
                     Dispatcher.Invoke(() =>
                     {
+                        progressCallback.Label_Secondary2.Content = $"compat. {compatible.Count}/{incompatible.Count} incompat.";
                         encoders.Remove(enc);
-                        Console.WriteLine($"Encoder {enc.ID} is not compatible");
                     });
                 } else
                 {
-                    Console.WriteLine($"Encoder {enc.ID} is compatible");
+                    compatible.Add(enc.ID);
                 }
             }
+            Console.WriteLine($"Compatible HW encoders:\n{string.Join("\n", compatible)}");
+            Console.WriteLine($"Incompatible HW encoders:\n{string.Join("\n", incompatible)}");
         }
 
         private void ReloadEncoders()
