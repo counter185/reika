@@ -20,7 +20,10 @@
         <DockPanel Margin="10" LastChildFill="True">
 
             <DockPanel DockPanel.Dock="Left" LastChildFill="True" >
-                <Label DockPanel.Dock="Top" Content="reika" FontSize="40" Foreground="White"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <Label Content="reika" FontSize="40" Foreground="White"/>
+                    <Label x:Name="Label_VersionNumber" Content="" FontSize="14" VerticalContentAlignment="Top" Padding="0,15" Foreground="#808080"/>
+                </StackPanel>
                 <TextBlock x:Name="Label_FFMPEGVersion" Text="Getting FFMPEG version..." DockPanel.Dock="Bottom" Foreground="#FF808080" Padding="5,0" FontStyle="Italic" FontSize="11"/>
                 <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Vertical" DockPanel.Dock="Bottom">
                     <Label DockPanel.Dock="Bottom" Content="Drop a file here to start..." Foreground="#808080"/>
