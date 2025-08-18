@@ -204,6 +204,11 @@ namespace ReencGUI
             Action<string> outputLineCallback,
             Action<int> exitCallback = null)
         {
+            if (File.Exists($"ffmpeg\\{command}.exe"))
+            {
+                command = $"ffmpeg\\{command}.exe";
+            }
+
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo
@@ -238,7 +243,6 @@ namespace ReencGUI
             {
                 throw new Exception("Error running FFMPEG command: " + ex.Message, ex);
             }
-            return null;
         }
 
         public static List<string> RunFFMPEGCommandlineForOutput(IEnumerable<string> args)

@@ -387,6 +387,11 @@ namespace ReencGUI
 
         private void Button_QuickReenc_Click(object sender, RoutedEventArgs e)
         {
+            if (downloadingFFMPEG)
+            {
+                MessageBox.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             new WindowQuickReencode().Show();
         }
     }
