@@ -65,6 +65,7 @@ namespace ReencGUI.UI
             {
                 List<KeyValuePair<string, int>> videoKeywordPriorities = new List<KeyValuePair<string, int>>()
             {
+                new KeyValuePair<string, int>("copy", 10),
                 new KeyValuePair<string, int>("hevc", 5),
                 new KeyValuePair<string, int>("h265", 5),
                 new KeyValuePair<string, int>("264", 4),
@@ -87,6 +88,7 @@ namespace ReencGUI.UI
             {
                 List<KeyValuePair<string, int>> audioKeywordPriorities = new List<KeyValuePair<string, int>>()
             {
+                new KeyValuePair<string, int>("copy", 10),
                 new KeyValuePair<string, int>("opus", 4),
                 new KeyValuePair<string, int>("flac", 3),
                 new KeyValuePair<string, int>("mp3", 2),

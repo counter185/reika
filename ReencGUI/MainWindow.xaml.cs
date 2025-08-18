@@ -97,6 +97,7 @@ namespace ReencGUI
 
             AppData.GetAppDataPath();
             AppData.GetAppDataSubdir("presets");
+            Label_HwInfo.Content = Utils.GetSystemHardwareInfo();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -208,6 +209,21 @@ namespace ReencGUI
         {
             decoders = FFMPEG.GetAvailableDecoders();
             encoders = FFMPEG.GetAvailableEncoders();
+
+            encoders.Insert(0, new FFMPEG.CodecInfo
+            {
+                Name = "Copy (same as source)",
+                ID = "copy",
+                Type = FFMPEG.CodecType.Video,
+            });
+
+            encoders.Insert(0, new FFMPEG.CodecInfo
+            {
+                Name = "Copy (same as source)",
+                ID = "copy",
+                Type = FFMPEG.CodecType.Audio,
+            });
+
             Dispatcher.Invoke(() =>
             {
                 EnqueueOtherOperation((entry) => TestEncoders(entry));
