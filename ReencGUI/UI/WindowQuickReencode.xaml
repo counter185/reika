@@ -17,7 +17,7 @@
                     <Button DockPanel.Dock="Right" Style="{DynamicResource ReencButtonStyle}" Content="Load" Margin="10,0,0,0" Padding="10,5"/>
                     <ComboBox DockPanel.Dock="Right" x:Name="Combo_Presets"/>
                 </DockPanel>
-                <CheckBox HorizontalAlignment="Center" Foreground="White" IsChecked="False" Content="Delete source media on successful encode..."/>
+                <CheckBox x:Name="Check_DeleteSourceMedia" HorizontalAlignment="Center" Foreground="White" IsChecked="False" Content="Delete source media on successful encode..."/>
             </StackPanel>
         </DockPanel>
     </Grid>

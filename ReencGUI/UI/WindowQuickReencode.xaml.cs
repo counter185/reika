@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ReencGUI.UI;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +65,21 @@ namespace ReencGUI
                 (pre.otherArgs != "" ? pre.otherArgs : ""),
                 $"\"{outputPath}\""
             };
-            MainWindow.instance.EnqueueEncodeOperation(args, media.Duration, null);
+            Action<UIFFMPEGOperationEntry, int> onFinished = null;
+            if (Check_DeleteSourceMedia.IsChecked == true)
+            {
+                onFinished = (ui, exit) =>
+                {
+                    try
+                    {
+                        File.Delete(path);
+                    } catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error deleting source media: {ex.Message}");
+                    }
+                };
+            }
+            MainWindow.instance.EnqueueEncodeOperation(args, media.Duration, onFinished);
         }
 
         private void Window_Drop(object sender, DragEventArgs e)
