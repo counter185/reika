@@ -55,6 +55,7 @@ namespace ReencGUI.UI
             {
                 Input_VcodecName.InputField,
                 Input_Vbitrate.InputField,
+                Input_Vres.InputField,
                 Input_AcodecName.InputField,
                 Input_Abitrate.InputField,
                 Input_OutFileName.InputField,
@@ -205,9 +206,10 @@ namespace ReencGUI.UI
                                                 where MainWindow.instance.encoders.Any(y=>y.ID == x)
                                                 select x).First();
             Input_Vbitrate.InputField.Text = preset.vbitrate;
+            Input_Vres.InputField.Text = preset.vresolution ?? Input_Vres.InputField.Text;
             Input_AcodecName.InputField.Text = preset.acodec;
             Input_Abitrate.InputField.Text = preset.abitrate;
-            Input_OtherArgs.InputField.Text = preset.otherArgs;
+            Input_OtherArgs.InputField.Text = preset.otherArgs ?? Input_OtherArgs.InputField.Text;
         }
 
         void CreateStreamsList()
@@ -335,6 +337,7 @@ namespace ReencGUI.UI
         {
             string vcodec = Input_VcodecName.InputField.Text;
             string vbitrate = Input_Vbitrate.InputField.Text;
+            string vresolution = Input_Vres.InputField.Text;
             string acodec = Input_AcodecName.InputField.Text;
             string abitrate = Input_Abitrate.InputField.Text;
 
@@ -347,6 +350,7 @@ namespace ReencGUI.UI
                 name = "Custom preset",
                 vcodecs = new List<string> { vcodec },
                 vbitrate = vbitrate,
+                vresolution = vresolution,
                 acodec = acodec,
                 abitrate = abitrate,
                 otherArgs = otherArgs
@@ -358,12 +362,20 @@ namespace ReencGUI.UI
         {
             string outputFileName = Input_OutFileName.InputField.Text;
 
+            List<string> vfArgs = new List<string>();
+
             string vcodec = "";
             string vbitrate = "";
+            string vresolution = "";
             if (videoAvailable)
             {
                 vcodec = Input_VcodecName.InputField.Text;
                 vbitrate = Input_Vbitrate.InputField.Text;
+                vresolution = Input_Vres.InputField.Text;
+                if (!Regex.IsMatch(vresolution, @"^\d+(?:x|:)\d+$"))
+                {
+                    vresolution = "";
+                }
             }
 
             string acodec = "";
@@ -412,6 +424,16 @@ namespace ReencGUI.UI
                 ffmpegArgs.Add("-b:v");
                 ffmpegArgs.Add(vbitrate);
             }
+            if (vresolution != "")
+            {
+                try
+                {
+                    var dimensions = Regex.Match(vresolution, @"^(\d+)(?:x|:)(\d+)$").Groups.OfType<Group>().Skip(1).Select(g => int.Parse(g.Value)).ToList();
+                    vfArgs.Add($"scale={dimensions[0]}:{dimensions[1]}");
+                    vfArgs.Add("setsar=1");
+                }
+                catch (Exception) { }
+            }
             if (acodec != "")
             {
                 ffmpegArgs.Add("-c:a");
@@ -454,8 +476,24 @@ namespace ReencGUI.UI
 
             if (otherArgs != "")
             {
+                string regexVFArgs = @"-vf\s+(?:(?:([^""=]+=[^\s""]+))|(?:""([^=]+=[^""]+)""))\s*";
+                Match otherVFArgs = Regex.Match(otherArgs, regexVFArgs);
+                while (otherVFArgs.Success)
+                {
+                    vfArgs.Add(otherVFArgs.Groups[1].Value);
+                    otherVFArgs = otherVFArgs.NextMatch();
+                }
+                otherArgs = Regex.Replace(otherArgs, regexVFArgs, "").Trim();
+
                 ffmpegArgs.Add(otherArgs);
             }
+
+            if (vfArgs.Any())
+            {
+                ffmpegArgs.Add("-vf");
+                ffmpegArgs.Add($"\"{string.Join(",", vfArgs)}\"");
+            }
+
             ffmpegArgs.Add($"\"{outputFileName}\"");
             return ffmpegArgs;
         }

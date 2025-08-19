@@ -18,7 +18,7 @@
             <CheckBox DockPanel.Dock="Bottom" x:Name="Check_DeleteMedia" Foreground="White" IsChecked="False" Content="Delete all used media on successful encode"/>
             <ListBox DockPanel.Dock="Bottom" x:Name="Panel_Streams" Background="Transparent" BorderBrush="#404040" AllowDrop="True" Drop="Panel_Streams_Drop" Margin="0,5"/>
         </DockPanel>
-        
+
         <local:UIInputFieldWithName x:Name="Input_OutFileName" Margin="10,56,36,0" InputFieldName="Output file" Height="18" VerticalAlignment="Top" Grid.Column="1" Grid.ColumnSpan="2"/>
 
         <DockPanel Margin="10,80,10,0" Grid.Column="1" MinHeight="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
@@ -30,6 +30,7 @@
         <local:UIInputFieldWithName x:Name="Input_VcodecName" Margin="10,125,36,0" InputFieldName="Video codec" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
         <Button x:Name="Button_VcodecSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_VcodecSelect_Click"/>
         <local:UIInputFieldWithName x:Name="Input_Vbitrate" Margin="10,148,62,0" InputFieldName="Video bitrate" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
+        <local:UIInputFieldWithName x:Name="Input_Vres" Margin="10,173,13,0" InputFieldName="Video resolution" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
         <local:UIInputFieldWithName x:Name="Input_TrimFrom" Margin="10,199,13,0" InputFieldName="Trim from (HH:MM:SS)" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
         <ComboBox x:Name="Combo_VbitrateUnits" FontSize="11" Margin="0,149,10,0" SelectedIndex="1" Grid.Column="1" HorizontalAlignment="Right" Width="52" Grid.ColumnSpan="1" Height="20" VerticalAlignment="Top" Visibility="Collapsed">
             <ComboBoxItem Content="bps"/>

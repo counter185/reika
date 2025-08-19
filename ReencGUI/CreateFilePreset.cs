@@ -14,6 +14,7 @@ namespace ReencGUI
         public string name;
         public List<string> vcodecs;
         public string vbitrate;
+        public string vresolution = null;
         public string acodec;
         public string abitrate;
         public string otherArgs = null;
@@ -34,6 +35,10 @@ namespace ReencGUI
             root.AppendChild(vcodecs);
 
             root.AppendChild(doc.CreateElement("VideoBitrate")).InnerText = vbitrate;
+            if (!string.IsNullOrEmpty(vresolution))
+            {
+                root.AppendChild(doc.CreateElement("VideoResolution")).InnerText = vresolution;
+            }
             root.AppendChild(doc.CreateElement("AudioCodec")).InnerText = acodec;
             root.AppendChild(doc.CreateElement("AudioBitrate")).InnerText = abitrate;
             if (!string.IsNullOrEmpty(otherArgs))
@@ -60,6 +65,10 @@ namespace ReencGUI
                     preset.vcodecs.Add(codecElement.InnerText);
                 }
                 preset.vbitrate = root["VideoBitrate"].InnerText;
+                if (root["VideoResolution"] != null)
+                {
+                    preset.vresolution = root["VideoResolution"].InnerText;
+                }
                 preset.acodec = root["AudioCodec"].InnerText;
                 preset.abitrate = root["AudioBitrate"].InnerText;
                 if (root["OtherArgs"] != null)

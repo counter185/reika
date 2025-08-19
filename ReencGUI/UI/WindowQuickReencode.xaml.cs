@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -55,6 +56,29 @@ namespace ReencGUI
             }
             //todo: let presets choose other extensions
             string outputPath = path + ".reenc.mp4";
+            List<string> vfArgs = new List<string>();
+
+            if (pre.vresolution != null && Regex.IsMatch(pre.vresolution, @"^(\d+)(?:x|:)(\d+)$"))
+            {
+                try
+                {
+                    var dimensions = Regex.Match(pre.vresolution, @"^(\d+)(?:x|:)(\d+)$").Groups.OfType<Group>().Skip(1).Select(g => int.Parse(g.Value)).ToList();
+                    vfArgs.Add($"scale={dimensions[0]}:{dimensions[1]}");
+                    vfArgs.Add("setsar=1");
+                }
+                catch (Exception) { }
+            }
+
+            string otherArgs = pre.otherArgs ?? "";
+            string regexVFArgs = @"-vf\s+(?:(?:([^""=]+=[^\s""]+))|(?:""([^=]+=[^""]+)""))\s*";
+            Match otherVFArgs = Regex.Match(otherArgs, regexVFArgs);
+            while (otherVFArgs.Success)
+            {
+                vfArgs.Add(otherVFArgs.Groups[1].Value);
+                otherVFArgs = otherVFArgs.NextMatch();
+            }
+            otherArgs = Regex.Replace(otherArgs, regexVFArgs, "").Trim();
+
             List<string> args = new List<string>
             {
                 "-i", $"\"{path}\"",
@@ -62,7 +86,8 @@ namespace ReencGUI
                 (pre.vcodecs.Any() ? $"-c:v {pre.vcodecs.Where(x=>MainWindow.instance.encoders.Any(y=>y.ID == x)).First()}" : ""),
                 (pre.abitrate != "" ? $"-b:a {pre.abitrate}" : ""),
                 (pre.acodec != "" ? $"-c:a {pre.acodec}" : ""),
-                (pre.otherArgs != "" ? pre.otherArgs : ""),
+                (vfArgs.Any() ? $"-vf \"{string.Join(",", vfArgs)}\"" : ""),
+                otherArgs,
                 $"\"{outputPath}\""
             };
             Action<UIFFMPEGOperationEntry, int> onFinished = null;
