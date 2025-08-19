@@ -84,19 +84,17 @@ namespace ReencGUI
         public abstract void Recalculate(FFMPEG.MediaInfo singleMedia);
     }
 
-    public class Discord10MBPreset : DynamicCreateFilePreset
+    public abstract class TargetFilesizePreset : DynamicCreateFilePreset
     {
-        public Discord10MBPreset()
+        private ulong targetSizeBytes;
+        public TargetFilesizePreset(ulong targetSizeBytes)
         {
-            name = "Discord 10MB";
-            vcodecs = new List<string> { /*"h264_nvenc", "h264_amf",*/ "libx264" }; //harware h264 overshoots 10mb way too often
-            vbitrate = "10000k";
-            acodec = "aac";
-            abitrate = "128k";
+            this.targetSizeBytes = targetSizeBytes;
         }
+
         void RecalcFromTime(ulong time)
         {
-            ulong bps = Utils.CalculateBitsPerSecondForSize(Utils.Megabytes(9.7), time + 1000); //+1s to be safe
+            ulong bps = Utils.CalculateBitsPerSecondForSize(targetSizeBytes, time + 1000); //+1s to be safe
             if (bps > 128000)
             {
                 bps -= 128000; //reserve 128kbps for audio
@@ -113,6 +111,30 @@ namespace ReencGUI
         public override void Recalculate(FFMPEG.MediaInfo singleMedia)
         {
             RecalcFromTime(singleMedia.Duration);
+        }
+    }
+
+    public class Discord10MBPreset : TargetFilesizePreset
+    {
+        public Discord10MBPreset() : base(Utils.Megabytes(9.7))
+        {
+            name = "Discord 10MB H264";
+            vcodecs = new List<string> { /*"h264_nvenc", "h264_amf",*/ "libx264" }; //harware h264 overshoots 10mb way too often
+            vbitrate = "10000k";
+            acodec = "aac";
+            abitrate = "128k";
+        }
+    }
+
+    public class Discord50MBPreset : TargetFilesizePreset
+    {
+        public Discord50MBPreset() : base(Utils.Megabytes(48))
+        {
+            name = "Discord 50MB H264";
+            vcodecs = new List<string> { /*"h264_nvenc", "h264_amf",*/ "libx264" }; //hardware may be way more viable here?
+            vbitrate = "10000k";
+            acodec = "aac";
+            abitrate = "128k";
         }
     }
 
@@ -143,6 +165,7 @@ namespace ReencGUI
             }
 
             presets.Add(new Discord10MBPreset());
+            presets.Add(new Discord50MBPreset());
             presets.Add(new CreateFilePreset
             {
                 name = "H264: Moderate",
