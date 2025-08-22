@@ -164,6 +164,18 @@ namespace ReencGUI
             return false;
         }
 
+        public static string GetCommandPath(string command)
+        {
+            if (File.Exists($"ffmpeg\\{command}.exe"))
+            {
+                return $"ffmpeg\\{command}.exe";
+            } 
+            else
+            {
+                return command;
+            }
+        }
+
         public static List<string> RunCommandAndGetOutput(string command, IEnumerable<string> args)
         {
             if (File.Exists($"ffmpeg\\{command}.exe"))

@@ -333,6 +333,15 @@ namespace ReencGUI.UI
             }
         }
 
+        public void RunPreview()
+        {
+            var ffplayArgs = MakeFFPlayPreviewArgs();
+            ffplayArgs = new string[] { "/c", FFMPEG.GetCommandPath("ffmpeg") }.Concat(ffplayArgs).ToList();
+            FFMPEG.RunCommandWithAsyncOutput("cmd", ffplayArgs, (line) => {
+                //Console.WriteLine(line);
+            });
+        }
+
         CreateFilePreset PresetFromCurrentData()
         {
             string vcodec = Input_VcodecName.InputField.Text;
@@ -356,6 +365,72 @@ namespace ReencGUI.UI
                 otherArgs = otherArgs
             };
             return preset;
+        }
+
+        private List<string> MakeFFPlayPreviewArgs()
+        {
+            string trimFrom = Input_TrimFrom.InputField.Text;
+            string trimTo = Input_TrimTo.InputField.Text;
+
+            string vbitrate = "";//Input_Vbitrate.InputField.Text;
+
+            var distinctFiles = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
+            Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
+
+            List<string> ret = new List<string>();
+
+            int i = 0;
+            //add -i for all files
+            foreach (var fileName in distinctFiles)
+            {
+                ret.Add("-i");
+                ret.Add($"\"{fileName}\"");
+                fileIndexMap[fileName] = i++;
+            }
+
+            //-map streams
+            foreach (var stream in streamTargets)
+            {
+                ret.Add($"-map");
+                ret.Add($"{fileIndexMap[stream.mediaInfo.fileName]}:{stream.indexInStream}");
+            }
+
+            bool onlyOneMediaFileAndIsMP4 = distinctFiles.Count == 1 && distinctFiles[0].ToLower().EndsWith(".mp4");
+
+            if (trimFrom != "")
+            {
+                var ssArg = new string[] { "-ss", trimFrom };
+                int insertAt = onlyOneMediaFileAndIsMP4 ? 0 : ret.Count;
+                ret.InsertRange(insertAt, ssArg);
+            }
+            if (trimTo != "")
+            {
+                var toArg = new string[] { "-to", trimTo };
+                int insertAt = onlyOneMediaFileAndIsMP4 ? 0 : ret.Count;
+                ret.InsertRange(insertAt, toArg);
+            }
+
+            var vcodecs = MainWindow.instance.encoders.Where(x => x.Type == FFMPEG.CodecType.Video && x.ID.Contains("264"))
+                .OrderByDescending(x=>new string[] { "nvenc", "amf", "qsv", "mf" }.Any(y=>x.ID.Contains(y)) ? 1 : 0);
+
+            if (vbitrate != "")
+            {
+                ret.Add("-b:v");
+                ret.Add(vbitrate);
+            } else
+            {
+                //ret.AddRange(new string[] { "-crf", "20" });
+                ret.AddRange(new string[] { "-b:v", "20000k" });
+            }
+
+            ret.AddRange(new string[] { "-c:v", vcodecs.First().ID });
+
+            ret.AddRange(new string[] { "-f", "avi" });
+            ret.Add("-");
+
+            ret.AddRange(new string[] { "|", FFMPEG.GetCommandPath("ffplay"), "-autoexit", "-" });
+
+            return ret;
         }
 
         private List<string> MakeFFMPEGArgs()
@@ -449,29 +524,21 @@ namespace ReencGUI.UI
 
             if (trimFrom != "")
             {
-                if (onlyOneMediaFileAndIsMP4)
-                {
-                    ffmpegArgs.Insert(0, "-ss");
-                    ffmpegArgs.Insert(1, trimFrom);
-                }
-                else
-                {
-                    ffmpegArgs.Add("-ss");
-                    ffmpegArgs.Add(trimFrom);
-                }
+                var ssArg = new string[] { "-ss", trimFrom };
+                int insertAt = onlyOneMediaFileAndIsMP4 ? 0 : ffmpegArgs.Count;
+                ffmpegArgs.InsertRange(insertAt, ssArg);
             }
             if (trimTo != "")
             {
-                if (onlyOneMediaFileAndIsMP4)
-                {
-                    ffmpegArgs.Insert(0, "-to");
-                    ffmpegArgs.Insert(1, trimTo);
-                }
-                else
-                {
-                    ffmpegArgs.Add("-to");
-                    ffmpegArgs.Add(trimTo);
-                }
+                var toArg = new string[] { "-to", trimTo };
+                int insertAt = onlyOneMediaFileAndIsMP4 ? 0 : ffmpegArgs.Count;
+                ffmpegArgs.InsertRange(insertAt, toArg);
+            }
+
+            if (outputFileName.EndsWith(".mp4"))
+            {
+                ffmpegArgs.Add("-metadata:g");
+                ffmpegArgs.Add("encoding_tool=reika");
             }
 
             if (otherArgs != "")
@@ -636,6 +703,11 @@ namespace ReencGUI.UI
                     MessageBox.Show("Failed to load preset.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void Button_Preview_Click(object sender, RoutedEventArgs e)
+        {
+            RunPreview();
         }
     }
 }

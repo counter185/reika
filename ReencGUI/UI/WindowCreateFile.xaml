@@ -40,8 +40,9 @@
         </ComboBox>
         <DockPanel  VerticalAlignment="Bottom" Margin="10,0,10,10" Grid.Column="1" Grid.ColumnSpan="2" LastChildFill="False">
             <Button DockPanel.Dock="Right" x:Name="Button_Start" Margin="10,0,0,0" Style="{DynamicResource ReencButtonStyle}"  Content="Start" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinHeight="33" MinWidth="127" Click="Button_Start_Click"/>
+            <Button DockPanel.Dock="Right" x:Name="Button_Preview" Margin="10,0,0,0" Style="{DynamicResource ReencButtonStyle}"  Content="Preview" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinHeight="33" MinWidth="127" Click="Button_Preview_Click"/>
             <!--<Button DockPanel.Dock="Right" x:Name="Button_Preview" Margin="10,0,0,0" Style="{DynamicResource ReencButtonStyle}"  Content="Preview" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinHeight="33" MinWidth="127" Click="Button_Preview_Click"/>-->
-            <Label DockPanel.Dock="Right" x:Name="Label_EstFileSize" Content="" Foreground="#FFB0B0B0" FontStyle="Italic" FontSize="14" VerticalContentAlignment="Bottom" Padding="5,0"/>
+            <Label DockPanel.Dock="Right" x:Name="Label_EstFileSize" Content="" Foreground="#FFB0B0B0" FontStyle="Italic" FontSize="11" VerticalContentAlignment="Bottom" Padding="5,0"/>
         </DockPanel>
 
         <Button x:Name="Button_OutFileSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,56,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_OutFileSelect_Click"/>
