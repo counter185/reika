@@ -203,5 +203,24 @@ namespace ReencGUI
                 return "<error getting hardware info>";
             }
         }
+
+        public static string FriendlyDurationString(ulong msRemaining)
+        {
+            int ms, s, m, h;
+            ms = (int)(msRemaining % 1000);
+            s = (int)((msRemaining / 1000) % 60);
+            m = (int)((msRemaining / (1000 * 60)) % 60);
+            h = (int)(msRemaining / (1000 * 60 * 60));
+            string ret = $"{s:00}s";
+            if (m > 0 || h > 0)
+            {
+                ret = $"{m}m {ret}";
+                if (h > 0)
+                {
+                    ret = $"{h}h {ret}";
+                }
+            }
+            return ret;
+        }
     }
 }

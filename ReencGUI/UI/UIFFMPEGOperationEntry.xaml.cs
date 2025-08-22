@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,20 +32,18 @@ namespace ReencGUI.UI
             List<string> secondaryTextDetails = new List<string>();
             List<string> secondaryText2Details = new List<string>();
 
+            ulong remainingDuration = fileDuration;
+
             if (logOutputKVs.ContainsKey("time"))
             {
-                int h, m, s, ms;
-                Match timeMatch = Regex.Match(logOutputKVs["time"], @"(\d+):(\d+):(\d+).(\d+)");
-                if (timeMatch.Success)
+                try
                 {
-                    h = int.Parse(timeMatch.Groups[1].Value);
-                    m = int.Parse(timeMatch.Groups[2].Value);
-                    s = int.Parse(timeMatch.Groups[3].Value);
-                    ms = int.Parse(timeMatch.Groups[4].Value);
-                    ulong currentTimeMS = Utils.LengthToMS(h, m, s, ms);
+                    ulong currentTimeMS = Utils.ParseDuration(logOutputKVs["time"]);
+                    remainingDuration = fileDuration - currentTimeMS;
                     double progress = (double)currentTimeMS / fileDuration;
                     ProgressBar_Operation.Value = progress * 100;
                 }
+                catch (Exception) { }
             }
 
             if (logOutputKVs.ContainsKey("frame"))
@@ -69,7 +68,19 @@ namespace ReencGUI.UI
 
             if (logOutputKVs.ContainsKey("speed"))
             {
-                secondaryText2Details.Add($"{logOutputKVs["speed"]}");
+                string speedS = logOutputKVs["speed"];
+                secondaryText2Details.Add($"{speedS}");
+                try
+                {
+                    Match m = Regex.Match(speedS, @"(\d+\.\d+)x");
+                    if (m.Success)
+                    {
+                        double speedD = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                        ulong msRemaining = (ulong)(remainingDuration / speedD);
+                        secondaryText2Details.Add($"ETA {Utils.FriendlyDurationString(msRemaining)}");
+                    }
+                }
+                catch (Exception) { }
             }
 
             Label_Secondary.Content = string.Join(", ", secondaryTextDetails);
