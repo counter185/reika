@@ -325,7 +325,6 @@ namespace ReencGUI.UI
                     };
                 }
                 MainWindow.instance.EnqueueEncodeOperation(args, duration, onFinishAction);
-                Close();
             }
             else
             {
@@ -573,6 +572,10 @@ namespace ReencGUI.UI
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
             RunEncode();
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                Close();
+            }
         }
 
         private void Combo_Preset_SelectionChanged(object sender, SelectionChangedEventArgs e)
