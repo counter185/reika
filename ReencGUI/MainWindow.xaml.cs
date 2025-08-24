@@ -141,22 +141,9 @@ namespace ReencGUI
 
             try
             {
-                string fileName = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
-                FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(fileName);
-                if (media != null)
+                foreach (string fileName in (string[])e.Data.GetData(DataFormats.FileDrop))
                 {
-                    WindowCreateFile wd = new WindowCreateFile(from x in media.streams
-                                                               select new StreamTarget
-                                                               {
-                                                                   mediaInfo = media,
-                                                                   streamInfo = x,
-                                                                   indexInStream = media.streams.IndexOf(x)
-                                                               });
-                    wd.Input_OutFileName.InputField.Text = fileName + ".reenc.mp4";
-                    wd.Show();
-                } else
-                {
-                    MessageBox.Show("Failed to identify file.\nCheck if ffmpeg is installed.", "Invalid File", MessageBoxButton.OK, MessageBoxImage.Error);
+                    OpenCreateFileWindowForFile(fileName);
                 }
             }
             catch (Exception ex)
@@ -164,6 +151,27 @@ namespace ReencGUI
                 MessageBox.Show($"Error processing file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+
+        public void OpenCreateFileWindowForFile(string fileName)
+        {
+            FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(fileName);
+            if (media != null)
+            {
+                WindowCreateFile wd = new WindowCreateFile(from x in media.streams
+                                                           select new StreamTarget
+                                                           {
+                                                               mediaInfo = media,
+                                                               streamInfo = x,
+                                                               indexInStream = media.streams.IndexOf(x)
+                                                           });
+                wd.Input_OutFileName.InputField.Text = fileName + ".reenc.mp4";
+                wd.Show();
+            }
+            else
+            {
+                MessageBox.Show("Failed to identify file.\nCheck if ffmpeg is installed.", "Invalid File", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void TestEncoders(UIFFMPEGOperationEntry progressCallback)
