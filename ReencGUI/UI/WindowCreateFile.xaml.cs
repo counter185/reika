@@ -274,6 +274,11 @@ namespace ReencGUI.UI
 
         public ulong GetDuration()
         {
+            if (!streamTargets.Any())
+            {
+                return 0;
+            }
+
             ulong wholeDuration = streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS))
                 .Max();
 
