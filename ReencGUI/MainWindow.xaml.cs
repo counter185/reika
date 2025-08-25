@@ -56,6 +56,8 @@ namespace ReencGUI
             instance = this;
             InitializeComponent();
 
+            Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref }); 
+
 
             if ((!File.Exists("ffmpeg\\ffmpeg.exe")
                 || !File.Exists("ffmpeg\\ffprobe.exe"))
