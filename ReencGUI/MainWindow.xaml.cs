@@ -27,6 +27,7 @@ namespace ReencGUI
     {
         struct EncodeOperation
         {
+            public int encodingQueueChannel;
             public IEnumerable<string> ffmpegArgs;
             public ulong outputDuration;
             public string outputFileName;
@@ -48,7 +49,7 @@ namespace ReencGUI
 
         Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
         Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
-        bool encoding = false;
+        Dictionary<int, int> encodingQueueChannels = new Dictionary<int, int>();
         volatile bool doingOtherOp = false;
 
         public MainWindow()
@@ -104,7 +105,7 @@ namespace ReencGUI
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            if (encodeQueue.Count > 0 || otherOpsQueue.Count > 0 || encoding || doingOtherOp)
+            if (encodeQueue.Count > 0 || otherOpsQueue.Count > 0 || encodingQueueChannels.Any(x=>x.Value > 0) || doingOtherOp)
             {
                 if (MessageBox.Show("Operations are still in queue." +
                     "\nClosing reika will not stop any running encode operations." +
@@ -189,11 +190,8 @@ namespace ReencGUI
                 progressCallback.Label_Secondary.Content = "";
                 progressCallback.Label_Secondary2.Content = "";
             });
-            string[] hwEncKeywords = new string[]
-            {
-                "nvenc", "amf", "qsv", "vaapi", "_mf", "_vulkan", "d3d1"
-            };
-            var targetEncoders = encoders.Where(x => hwEncKeywords.Any(y => x.ID.Contains(y))).ToList();
+            
+            var targetEncoders = encoders.Where(x => FFMPEG.HardwareEncoderKeywords.Any(y => x.ID.Contains(y))).ToList();
             List<string> compatible = new List<string>(), incompatible = new List<string>();
             int i = 0;
             foreach (var enc in targetEncoders)
@@ -273,8 +271,12 @@ namespace ReencGUI
             ProcessNextOtherOperation();
         }
 
-        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration, string outFileName, Action<UIFFMPEGOperationEntry, int> onFinished = null)
+        public void EnqueueEncodeOperation(int channel, IEnumerable<string> args, ulong outputDuration, string outFileName, Action<UIFFMPEGOperationEntry, int> onFinished = null)
         {
+            if (!encodingQueueChannels.ContainsKey(channel))
+            {
+                encodingQueueChannels[channel] = 0;
+            }
 
             UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
             entry.Label_Primary.Text = $"In queue";
@@ -284,6 +286,7 @@ namespace ReencGUI
 
             encodeQueue.Enqueue(new EncodeOperation
             {
+                encodingQueueChannel = channel,
                 ffmpegArgs = args,
                 outputDuration = outputDuration,
                 uiQueueEntry = entry,
@@ -317,89 +320,104 @@ namespace ReencGUI
 
         public void ProcessNextEncode()
         {
-            if (!encoding && encodeQueue.Any())
+            if (encodeQueue.Any())
             {
-                encoding = true;
-                EncodeOperation next = encodeQueue.Dequeue();
-                next.uiQueueEntry.Label_Primary.Text = Path.GetFileName(next.outputFileName);
-                bool cancelling = false;
-
-                List<string> logLines = new List<string>();
-                Process newP = FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
+                EncodeOperation nextOp = encodeQueue.Peek();
+                if (encodingQueueChannels[nextOp.encodingQueueChannel] == 0)
                 {
-                    if (line != null)
-                    {
-                        Console.WriteLine(line);
-
-                        Match match = Regex.Match(line, @"([^\s]+)=\s*([^\s]+)");
-                        Dictionary<string, string> logOutputKVs = new Dictionary<string, string>();
-                        bool anyFound = false;
-                        while (match.Success)
-                        {
-                            anyFound = true;
-                            string key = match.Groups[1].Value;
-                            string value = match.Groups[2].Value;
-                            logOutputKVs[key] = value;
-                            match = match.NextMatch();
-                        }
-
-                        if (anyFound)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
-                            });
-                        } else
-                        {
-                            logLines.Add(line);
-                        }
-                    }
-                },
-                (exit) =>
-                {
-                    Console.WriteLine($"FFMPEG exited with code {exit:X}");
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (exit != 0)
-                        {
-                            EncodeFailed($"Exit code {exit:X}", "", 
-                                (el) => { 
-                                    EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.outputFileName);
-                                }, 
-                                (el) => { 
-                                    File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
-                                    Process.Start("notepad.exe", "ffmpeg_log.txt");
-                                });
-                        } else if (!cancelling)
-                        {
-                            next.onFinished?.Invoke(next.uiQueueEntry, exit);
-                        }
-                        Panel_Operations.Items.Remove(next.uiQueueEntry);
-                        encoding = false;
-                        ProcessNextEncode();
-                    });
-                });
-                
-                next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
-                {
-                    if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                    {
-                        cancelling = true;
-                        Dispatcher.Invoke(() =>
-                        {
-                            next.uiQueueEntry.Label_Primary.Text = $"Cancelling...";
-                        });
-                        newP.StandardInput.WriteLine("q");
-                        newP.StandardInput.Flush();
-                        Thread.Sleep(1000);
-                        try
-                        {
-                            newP.Kill();
-                        } catch (Exception) { } //who cares
-                    }
-                };
+                    EncodeOperation next = encodeQueue.Dequeue();
+                    ProcessEncode(next);
+                }
             }
         }
+
+        private void ProcessEncode(EncodeOperation next)
+        {
+            next.uiQueueEntry.Label_Primary.Text = Path.GetFileName(next.outputFileName);
+            bool cancelling = false;
+            encodingQueueChannels[next.encodingQueueChannel]++;
+
+            List<string> logLines = new List<string>();
+            Process newP = FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
+            {
+                if (line != null)
+                {
+                    Console.WriteLine(line);
+
+                    Match match = Regex.Match(line, @"([^\s]+)=\s*([^\s]+)");
+                    Dictionary<string, string> logOutputKVs = new Dictionary<string, string>();
+                    bool anyFound = false;
+                    while (match.Success)
+                    {
+                        anyFound = true;
+                        string key = match.Groups[1].Value;
+                        string value = match.Groups[2].Value;
+                        logOutputKVs[key] = value;
+                        match = match.NextMatch();
+                    }
+
+                    if (anyFound)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
+                        });
+                    }
+                    else
+                    {
+                        logLines.Add(line);
+                    }
+                }
+            },
+            (exit) =>
+            {
+                Console.WriteLine($"FFMPEG exited with code {exit:X}");
+                Dispatcher.Invoke(() =>
+                {
+                    if (exit != 0)
+                    {
+                        EncodeFailed($"Exit code {exit:X}", "",
+                            (el) =>
+                            {
+                                EnqueueEncodeOperation(next.encodingQueueChannel, next.ffmpegArgs, next.outputDuration, next.outputFileName);
+                            },
+                            (el) =>
+                            {
+                                File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
+                                Process.Start("notepad.exe", "ffmpeg_log.txt");
+                            });
+                    }
+                    else if (!cancelling)
+                    {
+                        next.onFinished?.Invoke(next.uiQueueEntry, exit);
+                    }
+                    Panel_Operations.Items.Remove(next.uiQueueEntry);
+                    encodingQueueChannels[next.encodingQueueChannel]--;
+                    ProcessNextEncode();
+                });
+            });
+
+            next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
+            {
+                if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    cancelling = true;
+                    Dispatcher.Invoke(() =>
+                    {
+                        next.uiQueueEntry.Label_Primary.Text = $"Cancelling...";
+                    });
+                    newP.StandardInput.WriteLine("q");
+                    newP.StandardInput.Flush();
+                    Thread.Sleep(1000);
+                    try
+                    {
+                        newP.Kill();
+                    }
+                    catch (Exception) { } //who cares
+                }
+            };
+        }
+
         public void ProcessNextOtherOperation()
         {
             if (!doingOtherOp && otherOpsQueue.Any())

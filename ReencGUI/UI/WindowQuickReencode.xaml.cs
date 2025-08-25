@@ -79,11 +79,13 @@ namespace ReencGUI
             }
             otherArgs = Regex.Replace(otherArgs, regexVFArgs, "").Trim();
 
+            string encoderID = pre.vcodecs.Where(x => MainWindow.instance.encoders.Any(y => y.ID == x)).FirstOrDefault();
+
             List<string> args = new List<string>
             {
                 "-i", $"\"{path}\"",
                 (pre.vbitrate != "" ? $"-b:v {pre.vbitrate}" : ""),
-                (pre.vcodecs.Any() ? $"-c:v {pre.vcodecs.Where(x=>MainWindow.instance.encoders.Any(y=>y.ID == x)).First()}" : ""),
+                (pre.vcodecs.Any() ? $"-c:v {encoderID}" : ""),
                 (pre.abitrate != "" ? $"-b:a {pre.abitrate}" : ""),
                 (pre.acodec != "" ? $"-c:a {pre.acodec}" : ""),
                 (vfArgs.Any() ? $"-vf \"{string.Join(",", vfArgs)}\"" : ""),
@@ -104,7 +106,7 @@ namespace ReencGUI
                     }
                 };
             }
-            MainWindow.instance.EnqueueEncodeOperation(args, media.Duration, outputPath, onFinished);
+            MainWindow.instance.EnqueueEncodeOperation(FFMPEG.GetEncodingChannelForEncoderID(encoderID), args, media.Duration, outputPath, onFinished);
         }
 
         private void Window_Drop(object sender, DragEventArgs e)
