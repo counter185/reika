@@ -74,5 +74,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./reika-latest.zip
-        asset_name: reika-latest.zip
+        asset_name: reika-${{env.VERSION_NAME}}.zip
         asset_content_type: application/zip
