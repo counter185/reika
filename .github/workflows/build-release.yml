@@ -22,7 +22,7 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    permissions: all-write
+    permissions: write-all
 
     steps:
     - uses: actions/checkout@v4
