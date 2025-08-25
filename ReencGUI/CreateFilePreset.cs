@@ -142,6 +142,14 @@ namespace ReencGUI
             vcodecs = new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" };
         }
     }
+    public class Discord10MBH265Preset : Discord10MBPreset
+    {
+        public Discord10MBH265Preset()
+        {
+            name = "Discord 10MB H265";
+            vcodecs = new List<string> { "hevc_nvenc", "hevc_qsv", "hevc_amf", "libx265" };
+        }
+    }
 
     public class Discord50MBPreset : TargetFilesizePreset
     {
@@ -160,6 +168,14 @@ namespace ReencGUI
         {
             name = "Discord 50MB VP9";
             vcodecs = new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" };
+        }
+    }
+    public class Discord50MBH265Preset : Discord50MBPreset
+    {
+        public Discord50MBH265Preset()
+        {
+            name = "Discord 50MB H265";
+            vcodecs = new List<string> { "hevc_nvenc", "hevc_qsv", "hevc_amf", "libx265" };
         }
     }
 
@@ -190,8 +206,10 @@ namespace ReencGUI
             }
 
             presets.Add(new Discord10MBPreset());
+            presets.Add(new Discord10MBH265Preset());
             presets.Add(new Discord10MBVP9Preset());
             presets.Add(new Discord50MBPreset());
+            presets.Add(new Discord50MBH265Preset());
             presets.Add(new Discord50MBVP9Preset());
             presets.Add(new CreateFilePreset
             {
