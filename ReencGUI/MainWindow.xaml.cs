@@ -17,7 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ReencGUI
 {
@@ -30,6 +29,7 @@ namespace ReencGUI
         {
             public IEnumerable<string> ffmpegArgs;
             public ulong outputDuration;
+            public string outputFileName;
             public UIFFMPEGOperationEntry uiQueueEntry;
             public Action<UIFFMPEGOperationEntry, int> onFinished;
         }
@@ -183,7 +183,7 @@ namespace ReencGUI
         {
             Dispatcher.Invoke(() =>
             {
-                progressCallback.Label_Primary.Content = "Testing HW encoders";
+                progressCallback.Label_Primary.Text = "Testing HW encoders";
                 progressCallback.Label_Secondary.Content = "";
                 progressCallback.Label_Secondary2.Content = "";
             });
@@ -259,7 +259,7 @@ namespace ReencGUI
         public void EnqueueOtherOperation(Action<UIFFMPEGOperationEntry> action)
         {
             UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
-            entry.Label_Primary.Content = $"In queue";
+            entry.Label_Primary.Text = $"In queue";
             entry.Label_Secondary.Content = "";
             entry.Label_Secondary2.Content = "";
             Panel_Operations.Items.Add(entry);
@@ -271,11 +271,12 @@ namespace ReencGUI
             ProcessNextOtherOperation();
         }
 
-        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration, Action<UIFFMPEGOperationEntry, int> onFinished = null)
+        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration, string outFileName, Action<UIFFMPEGOperationEntry, int> onFinished = null)
         {
+
             UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
-            entry.Label_Primary.Content = $"In queue";
-            entry.Label_Secondary.Content = "";
+            entry.Label_Primary.Text = $"In queue";
+            entry.Label_Secondary.Content = Path.GetFileName(outFileName);
             entry.Label_Secondary2.Content = "";
             Panel_Operations.Items.Add(entry);
 
@@ -284,7 +285,8 @@ namespace ReencGUI
                 ffmpegArgs = args,
                 outputDuration = outputDuration,
                 uiQueueEntry = entry,
-                onFinished = onFinished
+                onFinished = onFinished,
+                outputFileName = outFileName
             });
             ProcessNextEncode();
         }
@@ -317,7 +319,7 @@ namespace ReencGUI
             {
                 encoding = true;
                 EncodeOperation next = encodeQueue.Dequeue();
-                next.uiQueueEntry.Label_Primary.Content = $"Encoding";
+                next.uiQueueEntry.Label_Primary.Text = Path.GetFileName(next.outputFileName);
                 bool cancelling = false;
 
                 List<string> logLines = new List<string>();
@@ -360,7 +362,7 @@ namespace ReencGUI
                         {
                             EncodeFailed($"Exit code {exit:X}", "", 
                                 (el) => { 
-                                    EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration);
+                                    EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.outputFileName);
                                 }, 
                                 (el) => { 
                                     File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
@@ -383,7 +385,7 @@ namespace ReencGUI
                         cancelling = true;
                         Dispatcher.Invoke(() =>
                         {
-                            next.uiQueueEntry.Label_Primary.Content = $"Cancelling...";
+                            next.uiQueueEntry.Label_Primary.Text = $"Cancelling...";
                         });
                         newP.StandardInput.WriteLine("q");
                         newP.StandardInput.Flush();
@@ -402,7 +404,7 @@ namespace ReencGUI
             {
                 doingOtherOp = true;
                 OtherOperation next = otherOpsQueue.Dequeue();
-                next.uiQueueEntry.Label_Primary.Content = $"Processing";
+                next.uiQueueEntry.Label_Primary.Text = $"Processing";
                 new Thread(() =>
                 {
                     next.action(next.uiQueueEntry);

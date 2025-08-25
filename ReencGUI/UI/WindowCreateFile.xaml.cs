@@ -324,7 +324,8 @@ namespace ReencGUI.UI
                         }
                     };
                 }
-                MainWindow.instance.EnqueueEncodeOperation(args, duration, onFinishAction);
+                //todo get rid of args.last()
+                MainWindow.instance.EnqueueEncodeOperation(args, duration, args.Last().Trim('\"'), onFinishAction);
             }
             else
             {

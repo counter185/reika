@@ -97,6 +97,17 @@ namespace ReencGUI
                 return $"{Math.Round(byteCount / (1024.0 * 1024.0 * 1024.0), 2)} GB";
             }
         }
+
+        public static string KiBStringToFriendlySizeString(string kibString)
+        {
+            Match m = Regex.Match(kibString, @"(\d+)KiB");
+            if (m.Success)
+            {
+                ulong num = ulong.Parse(m.Groups[1].Value);
+                return ByteCountToFriendlyString(num * 1024);
+            }
+            return kibString;
+        }
         public static ulong CalculateBitsPerSecondForSize(ulong sizeInBytes, ulong durationMS)
         {
             if (durationMS == 0)

@@ -104,7 +104,7 @@ namespace ReencGUI
                     }
                 };
             }
-            MainWindow.instance.EnqueueEncodeOperation(args, media.Duration, onFinished);
+            MainWindow.instance.EnqueueEncodeOperation(args, media.Duration, outputPath, onFinished);
         }
 
         private void Window_Drop(object sender, DragEventArgs e)

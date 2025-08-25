@@ -82,7 +82,7 @@ namespace ReencGUI
         {
             progressCallback.Dispatcher.Invoke(() =>
             {
-                progressCallback.Label_Primary.Content = "Finding latest FFMPEG release";
+                progressCallback.Label_Primary.Text = "Finding latest FFMPEG release";
                 progressCallback.Label_Secondary.Content = "";
             });
             string releasesURL = "https://api.github.com/repos/GyanD/codexffmpeg/releases";
@@ -109,7 +109,7 @@ namespace ReencGUI
                     {
                         progressCallback.Dispatcher.Invoke(() =>
                         {
-                            progressCallback.Label_Primary.Content = "Downloading FFMPEG";
+                            progressCallback.Label_Primary.Text = "Downloading FFMPEG";
                             progressCallback.Label_Secondary.Content = "";
                         });
 
@@ -138,7 +138,7 @@ namespace ReencGUI
 
                         progressCallback.Dispatcher.Invoke(() =>
                         {
-                            progressCallback.Label_Primary.Content = "Extracting FFMPEG";
+                            progressCallback.Label_Primary.Text = "Extracting FFMPEG";
                             progressCallback.Label_Secondary.Content = "";
                         });
 

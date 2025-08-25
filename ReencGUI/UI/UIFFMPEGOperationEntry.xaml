@@ -4,10 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReencGUI.UI"
-             mc:Ignorable="d" Padding="0,10" >
+             mc:Ignorable="d" Padding="0,3" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}" >
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-            <Label x:Name="Label_Primary" Foreground="White" Content="Primary text" FontSize="18" Margin="0,-5"/>
+        <StackPanel DockPanel.Dock="Top" Margin="-3,0,0,0" Orientation="Vertical">
+            <Label Foreground="White" FontSize="16" Margin="0,-5,0,0">
+                <Label.Content>
+                    <TextBlock x:Name="Label_Primary" Text="Primary text" TextWrapping="Wrap"/>
+                </Label.Content>
+            </Label>
             <Label x:Name="Label_Secondary" Foreground="#D0D0D0" Content="Secondary text" FontSize="12" Margin="0,-6"/>
             <Label x:Name="Label_Secondary2" Foreground="#D0D0D0" Content="Secondary text 2" FontSize="12" Margin="0,-6"/>
         </StackPanel>

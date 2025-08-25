@@ -15,7 +15,7 @@
         <Label Content="レイカ" Foreground="#0aFFFFFF" FontSize="160" Margin="-20,-40,-20,-40" Grid.ColumnSpan="2"/>
         <DockPanel Grid.Column="1" LastChildFill="True" Margin="5,5">
             <Label Content="Queue" DockPanel.Dock="Top" Foreground="White"/>
-            <ListBox x:Name="Panel_Operations" DockPanel.Dock="Bottom" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" Margin="0" />
+            <ListBox x:Name="Panel_Operations" DockPanel.Dock="Bottom" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0"/>
         </DockPanel>
         <DockPanel Margin="10" LastChildFill="True">
 

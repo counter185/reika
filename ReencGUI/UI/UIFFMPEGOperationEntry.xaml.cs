@@ -58,7 +58,7 @@ namespace ReencGUI.UI
 
             if (logOutputKVs.ContainsKey("size"))
             {
-                secondaryTextDetails.Add($"{logOutputKVs["size"]}");
+                secondaryTextDetails.Add(Utils.KiBStringToFriendlySizeString(logOutputKVs["size"]));
             }
 
             if (logOutputKVs.ContainsKey("bitrate"))

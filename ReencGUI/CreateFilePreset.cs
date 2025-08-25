@@ -134,6 +134,14 @@ namespace ReencGUI
             abitrate = "128k";
         }
     }
+    public class Discord10MBVP9Preset : Discord10MBPreset
+    {
+        public Discord10MBVP9Preset()
+        {
+            name = "Discord 10MB VP9";
+            vcodecs = new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" };
+        }
+    }
 
     public class Discord50MBPreset : TargetFilesizePreset
     {
@@ -144,6 +152,14 @@ namespace ReencGUI
             vbitrate = "10000k";
             acodec = "aac";
             abitrate = "128k";
+        }
+    }
+    public class Discord50MBVP9Preset : Discord50MBPreset
+    {
+        public Discord50MBVP9Preset()
+        {
+            name = "Discord 50MB VP9";
+            vcodecs = new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" };
         }
     }
 
@@ -174,7 +190,9 @@ namespace ReencGUI
             }
 
             presets.Add(new Discord10MBPreset());
+            presets.Add(new Discord10MBVP9Preset());
             presets.Add(new Discord50MBPreset());
+            presets.Add(new Discord50MBVP9Preset());
             presets.Add(new CreateFilePreset
             {
                 name = "H264: Moderate",
