@@ -146,9 +146,18 @@ namespace ReencGUI
                         Console.WriteLine("Extracting FFMPEG release...");
                         ZipArchive zip = ZipFile.OpenRead("ffmpeg.zip");
                         Directory.CreateDirectory("ffmpeg");
-                        foreach (ZipArchiveEntry entry in zip.Entries.Where(x=>x.Name.EndsWith(".exe")))
+                        var extractTargets = zip.Entries.Where(x => x.Name.EndsWith(".exe"));
+                        int done = 0;
+                        foreach (ZipArchiveEntry entry in extractTargets)
                         {
+                            progressCallback.Dispatcher.Invoke(() =>
+                            {
+                                progressCallback.Label_Secondary.Content = entry.Name;
+                                progressCallback.Label_Secondary2.Content = $"{done} / {extractTargets.Count()} files";
+                                progressCallback.ProgressBar_Operation.Value = (double)done / extractTargets.Count() * 100;
+                            });
                             entry.ExtractToFile(Path.Combine("ffmpeg", entry.Name));
+                            done++;
                         }
                         zip.Dispose();
                         File.Delete("ffmpeg.zip");

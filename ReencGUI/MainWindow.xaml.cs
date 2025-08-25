@@ -57,8 +57,9 @@ namespace ReencGUI
             InitializeComponent();
 
 
-            if (!File.Exists("ffmpeg\\ffmpeg.exe")
+            if ((!File.Exists("ffmpeg\\ffmpeg.exe")
                 || !File.Exists("ffmpeg\\ffprobe.exe"))
+                && !TestFFMPEG())
             {
                 if (MessageBox.Show("FFMPEG not found. Download it now?" +
                     "\n\n*At least 500MB of free space is required" +
@@ -79,17 +80,8 @@ namespace ReencGUI
                     });
                 } else
                 {
-                    try
-                    {
-                        FFMPEG.RunFFMPEGCommandlineForOutput(new string[]{ "-version"});
-                        FFMPEG.RunFFProbeCommandlineForOutput(new string[]{ "-version"});
-                        ReloadEncoders();
-                    } catch (Exception)
-                    {
-                        MessageBox.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Environment.Exit(-1);
-                    }
-                    
+                    MessageBox.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Environment.Exit(-1);
                 }
             } else
             {
@@ -138,7 +130,6 @@ namespace ReencGUI
                 return;
             }
 
-
             try
             {
                 foreach (string fileName in (string[])e.Data.GetData(DataFormats.FileDrop))
@@ -151,6 +142,20 @@ namespace ReencGUI
                 MessageBox.Show($"Error processing file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+
+        private bool TestFFMPEG()
+        {
+            try
+            {
+                FFMPEG.RunFFMPEGCommandlineForOutput(new string[] { "-version" });
+                FFMPEG.RunFFProbeCommandlineForOutput(new string[] { "-version" });
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void OpenCreateFileWindowForFile(string fileName)
