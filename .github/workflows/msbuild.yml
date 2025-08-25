@@ -44,12 +44,12 @@ jobs:
     - name: Remove unnecessary files
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        del bin\${{env.BUILD_CONFIGURATION}}\*.pdb
-        del bin\${{env.BUILD_CONFIGURATION}}\*.config
+        del ReencGUI\bin\${{env.BUILD_CONFIGURATION}}\*.pdb
+        del ReencGUI\bin\${{env.BUILD_CONFIGURATION}}\*.config
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: |
-          bin/${{env.BUILD_CONFIGURATION}}
+          ReencGUI/bin/${{env.BUILD_CONFIGURATION}}

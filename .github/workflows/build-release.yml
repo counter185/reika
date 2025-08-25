@@ -33,13 +33,13 @@ jobs:
     - name: Remove unnecessary files
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        del bin\${{env.BUILD_CONFIGURATION}}\*.pdb
-        del bin\${{env.BUILD_CONFIGURATION}}\*.config
+        del ReencGUI\bin\${{env.BUILD_CONFIGURATION}}\*.pdb
+        del ReencGUI\bin\${{env.BUILD_CONFIGURATION}}\*.config
 
     - name: Zip everything
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        powershell Compress-Archive -Path bin\${{env.BUILD_CONFIGURATION}}\* -DestinationPath reika-latest.zip -Force
+        Compress-Archive -Path ReencGUI\bin\${{env.BUILD_CONFIGURATION}}\* -DestinationPath reika-latest.zip -Force
 
     - name: Create Release
       id: create_release
