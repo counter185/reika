@@ -16,6 +16,9 @@ env:
   SOLUTION_FILE_PATH: .
   BUILD_CONFIGURATION: Release
 
+  VERSION_NAME: ${{ github.event.inputs.versionName }}
+  VERSION_REF: ${{ github.ref }}
+
 jobs:
   build:
     runs-on: windows-latest
@@ -29,6 +32,10 @@ jobs:
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Generate release info file
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: ./script_gen_release_info.ps1
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
