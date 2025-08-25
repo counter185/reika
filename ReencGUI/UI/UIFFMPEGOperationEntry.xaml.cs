@@ -70,17 +70,23 @@ namespace ReencGUI.UI
             {
                 string speedS = logOutputKVs["speed"];
                 secondaryText2Details.Add($"{speedS}");
-                try
+                if (fileDuration != 0)
                 {
-                    Match m = Regex.Match(speedS, @"(\d+\.\d+)x");
-                    if (m.Success)
+                    try
                     {
-                        double speedD = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
-                        ulong msRemaining = (ulong)(remainingDuration / speedD);
-                        secondaryText2Details.Add($"ETA {Utils.FriendlyDurationString(msRemaining)}");
+                        Match m = Regex.Match(speedS, @"(\d+\.\d+)x");
+                        if (m.Success)
+                        {
+                            double speedD = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                            ulong msRemaining = (ulong)(remainingDuration / speedD);
+                            secondaryText2Details.Add($"ETA {Utils.FriendlyDurationString(msRemaining)}");
+                        }
                     }
+                    catch (Exception) { }
+                } else
+                {
+                    secondaryText2Details.Add($"ETA ???");
                 }
-                catch (Exception) { }
             }
 
             Label_Secondary.Content = string.Join(", ", secondaryTextDetails);

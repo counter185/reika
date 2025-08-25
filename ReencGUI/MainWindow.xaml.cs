@@ -276,7 +276,7 @@ namespace ReencGUI
 
             UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
             entry.Label_Primary.Text = $"In queue";
-            entry.Label_Secondary.Content = Path.GetFileName(outFileName);
+            entry.Label_Secondary.Content = Utils.SanitizeForXAML(Path.GetFileName(outFileName));
             entry.Label_Secondary2.Content = "";
             Panel_Operations.Items.Add(entry);
 
