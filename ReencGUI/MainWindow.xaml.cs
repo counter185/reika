@@ -47,7 +47,7 @@ namespace ReencGUI
 
         volatile bool downloadingFFMPEG = false;
 
-        Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
+        List<EncodeOperation> encodeQueue = new List<EncodeOperation>();
         Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
         Dictionary<int, int> encodingQueueChannels = new Dictionary<int, int>();
         volatile bool doingOtherOp = false;
@@ -282,9 +282,10 @@ namespace ReencGUI
             entry.Label_Primary.Text = $"In queue";
             entry.Label_Secondary.Content = Utils.SanitizeForXAML(Path.GetFileName(outFileName));
             entry.Label_Secondary2.Content = "";
+            entry.BackgroundFromEncoderChannel(channel);
             Panel_Operations.Items.Add(entry);
 
-            encodeQueue.Enqueue(new EncodeOperation
+            encodeQueue.Add(new EncodeOperation
             {
                 encodingQueueChannel = channel,
                 ffmpegArgs = args,
@@ -320,14 +321,19 @@ namespace ReencGUI
 
         public void ProcessNextEncode()
         {
-            if (encodeQueue.Any())
+            List<EncodeOperation> deleteTargets = new List<EncodeOperation>();
+            foreach (EncodeOperation nextOp in encodeQueue)
             {
-                EncodeOperation nextOp = encodeQueue.Peek();
                 if (encodingQueueChannels[nextOp.encodingQueueChannel] == 0)
                 {
-                    EncodeOperation next = encodeQueue.Dequeue();
-                    ProcessEncode(next);
+                    deleteTargets.Add(nextOp);
+                    ProcessEncode(nextOp);
                 }
+            }
+
+            foreach (EncodeOperation d in deleteTargets)
+            {
+                encodeQueue.Remove(d);
             }
         }
 

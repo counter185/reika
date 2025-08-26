@@ -22,9 +22,26 @@ namespace ReencGUI.UI
     /// </summary>
     public partial class UIFFMPEGOperationEntry : UserControl
     {
+        Dictionary<int, Brush> encoderChannelBackgrounds = new Dictionary<int, Brush>
+        {
+            { 0, Brushes.Transparent},
+            { 1, new LinearGradientBrush(Color.FromArgb(0x60, 0, 0x7e, 0x15), Color.FromArgb(0x10, 0, 0x7e, 0x15), 0) },
+            { 2, new LinearGradientBrush(Color.FromArgb(0x60, 0x7e, 0, 0), Color.FromArgb(0x10, 0x7e, 0, 0), 0) },
+            { 3, new LinearGradientBrush(Color.FromArgb(0x60, 0, 0x5e, 0x7e), Color.FromArgb(0x10, 0, 0x5e, 0x7e), 0) },
+            { 4, new LinearGradientBrush(Color.FromArgb(0x60, 0x7e, 0x7a, 0), Color.FromArgb(0x10, 0x7e, 0x7a, 0), 0) },
+        };
+
         public UIFFMPEGOperationEntry()
         {
             InitializeComponent();
+        }
+
+        public void BackgroundFromEncoderChannel(int channel)
+        {
+            if (encoderChannelBackgrounds.ContainsKey(channel))
+            {
+                Background = encoderChannelBackgrounds[channel];
+            }
         }
 
         public void UpdateProgressBasedOnLogKVs(Dictionary<string, string> logOutputKVs, ulong fileDuration)
