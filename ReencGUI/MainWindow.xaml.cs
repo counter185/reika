@@ -46,9 +46,9 @@ namespace ReencGUI
 
         volatile bool downloadingFFMPEG = false;
 
-        Queue<EncodeOperation> encodeQueue = new Queue<EncodeOperation>();
+        List<EncodeOperation> encodeQueue = new List<EncodeOperation>();
         Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
-        bool encoding = false;
+        int encodesRunning = 0;
         volatile bool doingOtherOp = false;
 
         public MainWindow()
@@ -104,7 +104,7 @@ namespace ReencGUI
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            if (encodeQueue.Count > 0 || otherOpsQueue.Count > 0 || encoding || doingOtherOp)
+            if (encodeQueue.Count > 0 || otherOpsQueue.Count > 0 || encodesRunning > 0 || doingOtherOp)
             {
                 if (MessageBox.Show("Operations are still in queue." +
                     "\nClosing reika will not stop any running encode operations." +
@@ -282,14 +282,32 @@ namespace ReencGUI
             entry.Label_Secondary2.Content = "";
             Panel_Operations.Items.Add(entry);
 
-            encodeQueue.Enqueue(new EncodeOperation
+            EncodeOperation op = new EncodeOperation
             {
                 ffmpegArgs = args,
                 outputDuration = outputDuration,
                 uiQueueEntry = entry,
                 onFinished = onFinished,
                 outputFileName = outFileName
-            });
+            };
+
+            encodeQueue.Add(op);
+
+            entry.MouseRightButtonDown += (a, b) =>
+            {
+                if (MessageBox.Show("Run this encode operation now?", "reika", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (encodeQueue.Contains(op))
+                        {
+                            encodeQueue.Remove(op);
+                            ProcessEncode(op);
+                        }
+                    });
+                }
+            };
+
             ProcessNextEncode();
         }
 
@@ -317,89 +335,101 @@ namespace ReencGUI
 
         public void ProcessNextEncode()
         {
-            if (!encoding && encodeQueue.Any())
+            if (encodesRunning == 0 && encodeQueue.Any())
             {
-                encoding = true;
-                EncodeOperation next = encodeQueue.Dequeue();
-                next.uiQueueEntry.Label_Primary.Text = Path.GetFileName(next.outputFileName);
-                bool cancelling = false;
-
-                List<string> logLines = new List<string>();
-                Process newP = FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
-                {
-                    if (line != null)
-                    {
-                        Console.WriteLine(line);
-
-                        Match match = Regex.Match(line, @"([^\s]+)=\s*([^\s]+)");
-                        Dictionary<string, string> logOutputKVs = new Dictionary<string, string>();
-                        bool anyFound = false;
-                        while (match.Success)
-                        {
-                            anyFound = true;
-                            string key = match.Groups[1].Value;
-                            string value = match.Groups[2].Value;
-                            logOutputKVs[key] = value;
-                            match = match.NextMatch();
-                        }
-
-                        if (anyFound)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
-                            });
-                        } else
-                        {
-                            logLines.Add(line);
-                        }
-                    }
-                },
-                (exit) =>
-                {
-                    Console.WriteLine($"FFMPEG exited with code {exit:X}");
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (exit != 0)
-                        {
-                            EncodeFailed($"Exit code {exit:X}", "", 
-                                (el) => { 
-                                    EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.outputFileName);
-                                }, 
-                                (el) => { 
-                                    File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
-                                    Process.Start("notepad.exe", "ffmpeg_log.txt");
-                                });
-                        } else if (!cancelling)
-                        {
-                            next.onFinished?.Invoke(next.uiQueueEntry, exit);
-                        }
-                        Panel_Operations.Items.Remove(next.uiQueueEntry);
-                        encoding = false;
-                        ProcessNextEncode();
-                    });
-                });
-                
-                next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
-                {
-                    if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                    {
-                        cancelling = true;
-                        Dispatcher.Invoke(() =>
-                        {
-                            next.uiQueueEntry.Label_Primary.Text = $"Cancelling...";
-                        });
-                        newP.StandardInput.WriteLine("q");
-                        newP.StandardInput.Flush();
-                        Thread.Sleep(1000);
-                        try
-                        {
-                            newP.Kill();
-                        } catch (Exception) { } //who cares
-                    }
-                };
+                EncodeOperation next = encodeQueue.First();
+                encodeQueue.RemoveAt(0);
+                ProcessEncode(next);
             }
         }
+
+        private void ProcessEncode(EncodeOperation next)
+        {
+            encodesRunning++;
+            next.uiQueueEntry.Label_Primary.Text = Path.GetFileName(next.outputFileName);
+            bool cancelling = false;
+
+            List<string> logLines = new List<string>();
+            Process newP = FFMPEG.RunCommandWithAsyncOutput("ffmpeg", next.ffmpegArgs, (line) =>
+            {
+                if (line != null)
+                {
+                    Console.WriteLine(line);
+
+                    Match match = Regex.Match(line, @"([^\s]+)=\s*([^\s]+)");
+                    Dictionary<string, string> logOutputKVs = new Dictionary<string, string>();
+                    bool anyFound = false;
+                    while (match.Success)
+                    {
+                        anyFound = true;
+                        string key = match.Groups[1].Value;
+                        string value = match.Groups[2].Value;
+                        logOutputKVs[key] = value;
+                        match = match.NextMatch();
+                    }
+
+                    if (anyFound)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
+                        });
+                    }
+                    else
+                    {
+                        logLines.Add(line);
+                    }
+                }
+            },
+            (exit) =>
+            {
+                Console.WriteLine($"FFMPEG exited with code {exit:X}");
+                Dispatcher.Invoke(() =>
+                {
+                    if (exit != 0)
+                    {
+                        EncodeFailed($"Exit code {exit:X}", "",
+                            (el) =>
+                            {
+                                EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.outputFileName);
+                            },
+                            (el) =>
+                            {
+                                File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
+                                Process.Start("notepad.exe", "ffmpeg_log.txt");
+                            });
+                    }
+                    else if (!cancelling)
+                    {
+                        next.onFinished?.Invoke(next.uiQueueEntry, exit);
+                    }
+                    Panel_Operations.Items.Remove(next.uiQueueEntry);
+                    encodesRunning--;
+                    ProcessNextEncode();
+                });
+            });
+
+            next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
+            {
+                if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    cancelling = true;
+                    Dispatcher.Invoke(() =>
+                    {
+                        next.uiQueueEntry.Label_Primary.Text = $"Cancelling...";
+                    });
+                    newP.StandardInput.WriteLine("q");
+                    newP.StandardInput.Flush();
+                    Thread.Sleep(1000);
+                    try
+                    {
+                        newP.Kill();
+                    }
+                    catch (Exception) { } //who cares
+                }
+            };
+        }
+
         public void ProcessNextOtherOperation()
         {
             if (!doingOtherOp && otherOpsQueue.Any())
