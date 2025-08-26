@@ -330,7 +330,7 @@ namespace ReencGUI.UI
                     };
                 }
                 //todo get rid of args.last()
-                MainWindow.instance.EnqueueEncodeOperation(FFMPEG.GetEncodingChannelForEncoderID(Input_VcodecName.InputField.Text), args, duration, args.Last().Trim('\"'), onFinishAction);
+                MainWindow.instance.EnqueueEncodeOperation(args, duration, args.Last().Trim('\"'), onFinishAction);
             }
             else
             {

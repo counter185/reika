@@ -55,22 +55,6 @@ namespace ReencGUI
             public List<string> otherData = new List<string>();
         }
 
-        public static string[] HardwareEncoderKeywords = new string[]
-        {
-            "nvenc", "amf", "qsv", "vaapi", "_mf", "_vulkan", "d3d1"
-        };
-        public static Dictionary<string, int> HardwareEncoderKeywordChannels = new Dictionary<string, int>()
-        {
-            { "nvenc", 1 },
-            { "amf", 2 },
-            { "qsv", 3 },
-
-            { "vaapi", 4 },
-            { "_mf", 4 },
-            { "_vulkan", 4 },
-            { "d3d1", 4 }
-        };
-
         public static bool MachineShouldUseEssentialBuild()
         {
             try
@@ -571,22 +555,6 @@ namespace ReencGUI
             else
             {
                 Console.WriteLine($"{thumbnailPath} was not tracked for deletion.");
-            }
-        }
-
-        public static int GetEncodingChannelForEncoderID(string id)
-        {
-            if (id == null)
-            {
-                return 0;
-            }
-            var match = HardwareEncoderKeywordChannels.Where(x => id.Contains(x.Key));
-            if (match.Any())
-            {
-                return match.First().Value;
-            } else
-            {
-                return 0;
             }
         }
     }
