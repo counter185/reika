@@ -29,6 +29,7 @@ namespace ReencGUI
         {
             public IEnumerable<string> ffmpegArgs;
             public ulong outputDuration;
+            public string visualEncoderID;
             public string outputFileName;
             public UIFFMPEGOperationEntry uiQueueEntry;
             public Action<UIFFMPEGOperationEntry, int> onFinished;
@@ -273,13 +274,14 @@ namespace ReencGUI
             ProcessNextOtherOperation();
         }
 
-        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration, string outFileName, Action<UIFFMPEGOperationEntry, int> onFinished = null)
+        public void EnqueueEncodeOperation(IEnumerable<string> args, ulong outputDuration, string visualEncoderID, string outFileName, Action<UIFFMPEGOperationEntry, int> onFinished = null)
         {
 
             UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
             entry.Label_Primary.Text = $"In queue";
             entry.Label_Secondary.Content = Utils.SanitizeForXAML(Path.GetFileName(outFileName));
             entry.Label_Secondary2.Content = "";
+            entry.SetProgressBarStyleForEncoderID(visualEncoderID);
             Panel_Operations.Items.Add(entry);
 
             EncodeOperation op = new EncodeOperation
@@ -293,7 +295,7 @@ namespace ReencGUI
 
             encodeQueue.Add(op);
 
-            entry.MouseRightButtonDown += (a, b) =>
+            entry.onRightClick = (a) =>
             {
                 if (MessageBox.Show("Run this encode operation now?", "reika", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
@@ -391,7 +393,7 @@ namespace ReencGUI
                         EncodeFailed($"Exit code {exit:X}", "",
                             (el) =>
                             {
-                                EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.outputFileName);
+                                EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.visualEncoderID, next.outputFileName);
                             },
                             (el) =>
                             {
@@ -409,7 +411,7 @@ namespace ReencGUI
                 });
             });
 
-            next.uiQueueEntry.MouseRightButtonDown += (a, b) =>
+            next.uiQueueEntry.onRightClick = (b) =>
             {
                 if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {

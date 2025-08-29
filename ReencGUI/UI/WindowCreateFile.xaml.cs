@@ -329,8 +329,9 @@ namespace ReencGUI.UI
                         }
                     };
                 }
+                string encoderID = Input_VcodecName.InputField.IsEnabled ? Input_VcodecName.InputField.Text : Input_AcodecName.InputField.Text;
                 //todo get rid of args.last()
-                MainWindow.instance.EnqueueEncodeOperation(args, duration, args.Last().Trim('\"'), onFinishAction);
+                MainWindow.instance.EnqueueEncodeOperation(args, duration, encoderID, args.Last().Trim('\"'), onFinishAction);
             }
             else
             {

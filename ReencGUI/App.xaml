@@ -143,21 +143,50 @@
             </Setter>
         </Style>
         
-        <!--Progress bar style-->
-        <LinearGradientBrush x:Key="ProgressBar.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
+        <!-- hwenc progress bars-->
+        <LinearGradientBrush x:Key="ProgressBar.NVENC.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
             <GradientStop Color="#FF001701" Offset="0.0"/>
             <GradientStop Color="#FF002101" Offset="0.1"/>
             <GradientStop Color="#FF148A04" Offset="0.5"/>
-            <!--<GradientStop Color="#FF009617" Offset="0.95"/>-->
             <GradientStop Color="#FF93FF97" Offset="0.95"/>
             <GradientStop Color="#FF93FF97" Offset="1"/>
         </LinearGradientBrush>
+        <SolidColorBrush x:Key="ProgressBar.NVENC.Border" Color="#FF458E3B"/>
+
+        <LinearGradientBrush x:Key="ProgressBar.AMF.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#FF170000" Offset="0.0"/>
+            <GradientStop Color="#FF210000" Offset="0.1"/>
+            <GradientStop Color="#FF8A0404" Offset="0.5"/>
+            <GradientStop Color="#FFFF9393" Offset="0.95"/>
+            <GradientStop Color="#FFFF9393" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ProgressBar.AMF.Border" Color="#FF8E3B3B"/>
+
+        <LinearGradientBrush x:Key="ProgressBar.QSV.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#FF000A17" Offset="0.0"/>
+            <GradientStop Color="#FF000D21" Offset="0.1"/>
+            <GradientStop Color="#FF04318A" Offset="0.5"/>
+            <GradientStop Color="#FF93BCFF" Offset="0.95"/>
+            <GradientStop Color="#FF93C6FF" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ProgressBar.QSV.Border" Color="#FF3B538E"/>
+
+        <LinearGradientBrush x:Key="ProgressBar.CPU.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#FF1D1D1D" Offset="0.0"/>
+            <GradientStop Color="#FF212121" Offset="0.1"/>
+            <GradientStop Color="#FF8A8A8A" Offset="0.5"/>
+            <GradientStop Color="#FFCCCCCC" Offset="0.95"/>
+            <GradientStop Color="White" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ProgressBar.CPU.Border" Color="White"/>
+
+
+        <!--Progress bar style-->
         <SolidColorBrush x:Key="ProgressBar.Background" Color="Black"/>
-        <SolidColorBrush x:Key="ProgressBar.Border" Color="#FF458E3B"/>
         <Style x:Key="ReencProgressBarStyle" TargetType="{x:Type ProgressBar}">
-            <Setter Property="Foreground" Value="{StaticResource ProgressBar.Progress}"/>
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.NVENC.Progress}"/>
             <Setter Property="Background" Value="{StaticResource ProgressBar.Background}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.Border}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.NVENC.Border}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -213,6 +242,23 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+        
+        <Style x:Key="ReencProgressBarStyleNVENC" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.NVENC.Progress}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.NVENC.Border}"/>
+        </Style>
+        <Style x:Key="ReencProgressBarStyleAMF" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.AMF.Progress}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.AMF.Border}"/>
+        </Style>
+        <Style x:Key="ReencProgressBarStyleQSV" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.QSV.Progress}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.QSV.Border}"/>
+        </Style>
+        <Style x:Key="ReencProgressBarStyleCPU" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.CPU.Progress}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.CPU.Border}"/>
         </Style>
     </Application.Resources>
 </Application>

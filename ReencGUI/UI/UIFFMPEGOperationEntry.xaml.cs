@@ -22,9 +22,39 @@ namespace ReencGUI.UI
     /// </summary>
     public partial class UIFFMPEGOperationEntry : UserControl
     {
+        public Action<UIFFMPEGOperationEntry> onRightClick = null;
+
         public UIFFMPEGOperationEntry()
         {
             InitializeComponent();
+
+            MouseRightButtonDown += (a, b) =>
+            {
+                this.onRightClick?.Invoke(this);
+            };
+        }
+
+        public static string GetProgressBarStyleForEncoderID(string encID)
+        {
+            if (encID.Contains("nvenc"))
+            {
+                return "ReencProgressBarStyleNVENC";
+            }
+            if (encID.Contains("amf"))
+            {
+                return "ReencProgressBarStyleAMF";
+            }
+            if (encID.Contains("qsv"))
+            {
+                return "ReencProgressBarStyleQSV";
+            }
+            return "ReencProgressBarStyleCPU";
+        }
+
+        public void SetProgressBarStyleForEncoderID(string encID)
+        {
+            string styleKey = GetProgressBarStyleForEncoderID(encID);
+            ProgressBar_Operation.Style = (Style)FindResource(styleKey);
         }
 
         public void UpdateProgressBasedOnLogKVs(Dictionary<string, string> logOutputKVs, ulong fileDuration)
