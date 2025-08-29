@@ -22,25 +22,26 @@ namespace ReencGUI.UI
     {
         public string result = null;
 
-        LinearGradientBrush nvidiaGradient = new LinearGradientBrush(
-            Color.FromArgb(80, 0, 255, 0), 
+        static LinearGradientBrush nvidiaGradient = new LinearGradientBrush(
+            Color.FromArgb(30, 0, 255, 0), 
             Color.FromArgb(0, 0, 255, 0), 
             new Point(0, 0.5), 
             new Point(1, 0.5));
 
-        LinearGradientBrush amdGradient = new LinearGradientBrush(
-            Color.FromArgb(80, 255, 0, 0), 
+        static LinearGradientBrush amdGradient = new LinearGradientBrush(
+            Color.FromArgb(30, 255, 0, 0), 
             Color.FromArgb(0, 255, 0, 0), 
             new Point(0, 0.5), 
             new Point(1, 0.5));
 
-        LinearGradientBrush intelGradient = new LinearGradientBrush(
-            Color.FromArgb(80, 0, 0x94, 255), 
+        static LinearGradientBrush intelGradient = new LinearGradientBrush(
+            Color.FromArgb(30, 0, 0x94, 255), 
             Color.FromArgb(0, 0, 0x94, 255), 
             new Point(0, 0.5), 
             new Point(1, 0.5));
 
-        Brush GetGradientForCodecID(string id)
+        //todo move this somewhere
+        public static Brush GetGradientForCodecID(string id)
         {
             if (id.Contains("nvenc"))
             {
@@ -55,7 +56,7 @@ namespace ReencGUI.UI
                 return intelGradient;
             }
 
-            return null;
+            return Brushes.Transparent;
         }
 
         int GetPriorityForID(FFMPEG.CodecType type, string id)
@@ -116,9 +117,7 @@ namespace ReencGUI.UI
 
             foreach (var enc in validEncs)
             {
-                UIEncoderEntry entry = new UIEncoderEntry();
-                entry.Text_Primary.Content = Utils.SanitizeForXAML(enc.ID);
-                entry.Text_Secondary.Text = Utils.SanitizeForXAML(enc.Name);
+                UIEncoderEntry entry = new UIEncoderEntry(Utils.SanitizeForXAML(enc.ID), Utils.SanitizeForXAML(enc.Name));
                 entry.Background = GetGradientForCodecID(enc.ID);
                 entry.MouseDoubleClick += (s, e) =>
                 {

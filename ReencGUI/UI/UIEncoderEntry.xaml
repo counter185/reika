@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ReencGUI.UI"
-             mc:Ignorable="d" >
+             mc:Ignorable="d" TextSearch.Text="{Binding PrimaryText}">
     <StackPanel Orientation="Vertical" Margin="10,5">
         <Label x:Name="Text_Primary" Margin="0,-5" Content="Primary text" FontSize="18" Foreground="White"/>
         <TextBlock x:Name="Text_Secondary" Margin="4" Text="Secondary text" FontSize="12" Foreground="#a0a0a0" TextWrapping="Wrap"/>

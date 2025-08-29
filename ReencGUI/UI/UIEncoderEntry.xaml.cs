@@ -20,9 +20,26 @@ namespace ReencGUI.UI
     /// </summary>
     public partial class UIEncoderEntry : UserControl
     {
-        public UIEncoderEntry()
+        public string PrimaryText
         {
+            get { return (string)GetValue(PrimaryTextProperty); }
+            set { SetValue(PrimaryTextProperty, value); }
+        }
+
+        public string SecondaryText;
+
+        public static readonly DependencyProperty PrimaryTextProperty =
+            DependencyProperty.Register("PrimaryText", typeof(string), typeof(UIEncoderEntry), new PropertyMetadata("Primary Text"));
+
+        public UIEncoderEntry(string primary, string secondary)
+        {
+            DataContext = this;
+            PrimaryText = primary;
+            SecondaryText = secondary;
             InitializeComponent();
+
+            Text_Primary.Content = primary;
+            Text_Secondary.Text = secondary;
         }
     }
 }

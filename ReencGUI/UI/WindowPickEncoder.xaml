@@ -9,6 +9,6 @@
         Title="Choose encoder" Height="496" Width="425">
     <DockPanel Margin="10" LastChildFill="True">
         <Label DockPanel.Dock="Top" Padding="0,10" Content="Choose encoder" Foreground="White" FontSize="30"/>
-        <ListBox DockPanel.Dock="Bottom" x:Name="Panel_Encoders" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch"/>
+        <ListBox DockPanel.Dock="Bottom" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" x:Name="Panel_Encoders" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
     </DockPanel>
 </Window>
