@@ -28,9 +28,10 @@
                 <StackPanel Margin="10" VerticalAlignment="Center" HorizontalAlignment="Left" Orientation="Vertical" DockPanel.Dock="Bottom">
                     <Label DockPanel.Dock="Bottom" Content="Drop a file here to start..." Foreground="#808080"/>
                     <StackPanel Orientation="Horizontal">
-                        <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_NewEmpty" Content="New file" Margin="10" Padding="8" Width="100" Click="Button_NewEmpty_Click"/>
-                        <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_QuickReenc" Content="Quick reencode" Margin="10" Padding="8" Width="100" Click="Button_QuickReenc_Click"/>
+                        <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_NewEmpty" Content="New file" Margin="10" Padding="8" MinWidth="100" Click="Button_NewEmpty_Click"/>
+                        <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_QuickReenc" Content="Quick reencode" Margin="10" Padding="8" MinWidth="100" Click="Button_QuickReenc_Click"/>
                     </StackPanel>
+                    <Button Style="{DynamicResource ReencButtonStyle}" x:Name="Button_Settings" HorizontalAlignment="Left" Content="Settings" Width="75" Margin="10,0" Padding="2" Click="Button_Settings_Click"/>
                     <Label x:Name="Label_HwInfo" Content="Getting hardware info..." Foreground="#606060" FontStyle="Italic" FontSize="11"/>
                 </StackPanel>
             </DockPanel>

@@ -473,5 +473,10 @@ namespace ReencGUI
             }
             new WindowQuickReencode().Show();
         }
+
+        private void Button_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            new WindowSettings().Show();
+        }
     }
 }

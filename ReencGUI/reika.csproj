@@ -85,6 +85,9 @@
     <Compile Include="UI\WindowPickEncoder.xaml.cs">
       <DependentUpon>WindowPickEncoder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\WindowSettings.xaml.cs">
+      <DependentUpon>WindowSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\WindowStreamSelect.xaml.cs">
       <DependentUpon>WindowStreamSelect.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WindowPickEncoder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WindowSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

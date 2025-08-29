@@ -1,0 +1,87 @@
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace ReencGUI.UI
+{
+    /// <summary>
+    /// Logika interakcji dla klasy WindowSettings.xaml
+    /// </summary>
+    public partial class WindowSettings : Window
+    {
+        public WindowSettings()
+        {
+            InitializeComponent();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            SaveSettings();
+            base.OnClosing(e);
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            WindowUtil.SetWindowDarkMode(this);
+        }
+
+        private void SaveSettings()
+        {
+            //todo
+        }
+
+        public bool RegisterContextMenuCommand()
+        {
+            try
+            {
+                string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                //create HKEY_CURRENT_USER\SOFTWARE\Classes\*\shell\reika\command
+                RegistryKey baseKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\*\shell\reika");
+                baseKey.SetValue("", "Open with reika");
+                baseKey.SetValue("Icon", exePath);
+
+                RegistryKey commandKey = baseKey.CreateSubKey("command");
+                commandKey.SetValue("", $"\"{exePath}\" \"%1\"");
+
+                baseKey.Close();
+                commandKey.Close();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private void Button_OpenAppdataFolder_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", AppData.GetAppDataPath());
+        }
+
+        private void Button_RegisterContextMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (RegisterContextMenuCommand())
+            {
+                MessageBox.Show("Context menu command registered successfully.", "Success", MessageBoxButton.OK);
+            } else
+            {
+                MessageBox.Show("Failed to register context menu command.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+}
