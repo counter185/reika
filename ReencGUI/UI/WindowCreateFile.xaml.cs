@@ -204,7 +204,7 @@ namespace ReencGUI.UI
             }
             Input_VcodecName.InputField.Text = (from x in preset.vcodecs
                                                 where MainWindow.instance.encoders.Any(y=>y.ID == x)
-                                                select x).First();
+                                                select x).FirstOrDefault() ?? Input_VcodecName.InputField.Text;
             Input_Vbitrate.InputField.Text = preset.vbitrate;
             Input_Vres.InputField.Text = preset.vresolution ?? Input_Vres.InputField.Text;
             Input_AcodecName.InputField.Text = preset.acodec;

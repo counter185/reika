@@ -83,6 +83,9 @@
     <Compile Include="UI\WindowCreateFile.xaml.cs">
       <DependentUpon>WindowCreateFile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\WindowInputTargetFileSize.xaml.cs">
+      <DependentUpon>WindowInputTargetFileSize.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\WindowPickEncoder.xaml.cs">
       <DependentUpon>WindowPickEncoder.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WindowCreateFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WindowInputTargetFileSize.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

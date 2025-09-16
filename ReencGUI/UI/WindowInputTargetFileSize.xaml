@@ -1,0 +1,15 @@
+﻿<Window x:Class="ReencGUI.UI.WindowInputTargetFileSize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReencGUI.UI"
+        mc:Ignorable="d"
+        Title="reika: input target file size" Style="{StaticResource ReencWindowStyle}" Height="208" Width="329" ResizeMode="NoResize">
+    <StackPanel Orientation="Vertical" Margin="20" >
+        <Label Content="Enter target file size (MB)" Margin="0,0,0,10" Foreground="White" FontSize="16"/>
+        <TextBox x:Name="Textbox_TargetSize" Margin="0,0,0,10" Style="{StaticResource ReencTextBoxStyle}" FontSize="16" Text="10"/>
+        <CheckBox x:Name="Checkbox_DontAskAgain" Content="Don't ask again for this session" Foreground="White" IsChecked="False"/>
+        <Button x:Name="Button_Confirm" Style="{StaticResource ReencButtonStyle}" Content="Confirm" Padding="15,8" HorizontalAlignment="Right" Click="Button_Confirm_Click"/>
+    </StackPanel>
+</Window>

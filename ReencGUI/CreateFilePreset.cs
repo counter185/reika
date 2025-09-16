@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 
 namespace ReencGUI
@@ -95,13 +96,13 @@ namespace ReencGUI
 
     public abstract class TargetFilesizePreset : DynamicCreateFilePreset
     {
-        private ulong targetSizeBytes;
+        protected ulong targetSizeBytes;
         public TargetFilesizePreset(ulong targetSizeBytes)
         {
             this.targetSizeBytes = targetSizeBytes;
         }
 
-        void RecalcFromTime(ulong time)
+        protected virtual void RecalcFromTime(ulong time)
         {
             ulong bps = Utils.CalculateBitsPerSecondForSize(targetSizeBytes, time + 1000); //+1s to be safe
             if (bps > 128000)
@@ -120,6 +121,37 @@ namespace ReencGUI
         public override void Recalculate(FFMPEG.MediaInfo singleMedia)
         {
             RecalcFromTime(singleMedia.Duration);
+        }
+    }
+
+    public class CustomTargetSizePreset : TargetFilesizePreset
+    {
+        static double? sessionDefault = null;
+
+        public CustomTargetSizePreset() : base(1) {
+            name = "Custom file size target";
+            vcodecs = new List<string>();
+            acodec = "aac";
+            abitrate = "128k";
+        }
+
+        protected override void RecalcFromTime(ulong time)
+        {
+            if (sessionDefault == null)
+            {
+                WindowInputTargetFileSize wd = new WindowInputTargetFileSize();
+                wd.ShowDialog();
+                targetSizeBytes = Utils.Megabytes(wd.result != null ? wd.result.Value : Utils.Megabytes(10));
+                if (wd.result != null && wd.Checkbox_DontAskAgain.IsChecked == true)
+                {
+                    sessionDefault = wd.result.Value;
+                }
+            } else
+            {
+                targetSizeBytes = Utils.Megabytes(sessionDefault.Value);
+            }
+            targetSizeBytes = (ulong)(targetSizeBytes * 0.97);
+            base.RecalcFromTime(time);
         }
     }
 
@@ -171,6 +203,7 @@ namespace ReencGUI
 
             presets.Add(new DiscordPreset("Discord 10MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(9.5)));
             presets.Add(new DiscordPreset("Discord 50MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(48)));
+            presets.Add(new CustomTargetSizePreset());
             presets.Add(new CreateFilePreset
             {
                 name = "H264: Moderate",
