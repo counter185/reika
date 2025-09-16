@@ -13,6 +13,6 @@
             <Button x:Name="Button_OpenAppdataFolder" Content="Open application data directory" Style="{StaticResource ReencButtonStyle}" Height="30" Margin="0,5" Click="Button_OpenAppdataFolder_Click"/>
             <Button x:Name="Button_RegisterContextMenu" Content="Add &quot;Open with reika&quot; to context menu" Style="{StaticResource ReencButtonStyle}" Height="30" Margin="0,5" Click="Button_RegisterContextMenu_Click"/>
         </StackPanel>
-        <DataGrid x:Name="DGrid_Settings" HorizontalContentAlignment="Stretch" Background="Transparent" CellStyle="{StaticResource ReencDgridCellStyle}"/>
+        <DataGrid x:Name="DGrid_Settings" Background="Transparent" HorizontalContentAlignment="Stretch" HeadersVisibility="None" RowStyle="{StaticResource ReencDgridRowStyle}" CellStyle="{StaticResource ReencDgridCellStyle}"/>
     </DockPanel>
 </Window>

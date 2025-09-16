@@ -20,8 +20,8 @@ namespace ReencGUI
 
         public class SettingsValue
         {
-            public string Key { get; set; }
-            public string Name { get; set; }
+            public string Key { get; private set; }
+            public string Name { get; private set; }
             private string _Value;
             public string Value { 
                 get => _Value;

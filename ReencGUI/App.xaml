@@ -182,11 +182,17 @@
 
 
         <!--Datagrid cell style-->
-        <Style x:Key="ReencDgridCellStyle" TargetType="{x:Type DataGridCell}">
+        <Style x:Key="ReencDgridCellStyle" TargetType="DataGridCell">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#40FFFFFF"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
-        
+        <Style x:Key="ReencDgridRowStyle" TargetType="{x:Type DataGridRow}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
         <!--Progress bar style-->
         <SolidColorBrush x:Key="ProgressBar.Background" Color="Black"/>
         <Style x:Key="ReencProgressBarStyle" TargetType="{x:Type ProgressBar}">
