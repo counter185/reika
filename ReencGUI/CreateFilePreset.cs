@@ -159,15 +159,15 @@ namespace ReencGUI
                 Console.WriteLine($"Failed to load presets: {e.Message}");
             }
 
-            presets.Add(new DiscordPreset("Discord 10MB H264", new List<string> { "libx264" }, Utils.Megabytes(9.7)));
-            presets.Add(new DiscordPreset("Discord 10MB H264 [HW]", new List<string> { "h264_nvenc", "h264_amf", "h264_qsv", "libx264" }, Utils.Megabytes(8.8)));
-            presets.Add(new DiscordPreset("Discord 50MB H264", new List<string> { "libx264" }, Utils.Megabytes(48)));
-            presets.Add(new DiscordPreset("Discord 50MB H264 [HW]", new List<string> { "h264_nvenc", "h264_amf", "h264_qsv", "libx264" }, Utils.Megabytes(45)));
+            presets.Add(new DiscordPreset("Discord 10MB Fast (H264)", new List<string> { "libx264" }, Utils.Megabytes(9.7)));
+            presets.Add(new DiscordPreset("Discord 10MB Fast (H264) [HW]", new List<string> { "h264_nvenc", "h264_amf", "h264_qsv", "libx264" }, Utils.Megabytes(8.8)));
+            presets.Add(new DiscordPreset("Discord 50MB Fast (H264)", new List<string> { "libx264" }, Utils.Megabytes(48)));
+            presets.Add(new DiscordPreset("Discord 50MB Fast (H264) [HW]", new List<string> { "h264_nvenc", "h264_amf", "h264_qsv", "libx264" }, Utils.Megabytes(45)));
             
-            presets.Add(new DiscordPreset("Discord 10MB H265", new List<string> { "libx265" }, Utils.Megabytes(9.7)));
-            presets.Add(new DiscordPreset("Discord 10MB H265 [HW]", new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv", "libx265" }, Utils.Megabytes(8.8)));
-            presets.Add(new DiscordPreset("Discord 50MB H265", new List<string> { "libx265" }, Utils.Megabytes(48)));
-            presets.Add(new DiscordPreset("Discord 50MB H265 [HW]", new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv", "libx265" }, Utils.Megabytes(45)));
+            presets.Add(new DiscordPreset("Discord 10MB Quality (H265)", new List<string> { "libx265" }, Utils.Megabytes(9.7)));
+            presets.Add(new DiscordPreset("Discord 10MB Quality (H265) [HW]", new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv", "libx265" }, Utils.Megabytes(8.8)));
+            presets.Add(new DiscordPreset("Discord 50MB Quality (H265)", new List<string> { "libx265" }, Utils.Megabytes(48)));
+            presets.Add(new DiscordPreset("Discord 50MB Quality (H265) [HW]", new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv", "libx265" }, Utils.Megabytes(45)));
 
             presets.Add(new DiscordPreset("Discord 10MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(9.5)));
             presets.Add(new DiscordPreset("Discord 50MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(48)));
