@@ -130,7 +130,7 @@ namespace ReencGUI
 
         public CustomTargetSizePreset() : base(1) {
             name = "Custom file size target";
-            vcodecs = new List<string>();
+            vcodecs = new List<string>() { Settings.settings.FromKey("reika.presets.sizetarget.videoCodec").GetString() };
             acodec = "aac";
             abitrate = "128k";
         }

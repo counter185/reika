@@ -15,13 +15,17 @@ namespace ReencGUI
     {
         public List<SettingsValue> settingsValues = new List<SettingsValue>
         {
-            new SettingsValue ( "reika.presets.discord.useOpusInsteadOfAAC", "Discord presets: use opus audio instead of AAC", false )
+            new SettingsValue ( "reika.presets.discord.useOpusInsteadOfAAC", "Discord presets: use opus audio instead of AAC", false ),
+            new SettingsValue ( "reika.presets.sizetarget.videoCodec", "Custom file size target: video codec to use", "")
         };
 
         public class SettingsValue
         {
             public string Key { get; private set; }
-            public string Name { get; private set; }
+
+            private string _Name;
+            public string Name { get => _Name; private set => _Name = value + "   "; }    //datagrid cannot do padding so we do a little trolling
+
             private string _Value;
             public string Value { 
                 get => _Value;
@@ -34,6 +38,7 @@ namespace ReencGUI
             }
 
             public Func<string, bool> ValidateValueFunc = null;
+            
 
             public SettingsValue(string k, string n, string v)
             {
