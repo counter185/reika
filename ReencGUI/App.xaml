@@ -181,6 +181,12 @@
         <SolidColorBrush x:Key="ProgressBar.CPU.Border" Color="White"/>
 
 
+        <!--Datagrid cell style-->
+        <Style x:Key="ReencDgridCellStyle" TargetType="{x:Type DataGridCell}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        
         <!--Progress bar style-->
         <SolidColorBrush x:Key="ProgressBar.Background" Color="Black"/>
         <Style x:Key="ReencProgressBarStyle" TargetType="{x:Type ProgressBar}">

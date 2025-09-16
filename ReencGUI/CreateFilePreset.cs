@@ -123,62 +123,16 @@ namespace ReencGUI
         }
     }
 
-    public class Discord10MBPreset : TargetFilesizePreset
+    public class DiscordPreset : TargetFilesizePreset
     {
-        public Discord10MBPreset() : base(Utils.Megabytes(9.7))
+        public DiscordPreset(string name, List<string> encoders, ulong size)  : base(size)
         {
-            name = "Discord 10MB H264";
-            vcodecs = new List<string> { /*"h264_nvenc", "h264_amf",*/ "libx264" }; //harware h264 overshoots 10mb way too often
-            vbitrate = "10000k";
-            acodec = "aac";
+            this.name = name;
+            vcodecs = encoders;
+            acodec = Settings.settings.FromKey("reika.presets.discord.useOpusInsteadOfAAC").GetBool() ? "libopus" : "aac";
             abitrate = "128k";
         }
     }
-    public class Discord10MBVP9Preset : Discord10MBPreset
-    {
-        public Discord10MBVP9Preset()
-        {
-            name = "Discord 10MB VP9";
-            vcodecs = new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" };
-        }
-    }
-    public class Discord10MBH265Preset : Discord10MBPreset
-    {
-        public Discord10MBH265Preset()
-        {
-            name = "Discord 10MB H265";
-            vcodecs = new List<string> { "hevc_nvenc", "hevc_qsv", "hevc_amf", "libx265" };
-        }
-    }
-
-    public class Discord50MBPreset : TargetFilesizePreset
-    {
-        public Discord50MBPreset() : base(Utils.Megabytes(48))
-        {
-            name = "Discord 50MB H264";
-            vcodecs = new List<string> { /*"h264_nvenc", "h264_amf",*/ "libx264" }; //hardware may be way more viable here?
-            vbitrate = "10000k";
-            acodec = "aac";
-            abitrate = "128k";
-        }
-    }
-    public class Discord50MBVP9Preset : Discord50MBPreset
-    {
-        public Discord50MBVP9Preset()
-        {
-            name = "Discord 50MB VP9";
-            vcodecs = new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" };
-        }
-    }
-    public class Discord50MBH265Preset : Discord50MBPreset
-    {
-        public Discord50MBH265Preset()
-        {
-            name = "Discord 50MB H265";
-            vcodecs = new List<string> { "hevc_nvenc", "hevc_qsv", "hevc_amf", "libx265" };
-        }
-    }
-
     public static class PresetManager
     {
         public static List<CreateFilePreset> LoadPresets()
@@ -205,12 +159,18 @@ namespace ReencGUI
                 Console.WriteLine($"Failed to load presets: {e.Message}");
             }
 
-            presets.Add(new Discord10MBPreset());
-            presets.Add(new Discord10MBH265Preset());
-            presets.Add(new Discord10MBVP9Preset());
-            presets.Add(new Discord50MBPreset());
-            presets.Add(new Discord50MBH265Preset());
-            presets.Add(new Discord50MBVP9Preset());
+            presets.Add(new DiscordPreset("Discord 10MB H264", new List<string> { "libx264" }, Utils.Megabytes(9.7)));
+            presets.Add(new DiscordPreset("Discord 10MB H264 [HW]", new List<string> { "h264_nvenc", "h264_amf", "h264_qsv", "libx264" }, Utils.Megabytes(8.8)));
+            presets.Add(new DiscordPreset("Discord 50MB H264", new List<string> { "libx264" }, Utils.Megabytes(48)));
+            presets.Add(new DiscordPreset("Discord 50MB H264 [HW]", new List<string> { "h264_nvenc", "h264_amf", "h264_qsv", "libx264" }, Utils.Megabytes(45)));
+            
+            presets.Add(new DiscordPreset("Discord 10MB H265", new List<string> { "libx265" }, Utils.Megabytes(9.7)));
+            presets.Add(new DiscordPreset("Discord 10MB H265 [HW]", new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv", "libx265" }, Utils.Megabytes(8.8)));
+            presets.Add(new DiscordPreset("Discord 50MB H265", new List<string> { "libx265" }, Utils.Megabytes(48)));
+            presets.Add(new DiscordPreset("Discord 50MB H265 [HW]", new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv", "libx265" }, Utils.Megabytes(45)));
+
+            presets.Add(new DiscordPreset("Discord 10MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(9.5)));
+            presets.Add(new DiscordPreset("Discord 50MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(48)));
             presets.Add(new CreateFilePreset
             {
                 name = "H264: Moderate",

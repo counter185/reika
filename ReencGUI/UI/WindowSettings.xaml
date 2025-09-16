@@ -6,12 +6,13 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="reika: settings" Height="210" Width="401">
-    <DockPanel Margin="10" LastChildFill="False">
+        Title="reika: settings" Height="400" Width="425">
+    <DockPanel Margin="10" LastChildFill="True">
         <Label Content="Settings" DockPanel.Dock="Top" Foreground="White" FontSize="22"/>
         <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
             <Button x:Name="Button_OpenAppdataFolder" Content="Open application data directory" Style="{StaticResource ReencButtonStyle}" Height="30" Margin="0,5" Click="Button_OpenAppdataFolder_Click"/>
             <Button x:Name="Button_RegisterContextMenu" Content="Add &quot;Open with reika&quot; to context menu" Style="{StaticResource ReencButtonStyle}" Height="30" Margin="0,5" Click="Button_RegisterContextMenu_Click"/>
         </StackPanel>
+        <DataGrid x:Name="DGrid_Settings" HorizontalContentAlignment="Stretch" Background="Transparent" CellStyle="{StaticResource ReencDgridCellStyle}"/>
     </DockPanel>
 </Window>

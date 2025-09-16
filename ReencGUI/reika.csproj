@@ -63,6 +63,7 @@
     <Compile Include="AppData.cs" />
     <Compile Include="CreateFilePreset.cs" />
     <Compile Include="ReleaseInfo.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="StreamTarget.cs" />
     <Compile Include="UI\UIEncoderEntry.xaml.cs">
       <DependentUpon>UIEncoderEntry.xaml</DependentUpon>
