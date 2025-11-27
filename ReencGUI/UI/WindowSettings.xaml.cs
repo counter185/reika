@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ReencGUI.UI
 {
@@ -87,6 +87,28 @@ namespace ReencGUI.UI
             } else
             {
                 MessageBox.Show("Failed to register context menu command.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Button_AddPresetToList_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "reika Preset|*.reikapreset",
+                Title = "reika: load preset",
+                Multiselect = true,
+            };
+            openFileDialog.ShowDialog();
+            var dir = AppData.GetAppDataSubdir("presets");
+            foreach (string file in openFileDialog.FileNames)
+            {
+                try
+                {
+                    File.Copy(file, Path.Combine(dir, Path.GetFileName(file)), true);
+                } catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to copy preset file {file}:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
     }
