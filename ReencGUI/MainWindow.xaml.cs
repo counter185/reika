@@ -315,10 +315,14 @@ namespace ReencGUI
             ProcessNextEncode();
         }
 
-        public void EncodeFailed(string details1, string details2, 
+        public void EncodeFailed(string details1, string details2, bool manuallyCancelled,
             Action<UIFFMPEGFailedReencode> onRetry, Action<UIFFMPEGFailedReencode> onViewLog)
         {
             UIFFMPEGFailedReencode failedReencode = new UIFFMPEGFailedReencode();
+            if (manuallyCancelled)
+            {
+                failedReencode.Label_Primary.Content = "Encode cancelled";
+            }
             failedReencode.Label_Secondary.Content = details1;
             failedReencode.Label_Secondary2.Content = details2;
             failedReencode.Button_Retry.Click += (s, e) =>
@@ -392,7 +396,7 @@ namespace ReencGUI
                 {
                     if (exit != 0)
                     {
-                        EncodeFailed($"Exit code {exit:X}", "",
+                        EncodeFailed($"Exit code {exit:X}", "", cancelling,
                             (el) =>
                             {
                                 EnqueueEncodeOperation(next.ffmpegArgs, next.outputDuration, next.visualEncoderID, next.outputFileName);
