@@ -55,8 +55,7 @@ namespace ReencGUI
             {
                 dynamicPreset.Recalculate(media);
             }
-            //todo: let presets choose other extensions
-            string outputPath = path + ".reenc.mp4";
+            string outputPath = path + ".reenc" + (pre.requiredExtension == null ? ".mp4" : pre.requiredExtension);
             List<string> vfArgs = new List<string>();
 
             if (pre.vresolution != null && Regex.IsMatch(pre.vresolution, @"^(\d+)(?:x|:)(\d+)$"))

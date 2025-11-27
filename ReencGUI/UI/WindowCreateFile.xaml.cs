@@ -62,6 +62,7 @@ namespace ReencGUI.UI
                 Input_TrimFrom.InputField,
                 Input_TrimTo.InputField,
                 Input_OtherArgs.InputField,
+                Tbox_Extension,
                 Combo_Preset,
                 Combo_VbitrateUnits,
                 Combo_AbitrateUnits
@@ -202,6 +203,7 @@ namespace ReencGUI.UI
             {
                 dynamicPreset.Recalculate(this);
             }
+            Tbox_Extension.Text = preset.requiredExtension ?? Tbox_Extension.Text;
             Input_VcodecName.InputField.Text = (from x in preset.vcodecs
                                                 where MainWindow.instance.encoders.Any(y=>y.ID == x)
                                                 select x).FirstOrDefault() ?? Input_VcodecName.InputField.Text;
@@ -350,6 +352,8 @@ namespace ReencGUI.UI
 
         CreateFilePreset PresetFromCurrentData()
         {
+            string requiredExtension = Tbox_Extension.Text;
+
             string vcodec = Input_VcodecName.InputField.Text;
             string vbitrate = Input_Vbitrate.InputField.Text;
             string vresolution = Input_Vres.InputField.Text;
@@ -368,7 +372,8 @@ namespace ReencGUI.UI
                 vresolution = vresolution,
                 acodec = acodec,
                 abitrate = abitrate,
-                otherArgs = otherArgs
+                otherArgs = otherArgs,
+                requiredExtension = requiredExtension
             };
             return preset;
         }
@@ -441,7 +446,7 @@ namespace ReencGUI.UI
 
         private List<string> MakeFFMPEGArgs()
         {
-            string outputFileName = Input_OutFileName.InputField.Text;
+            string outputFileName = Input_OutFileName.InputField.Text + Tbox_Extension.Text;
 
             List<string> vfArgs = new List<string>();
 
@@ -658,6 +663,7 @@ namespace ReencGUI.UI
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
+                FileName = Input_OutFileName.InputField.Text + Tbox_Extension.Text,
                 Filter = "Video Files|*.mp4;*.mkv;*.avi;*.mov;*.flv;*.webm;*.wmv|All Files|*.*",
                 Title = "reika: save output file",
                 OverwritePrompt = true,
@@ -665,7 +671,9 @@ namespace ReencGUI.UI
             saveFileDialog.ShowDialog();
             if (!string.IsNullOrEmpty(saveFileDialog.FileName))
             {
-                Input_OutFileName.InputField.Text = saveFileDialog.FileName;
+                string extension = Path.GetExtension(saveFileDialog.FileName);
+                Input_OutFileName.InputField.Text = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.Length - extension.Length);
+                Tbox_Extension.Text = extension;
             }
         }
 

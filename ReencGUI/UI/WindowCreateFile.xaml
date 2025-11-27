@@ -19,7 +19,12 @@
             <ListBox DockPanel.Dock="Bottom" x:Name="Panel_Streams" Background="Transparent" BorderBrush="#404040" AllowDrop="True" Drop="Panel_Streams_Drop" Margin="0,5"/>
         </DockPanel>
 
-        <local:UIInputFieldWithName x:Name="Input_OutFileName" Margin="10,56,36,0" InputFieldName="Output file" Height="18" VerticalAlignment="Top" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <DockPanel LastChildFill="True" Margin="10,56,10,0" Grid.Column="1" Grid.ColumnSpan="2" Height="18" VerticalAlignment="Top">
+            <Button x:Name="Button_OutFileSelect" DockPanel.Dock="Right" Style="{DynamicResource ReencButtonStyle}" Content="..." Width="26" Height="18" Click="Button_OutFileSelect_Click"/>
+            <TextBox x:Name="Tbox_Extension" Width="60" Style="{DynamicResource ReencTextBoxStyle}" DockPanel.Dock="Right" ToolTip="Output file extension"/>
+            <local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_OutFileName" InputFieldName="Output file"/>
+        </DockPanel>
+        
 
         <DockPanel Margin="10,80,10,0" Grid.Column="1" MinHeight="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White" VerticalContentAlignment="Center"/>
@@ -45,7 +50,7 @@
             <Label DockPanel.Dock="Right" x:Name="Label_EstFileSize" Content="" Foreground="#FFB0B0B0" FontStyle="Italic" FontSize="11" VerticalContentAlignment="Bottom" Padding="5,0"/>
         </DockPanel>
 
-        <Button x:Name="Button_OutFileSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,56,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_OutFileSelect_Click"/>
+        
         <local:UIInputFieldWithName x:Name="Input_AcodecName" Margin="10,125,36,0" InputFieldName="Audio codec" Height="18" VerticalAlignment="Top" Grid.Column="2"/>
         <Button x:Name="Button_AcodecSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_AcodecSelect_Click"/>
         <local:UIInputFieldWithName x:Name="Input_Abitrate" Margin="10,148,62,0" InputFieldName="Audio bitrate" Height="21" VerticalAlignment="Top" Grid.Column="2"/>

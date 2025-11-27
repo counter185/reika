@@ -173,7 +173,8 @@ namespace ReencGUI
                                                                streamInfo = x,
                                                                indexInStream = media.streams.IndexOf(x)
                                                            });
-                wd.Input_OutFileName.InputField.Text = fileName + ".reenc.mp4";
+                wd.Input_OutFileName.InputField.Text = fileName + ".reenc";
+                wd.Tbox_Extension.Text = ".mp4";
                 wd.Show();
             }
             else

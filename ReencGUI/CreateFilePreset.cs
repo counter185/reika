@@ -15,6 +15,7 @@ namespace ReencGUI
     {
         public string name;
         public List<string> vcodecs;
+        public string requiredExtension = null;
         public string vbitrate;
         public string vresolution = null;
         public string acodec;
@@ -35,6 +36,11 @@ namespace ReencGUI
                 vcodecs.AppendChild(codecElement);
             }
             root.AppendChild(vcodecs);
+
+            if (!string.IsNullOrEmpty(requiredExtension))
+            {
+                root.AppendChild(doc.CreateElement("RequiredExtension")).InnerText = requiredExtension;
+            }
 
             root.AppendChild(doc.CreateElement("VideoBitrate")).InnerText = vbitrate;
             if (!string.IsNullOrEmpty(vresolution))
@@ -65,6 +71,10 @@ namespace ReencGUI
                 foreach (XmlElement codecElement in root["VideoCodecs"].GetElementsByTagName("Codec"))
                 {
                     preset.vcodecs.Add(codecElement.InnerText);
+                }
+                if (root["RequiredExtension"] != null)
+                {
+                    preset.requiredExtension = root["RequiredExtension"].InnerText;
                 }
                 preset.vbitrate = root["VideoBitrate"].InnerText;
                 if (root["VideoResolution"] != null)
@@ -162,6 +172,7 @@ namespace ReencGUI
         {
             this.name = name;
             vcodecs = encoders;
+            requiredExtension = ".mp4";
             acodec = Settings.settings.FromKey("reika.presets.discord.useOpusInsteadOfAAC").GetBool() ? "libopus" : "aac";
             abitrate = "128k";
         }
@@ -232,6 +243,7 @@ namespace ReencGUI
             {
                 name = "H264: Moderate",
                 vbitrate = "12000k",
+                requiredExtension = ".mp4",
                 vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
                 acodec = "copy",
                 abitrate = ""
@@ -240,6 +252,7 @@ namespace ReencGUI
             {
                 name = "H265: Quality",
                 vbitrate = "12000k",
+                requiredExtension = ".mp4",
                 vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
                 acodec = "copy",
                 abitrate = ""
@@ -248,6 +261,7 @@ namespace ReencGUI
             {
                 name = "H265: Moderate",
                 vbitrate = "8000k",
+                requiredExtension = ".mp4",
                 vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
                 acodec = "copy",
                 abitrate = ""
@@ -256,6 +270,7 @@ namespace ReencGUI
             {
                 name = "H265: File size",
                 vbitrate = "4000k",
+                requiredExtension = ".mp4",
                 vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
                 acodec = "copy",
                 abitrate = ""
@@ -264,6 +279,7 @@ namespace ReencGUI
             {
                 name = "H266: 2mpbs",
                 vbitrate = "2000k",
+                requiredExtension = ".mp4",
                 vcodecs = new List<string> { "libvvenc" },
                 acodec = "copy",
                 abitrate = ""
