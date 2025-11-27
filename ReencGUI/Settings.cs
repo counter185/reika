@@ -16,6 +16,7 @@ namespace ReencGUI
         public List<SettingsValue> settingsValues = new List<SettingsValue>
         {
             new SettingsValue ( "reika.presets.discord.useOpusInsteadOfAAC", "Discord presets: use opus audio instead of AAC", false ),
+            new SettingsValue ( "reika.presets.discord.allowHW", "Discord presets: allow hardware encoders", false ),
             new SettingsValue ( "reika.presets.sizetarget.videoCodec", "Custom file size target: video codec to use", "")
         };
 
