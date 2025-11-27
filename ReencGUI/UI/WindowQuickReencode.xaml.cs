@@ -38,6 +38,7 @@ namespace ReencGUI
 
         private void LoadPresets()
         {
+            Combo_Presets.Items.Clear();
             presets = PresetManager.LoadPresets();
 
             foreach (var preset in presets)
@@ -129,6 +130,12 @@ namespace ReencGUI
                     }
                 }
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            PresetManager.PromptInstallPreset();
+            LoadPresets();
         }
     }
 }

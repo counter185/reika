@@ -92,24 +92,7 @@ namespace ReencGUI.UI
 
         private void Button_AddPresetToList_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = "reika Preset|*.reikapreset",
-                Title = "reika: load preset",
-                Multiselect = true,
-            };
-            openFileDialog.ShowDialog();
-            var dir = AppData.GetAppDataSubdir("presets");
-            foreach (string file in openFileDialog.FileNames)
-            {
-                try
-                {
-                    File.Copy(file, Path.Combine(dir, Path.GetFileName(file)), true);
-                } catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to copy preset file {file}:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            PresetManager.PromptInstallPreset();
         }
     }
 }

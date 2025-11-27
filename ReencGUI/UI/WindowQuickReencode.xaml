@@ -14,7 +14,7 @@
                 <Label Content="Drop files here to reencode them to the same directory with the selected preset..." Foreground="#FFB0B0B0"/>
                 <DockPanel LastChildFill="True" Margin="0,10">
                     <Label DockPanel.Dock="Left" Content="Preset" Margin="0,0,10,0" Foreground="White"/>
-                    <Button DockPanel.Dock="Right" Style="{DynamicResource ReencButtonStyle}" Content="Load" Margin="10,0,0,0" Padding="10,5"/>
+                    <Button DockPanel.Dock="Right" Style="{DynamicResource ReencButtonStyle}" Content="Load" Margin="10,0,0,0" Padding="10,5" Click="Button_Click"/>
                     <ComboBox DockPanel.Dock="Right" x:Name="Combo_Presets"/>
                 </DockPanel>
                 <CheckBox x:Name="Check_DeleteSourceMedia" HorizontalAlignment="Center" Foreground="White" IsChecked="False" Content="Delete source media on successful encode..."/>

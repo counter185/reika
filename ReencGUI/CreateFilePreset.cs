@@ -1,4 +1,5 @@
-﻿using ReencGUI.UI;
+﻿using Microsoft.Win32;
+using ReencGUI.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -167,6 +168,29 @@ namespace ReencGUI
     }
     public static class PresetManager
     {
+        public static void PromptInstallPreset()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "reika Preset|*.reikapreset",
+                Title = "reika: install preset",
+                Multiselect = true,
+            };
+            openFileDialog.ShowDialog();
+            var dir = AppData.GetAppDataSubdir("presets");
+            foreach (string file in openFileDialog.FileNames)
+            {
+                try
+                {
+                    File.Copy(file, Path.Combine(dir, Path.GetFileName(file)), true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to copy preset file {file}:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         public static List<CreateFilePreset> LoadPresets()
         {
             var presets = new List<CreateFilePreset>();
