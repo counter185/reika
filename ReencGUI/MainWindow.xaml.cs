@@ -69,19 +69,9 @@ namespace ReencGUI
                     "\n*FFMPEG will be downloaded from github.com/GyanD/codexffmpeg/releases", 
                     "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    downloadingFFMPEG = true;
-                    EnqueueOtherOperation((entry) => {
-                        if (FFMPEG.DownloadLatest(entry))
-                        {
-                            ReloadEncoders();
-                            downloadingFFMPEG = false;
-                        } else
-                        {
-                            MessageBox.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                            Environment.Exit(-1);
-                        }
-                    });
-                } else
+                    StartFFMPEGDownload(true);
+                }
+                else
                 {
                     MessageBox.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(-1);
@@ -94,6 +84,38 @@ namespace ReencGUI
             AppData.GetAppDataPath();
             AppData.GetAppDataSubdir("presets");
             Label_HwInfo.Content = Utils.GetSystemHardwareInfo();
+        }
+
+        public void StartFFMPEGDownload(bool required)
+        {
+            if (!downloadingFFMPEG)
+            {
+                downloadingFFMPEG = true;
+                EnqueueOtherOperation((entry) =>
+                {
+                    if (FFMPEG.DownloadLatest(entry))
+                    {
+                        ReloadEncoders();
+                        downloadingFFMPEG = false;
+                    }
+                    else
+                    {
+                        if (required)
+                        {
+                            MessageBox.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Environment.Exit(-1);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Failed to download FFMPEG.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                            downloadingFFMPEG = false;
+                        }
+                    }
+                });
+            } else
+            {
+                MessageBox.Show("Already downloading FFMPEG.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)

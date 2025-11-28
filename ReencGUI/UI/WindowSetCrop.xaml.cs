@@ -34,6 +34,7 @@ namespace ReencGUI.UI
             InitializeComponent();
 
             initPassed = true;
+            //todo:can't close before showdialog
             GrabImage();
             Redraw();
             UpdateCropInputField();

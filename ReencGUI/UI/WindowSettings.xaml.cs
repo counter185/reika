@@ -94,5 +94,10 @@ namespace ReencGUI.UI
         {
             PresetManager.PromptInstallPreset();
         }
+
+        private void Button_ForceDLFFMPEG_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.instance.StartFFMPEGDownload(false);
+        }
     }
 }

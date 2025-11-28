@@ -156,7 +156,7 @@ namespace ReencGUI
                                 progressCallback.Label_Secondary2.Content = $"{done} / {extractTargets.Count()} files";
                                 progressCallback.ProgressBar_Operation.Value = (double)done / extractTargets.Count() * 100;
                             });
-                            entry.ExtractToFile(Path.Combine("ffmpeg", entry.Name));
+                            entry.ExtractToFile(Path.Combine("ffmpeg", entry.Name), true);
                             done++;
                         }
                         zip.Dispose();
