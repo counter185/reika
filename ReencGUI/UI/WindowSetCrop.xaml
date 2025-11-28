@@ -18,15 +18,15 @@
                 <DockPanel DockPanel.Dock="Left" LastChildFill="True">
                     <Rectangle Height="20" DockPanel.Dock="Top"/>
                     <Rectangle Height="20" DockPanel.Dock="Bottom"/>
-                    <Slider x:Name="Slider_Left" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="Slider_Left_ValueChanged" Maximum="1" Value="1"/>
+                    <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Left" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="Slider_Left_ValueChanged" Maximum="1" Value="1"/>
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Right" LastChildFill="True">
                     <Rectangle Height="20" DockPanel.Dock="Top"/>
                     <Rectangle Height="20" DockPanel.Dock="Bottom"/>
-                    <Slider x:Name="Slider_Right" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="Slider_Right_ValueChanged" Maximum="1" Value="0"/>
+                    <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Right" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="Slider_Right_ValueChanged" Maximum="1" Value="0"/>
                 </DockPanel>
-                <Slider x:Name="Slider_Top" Orientation="Horizontal" DockPanel.Dock="Top" Height="20" ValueChanged="Slider_Top_ValueChanged" Maximum="1" Value="0"/>
-                <Slider x:Name="Slider_Bottom" Orientation="Horizontal" DockPanel.Dock="Bottom" Height="20" ValueChanged="Slider_Bottom_ValueChanged" Maximum="1" Value="1"/>
+                <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Top" Orientation="Horizontal" DockPanel.Dock="Top" Height="20" ValueChanged="Slider_Top_ValueChanged" Maximum="1" Value="0"/>
+                <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Bottom" Orientation="Horizontal" DockPanel.Dock="Bottom" Height="20" ValueChanged="Slider_Bottom_ValueChanged" Maximum="1" Value="1"/>
                 <Grid>
                     <Image x:Name="Image_Preview"/>
                     <Canvas x:Name="Canvas_Preview" DockPanel.Dock="Bottom"/>
