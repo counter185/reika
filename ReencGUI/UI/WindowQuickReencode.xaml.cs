@@ -58,6 +58,10 @@ namespace ReencGUI
             string outputPath = path + ".reenc" + (pre.requiredExtension == null ? ".mp4" : pre.requiredExtension);
             List<string> vfArgs = new List<string>();
 
+            if (pre.cropString != null)
+            {
+                vfArgs.Add($"crop={pre.cropString}");
+            }
             if (pre.vresolution != null && Regex.IsMatch(pre.vresolution, @"^(\d+)(?:x|:)(\d+)$"))
             {
                 try

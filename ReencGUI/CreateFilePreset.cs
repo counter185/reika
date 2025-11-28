@@ -21,6 +21,7 @@ namespace ReencGUI
         public string acodec;
         public string abitrate;
         public string otherArgs = null;
+        public string cropString = null;
 
         public bool Save(string path)
         {
@@ -52,6 +53,10 @@ namespace ReencGUI
             if (!string.IsNullOrEmpty(otherArgs))
             {
                 root.AppendChild(doc.CreateElement("OtherArgs")).InnerText = otherArgs;
+            }
+            if (!string.IsNullOrEmpty(cropString))
+            {
+                root.AppendChild(doc.CreateElement("CropString")).InnerText = cropString;
             }
             doc.AppendChild(root);
             doc.Save(path);
@@ -86,6 +91,10 @@ namespace ReencGUI
                 if (root["OtherArgs"] != null)
                 {
                     preset.otherArgs = root["OtherArgs"].InnerText;
+                }
+                if (root["CropString"] != null)
+                {
+                    preset.cropString = root["CropString"].InnerText;
                 }
                 return preset;
             }

@@ -62,6 +62,7 @@ namespace ReencGUI.UI
                 Input_TrimFrom.InputField,
                 Input_TrimTo.InputField,
                 Input_OtherArgs.InputField,
+                Input_Crop.InputField,
                 Tbox_Extension,
                 Combo_Preset,
                 Combo_VbitrateUnits,
@@ -81,6 +82,8 @@ namespace ReencGUI.UI
 
             Input_Vbitrate.InputField.TextChanged += (s, e) => EstimateFileSize();
             Input_Abitrate.InputField.TextChanged += (s, e) => EstimateFileSize();
+            Input_TrimFrom.InputField.TextChanged += (s, e) => EstimateFileSize();
+            Input_TrimTo.InputField.TextChanged += (s, e) => EstimateFileSize();
 
             foreach (Control c in updateLogOnChange)
             {
@@ -129,10 +132,10 @@ namespace ReencGUI.UI
             string timestamp = Input_TrimFrom.InputField.Text;
             if (!fetchingFromThumbnail && fromThumbnailTimestampNow != timestamp)
             {
-                FFMPEG.MediaInfo targetMedia = streamTargets.Where(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video).FirstOrDefault()?.mediaInfo;
+                FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
+                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -142,7 +145,8 @@ namespace ReencGUI.UI
                             {
                                 Image_FromThumb.Source = Utils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
-                            } catch (Exception ex)
+                            }
+                            catch (Exception ex)
                             {
                                 Console.WriteLine($"Failed to load thumbnail for '{timestamp}': {ex.Message}");
                             }
@@ -153,12 +157,17 @@ namespace ReencGUI.UI
             }
         }
 
+        public FFMPEG.MediaInfo GetPreviewVideoMedia()
+        {
+            return streamTargets.Where(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video).FirstOrDefault()?.mediaInfo;
+        }
+
         void FetchToTimeThumbnail()
         {
             string timestamp = Input_TrimTo.InputField.Text;
             if (!fetchingToThumbnail && toThumbnailTimestampNow != timestamp)
             {
-                FFMPEG.MediaInfo targetMedia = streamTargets.Where(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video).FirstOrDefault()?.mediaInfo;
+                FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
                     FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
@@ -209,6 +218,7 @@ namespace ReencGUI.UI
                                                 select x).FirstOrDefault() ?? Input_VcodecName.InputField.Text;
             Input_Vbitrate.InputField.Text = preset.vbitrate;
             Input_Vres.InputField.Text = preset.vresolution ?? Input_Vres.InputField.Text;
+            Input_Crop.InputField.Text = preset.cropString ?? Input_Crop.InputField.Text;
             Input_AcodecName.InputField.Text = preset.acodec;
             Input_Abitrate.InputField.Text = preset.abitrate;
             Input_OtherArgs.InputField.Text = preset.otherArgs ?? Input_OtherArgs.InputField.Text;
@@ -231,13 +241,35 @@ namespace ReencGUI.UI
                 streamEntries.Add(streamEntry);
             }
 
+            Control[] videoControls = new Control[]
+            {
+                Input_VcodecName.InputField,
+                Input_Vbitrate.InputField,
+                Input_TrimFrom.InputField,
+                Input_TrimTo.InputField,
+                Input_Vres.InputField,
+                Input_Crop.InputField,
+                Button_VcodecSelect,
+                Button_Crop
+            };
+            Control[] audioControls = new Control[]
+            {
+                Input_AcodecName.InputField,
+                Input_Abitrate.InputField,
+                Button_AcodecSelect
+            };
+
             videoAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
-            Input_VcodecName.InputField.IsEnabled = videoAvailable;
-            Input_Vbitrate.InputField.IsEnabled = videoAvailable;
+            foreach (var vc in videoControls)
+            {
+                vc.IsEnabled = videoAvailable;
+            }
 
             audioAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
-            Input_AcodecName.InputField.IsEnabled = audioAvailable;
-            Input_Abitrate.InputField.IsEnabled = audioAvailable;
+            foreach (var ac in audioControls)
+            {
+                ac.IsEnabled = audioAvailable;
+            }
 
             EstimateFileSize();
         }
@@ -357,6 +389,7 @@ namespace ReencGUI.UI
             string vcodec = Input_VcodecName.InputField.Text;
             string vbitrate = Input_Vbitrate.InputField.Text;
             string vresolution = Input_Vres.InputField.Text;
+            string vcrop = Input_Crop.InputField.Text;
             string acodec = Input_AcodecName.InputField.Text;
             string abitrate = Input_Abitrate.InputField.Text;
 
@@ -373,7 +406,8 @@ namespace ReencGUI.UI
                 acodec = acodec,
                 abitrate = abitrate,
                 otherArgs = otherArgs,
-                requiredExtension = requiredExtension
+                requiredExtension = requiredExtension,
+                cropString = vcrop
             };
             return preset;
         }
@@ -385,8 +419,13 @@ namespace ReencGUI.UI
 
             string vbitrate = "";//Input_Vbitrate.InputField.Text;
 
+            string vresolution = Input_Vres.InputField.Text;
+            string cropString = Input_Crop.InputField.Text;
+
             var distinctFiles = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
             Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
+
+            List<string> vfArgs = new List<string>();
 
             List<string> ret = new List<string>();
 
@@ -407,6 +446,21 @@ namespace ReencGUI.UI
             }
 
             bool onlyOneMediaFileAndIsMP4 = distinctFiles.Count == 1 && distinctFiles[0].ToLower().EndsWith(".mp4");
+
+            if (cropString != "")
+            {
+                vfArgs.Add($"crop={cropString}");
+            }
+            if (vresolution != "")
+            {
+                try
+                {
+                    var dimensions = Regex.Match(vresolution, @"^(\d+)(?:x|:)(\d+)$").Groups.OfType<Group>().Skip(1).Select(g => int.Parse(g.Value)).ToList();
+                    vfArgs.Add($"scale={dimensions[0]}:{dimensions[1]}");
+                    vfArgs.Add("setsar=1");
+                }
+                catch (Exception) { }
+            }
 
             if (trimFrom != "")
             {
@@ -435,6 +489,12 @@ namespace ReencGUI.UI
             }
 
             ret.AddRange(new string[] { "-c:v", vcodecs.First().ID });
+
+            if (vfArgs.Any())
+            {
+                ret.Add("-vf");
+                ret.Add($"\"{string.Join(",", vfArgs)}\"");
+            }
 
             ret.AddRange(new string[] { "-f", "avi" });
             ret.Add("-");
@@ -475,6 +535,8 @@ namespace ReencGUI.UI
             string trimFrom = Input_TrimFrom.InputField.Text;
             string trimTo = Input_TrimTo.InputField.Text;
 
+            string cropString = Input_Crop.InputField.Text;
+
             string otherArgs = Input_OtherArgs.InputField.Text;
 
             List<string> ffmpegArgs = new List<string>();
@@ -509,6 +571,10 @@ namespace ReencGUI.UI
             {
                 ffmpegArgs.Add("-b:v");
                 ffmpegArgs.Add(vbitrate);
+            }
+            if (cropString != "")
+            {
+                vfArgs.Add($"crop={cropString}");
             }
             if (vresolution != "")
             {
@@ -726,6 +792,11 @@ namespace ReencGUI.UI
         private void Button_Preview_Click(object sender, RoutedEventArgs e)
         {
             RunPreview();
+        }
+
+        private void Button_Crop_Click(object sender, RoutedEventArgs e)
+        {
+            new WindowSetCrop(this).ShowDialog();
         }
     }
 }

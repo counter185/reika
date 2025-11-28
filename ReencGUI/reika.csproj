@@ -99,6 +99,9 @@
     <Compile Include="UI\WindowQuickReencode.xaml.cs">
       <DependentUpon>WindowQuickReencode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\WindowSetCrop.xaml.cs">
+      <DependentUpon>WindowSetCrop.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowUtil.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -154,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WindowQuickReencode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WindowSetCrop.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

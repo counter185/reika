@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="reika: create file" MinHeight="457" Height="534" MinWidth="871" Width="871">
+        Title="reika: create file" MinHeight="477" Height="570" MinWidth="871" Width="871">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -24,7 +24,7 @@
             <TextBox x:Name="Tbox_Extension" Width="60" Style="{DynamicResource ReencTextBoxStyle}" DockPanel.Dock="Right" ToolTip="Output file extension"/>
             <local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_OutFileName" InputFieldName="Output file"/>
         </DockPanel>
-        
+
 
         <DockPanel Margin="10,80,10,0" Grid.Column="1" MinHeight="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White" VerticalContentAlignment="Center"/>
@@ -50,7 +50,7 @@
             <Label DockPanel.Dock="Right" x:Name="Label_EstFileSize" Content="" Foreground="#FFB0B0B0" FontStyle="Italic" FontSize="11" VerticalContentAlignment="Bottom" Padding="5,0"/>
         </DockPanel>
 
-        
+
         <local:UIInputFieldWithName x:Name="Input_AcodecName" Margin="10,125,36,0" InputFieldName="Audio codec" Height="18" VerticalAlignment="Top" Grid.Column="2"/>
         <Button x:Name="Button_AcodecSelect" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_AcodecSelect_Click"/>
         <local:UIInputFieldWithName x:Name="Input_Abitrate" Margin="10,148,62,0" InputFieldName="Audio bitrate" Height="21" VerticalAlignment="Top" Grid.Column="2"/>
@@ -64,8 +64,10 @@
         <Label  Grid.Column="1" Foreground="#808080" FontSize="9" Margin="10,0,10,48" Grid.ColumnSpan="2" VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" FontStyle="Italic">
             <TextBlock x:Name="Label_FullCommand" TextWrapping="WrapWithOverflow" Text=""/>
         </Label>
-        <Image x:Name="Image_FromThumb" Grid.Column="1" Margin="10,230,10,147"/>
-        <Image x:Name="Image_ToThumb" Grid.Column="2" Margin="10,230,10,147"/>
+        <Image x:Name="Image_FromThumb" Grid.Column="1" Margin="10,251,10,147"/>
+        <Image x:Name="Image_ToThumb" Grid.Column="2" Margin="10,251,10,147"/>
         <local:UIInputFieldWithName x:Name="Input_OtherArgs" Margin="10,0,10,115" InputFieldName="Custom FFMPEG Args..." Grid.Column="1" Grid.ColumnSpan="2" Height="18" VerticalAlignment="Bottom"/>
+        <local:UIInputFieldWithName x:Name="Input_Crop" Margin="10,225,36,0" InputFieldName="Crop" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
+        <Button x:Name="Button_Crop" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,225,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_Crop_Click"/>
     </Grid>
 </Window>
