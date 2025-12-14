@@ -6,11 +6,12 @@
         xmlns:local="clr-namespace:ReencGUI.UI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
-        Title="reika: download from URL" Height="450" Width="800">
+        Title="reika: download from URL" Height="498" Width="546" MinHeight="375" MinWidth="273">
 
     <DockPanel Margin="20" LastChildFill="True">
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
             <Button x:Name="Button_StartDownload" Style="{StaticResource ReencButtonStyle}" DockPanel.Dock="Right" Width="150" Height="30" Content="Start download" Click="Button_StartDownload_Click"/>
+            <TextBlock x:Name="Label_FullCommand" TextWrapping="Wrap" Foreground="#505050" FontStyle="Italic" Text="" FontSize="10" VerticalAlignment="Bottom"/>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="True">
             <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
@@ -20,6 +21,8 @@
                     <Button x:Name="Button_OutputFolderPick" Content="..." DockPanel.Dock="Right" Width="30" Style="{StaticResource ReencButtonStyle}"/>
                     <local:UIInputFieldWithName x:Name="Input_OutputFolder" DockPanel.Dock="Left" InputFieldName="Save to" VerticalContentAlignment="Center" />
                 </DockPanel>
+                <Separator Height="10" Background="Transparent"/>
+                <local:UIInputFieldWithName x:Name="Input_ExtraArgs" InputFieldName="Additional yt-dlp args" VerticalContentAlignment="Center"/>
 
                 <Separator Height="15" Background="Transparent"/>
 

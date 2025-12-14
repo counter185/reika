@@ -28,6 +28,12 @@ namespace ReencGUI.UI
             InitializeComponent();
 
             Input_URL.InputField.TextChanged += (a, b) => URLChanged();
+
+            Input_URL.InputField.TextChanged += (a,b) => UpdateFullArgsLabel();
+            Input_ExtraArgs.InputField.TextChanged += (a,b) => UpdateFullArgsLabel();
+            ListBox_FormatList.SelectionChanged += (a,b) => UpdateFullArgsLabel();
+
+            SetMetadata(null);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -55,6 +61,7 @@ namespace ReencGUI.UI
                 autoRB.GroupName = "FormatSel";
                 autoRB.VerticalContentAlignment = VerticalAlignment.Center;
                 autoRB.IsChecked = true;
+                autoRB.Checked += (a,b) => UpdateFullArgsLabel();
                 ListBox_FormatList.Items.Add(autoRB);
 
                 var formatListReversed = v.formats.ToList();
@@ -67,9 +74,15 @@ namespace ReencGUI.UI
                     rb.Content = entry;
                     rb.GroupName = "FormatSel";
                     rb.VerticalContentAlignment = VerticalAlignment.Center;
+                    rb.Checked += (a, b) => UpdateFullArgsLabel();
                     ListBox_FormatList.Items.Add(rb);
                 }
             }
+        }
+
+        void UpdateFullArgsLabel()
+        {
+            Label_FullCommand.Text = "yt-dlp " + string.Join(" ", MakeYTDLPArgs());
         }
 
         void URLChanged()
@@ -115,6 +128,11 @@ namespace ReencGUI.UI
             }
 
             List<string> args = new List<string>();
+
+            if (Input_ExtraArgs.InputField.Text != "")
+            {
+                args.Add(Input_ExtraArgs.InputField.Text);
+            }
 
             if (targetID != null)
             {
