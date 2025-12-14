@@ -21,7 +21,7 @@
                     <local:UIInputFieldWithName x:Name="Input_OutputFolder" DockPanel.Dock="Left" InputFieldName="Save to" VerticalContentAlignment="Center" />
                 </DockPanel>
 
-                <Separator Height="30" Background="Transparent"/>
+                <Separator Height="15" Background="Transparent"/>
 
                 <StackPanel x:Name="Panel_VideoInfo" Orientation="Vertical" >
                     <Label x:Name="Label_VideoTitle" Content="Video title" Foreground="White" FontWeight="Bold" FontSize="23"/>

@@ -20,6 +20,7 @@ namespace ReencGUI.UI
     public partial class WindowYTDLPDownload : Window
     {
         MainWindow caller;
+        YTDLP.YTDLPVideo currentVideo = null;
 
         public WindowYTDLPDownload(MainWindow caller)
         {
@@ -73,8 +74,9 @@ namespace ReencGUI.UI
 
         void URLChanged()
         {
-            SetMetadata(YTDLP.GetVideoInfo(Input_URL.InputField.Text));
-            //todo:async
+            currentVideo = YTDLP.GetVideoInfo(Input_URL.InputField.Text);
+            SetMetadata(currentVideo);
+            //todo:async this
         }
 
         private void Button_StartDownload_Click(object sender, RoutedEventArgs e)
@@ -82,6 +84,14 @@ namespace ReencGUI.UI
             var args = MakeYTDLPArgs();
             caller.EnqueueOtherOperation((entry) =>
             {
+                Dispatcher.Invoke(() =>
+                {
+                    if (currentVideo != null)
+                    {
+                        entry.Label_Primary.Text = $"{currentVideo.title}";
+                    }
+                });
+                
                 YTDLP.RunDownload(args, entry);
             });
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
