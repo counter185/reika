@@ -57,6 +57,25 @@ namespace ReencGUI.UI
             ProgressBar_Operation.Style = (Style)FindResource(styleKey);
         }
 
+        public void UpdateProgressBasedOnYTDLPLine(string line)
+        {
+            if (line != null && line.StartsWith("[download]"))
+            {
+                Match m = Regex.Match(line, @"([\d\.]+)%");
+                if (m.Success)
+                {
+                    double progress = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                    ProgressBar_Operation.Value = progress;
+                }
+
+                m = Regex.Match(line, @"(ETA [\d\:\.]+)");
+                if (m.Success)
+                {
+                    Label_Secondary2.Content = m.Groups[1].Value;
+                }
+            }
+        }
+
         public void UpdateProgressBasedOnLogKVs(Dictionary<string, string> logOutputKVs, ulong fileDuration)
         {
             List<string> secondaryTextDetails = new List<string>();

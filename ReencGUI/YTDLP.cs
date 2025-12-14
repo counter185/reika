@@ -129,7 +129,10 @@ namespace ReencGUI
             int exitCode = -1;
             FFMPEG.RunCommandWithAsyncOutput(GetCommandPath("yt-dlp"), args, 
                 (s) => {
-                    progress.Dispatcher.Invoke(() => { progress.Label_Secondary.Content = s; });
+                    progress.Dispatcher.Invoke(() => { 
+                        progress.Label_Secondary.Content = s;
+                        progress.UpdateProgressBasedOnYTDLPLine(s);
+                    });
                 },
                 (ec) => { finished = true; exitCode = ec; });
 
