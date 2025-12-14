@@ -42,6 +42,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -80,6 +81,9 @@
     <Compile Include="UI\UIStreamEntry.xaml.cs">
       <DependentUpon>UIStreamEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\UIYTDLPFormatEntry.xaml.cs">
+      <DependentUpon>UIYTDLPFormatEntry.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\WindowCreateFile.xaml.cs">
       <DependentUpon>WindowCreateFile.xaml</DependentUpon>
     </Compile>
@@ -95,6 +99,9 @@
     <Compile Include="UI\WindowStreamSelect.xaml.cs">
       <DependentUpon>WindowStreamSelect.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\WindowYTDLPDownload.xaml.cs">
+      <DependentUpon>WindowYTDLPDownload.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="UI\WindowQuickReencode.xaml.cs">
       <DependentUpon>WindowQuickReencode.xaml</DependentUpon>
@@ -103,6 +110,7 @@
       <DependentUpon>WindowSetCrop.xaml</DependentUpon>
     </Compile>
     <Compile Include="WindowUtil.cs" />
+    <Compile Include="YTDLP.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -136,6 +144,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\UIYTDLPFormatEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\WindowCreateFile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -161,6 +173,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WindowSetCrop.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WindowYTDLPDownload.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

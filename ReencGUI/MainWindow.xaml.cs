@@ -508,5 +508,26 @@ namespace ReencGUI
         {
             new WindowSettings().Show();
         }
+
+        private void Button_Download_Click(object sender, RoutedEventArgs e)
+        {
+            if (!File.Exists(YTDLP.GetCommandPath("yt-dlp")))
+            {
+                EnqueueOtherOperation((entry) =>
+                {
+                    if (YTDLP.DownloadLatest(entry))
+                    {
+                        MessageBox.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
+            } else
+            {
+                new WindowYTDLPDownload(this).Show();
+            }
+        }
     }
 }
