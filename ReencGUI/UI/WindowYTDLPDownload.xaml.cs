@@ -46,10 +46,10 @@ namespace ReencGUI.UI
             {
                 UIYTDLPFormatEntry autoPick = new UIYTDLPFormatEntry();
                 autoPick.Label_FormatDisplayName.Content = "<autoselect best>";
-                autoPick.Label_FormatID.Visibility = Visibility.Collapsed;
+                autoPick.Label_FormatID.Content = v.autoFormat;
                 autoPick.Label_VideoDetails.Visibility = Visibility.Collapsed;
                 autoPick.Label_AudioDetails.Visibility = Visibility.Collapsed;
-                autoPick.Label_Extension.Visibility = Visibility.Collapsed;
+                autoPick.Label_Extension.Content = v.autoExt;
                 RadioButton autoRB = new RadioButton();
                 autoRB.Content = autoPick;
                 autoRB.GroupName = "FormatSel";

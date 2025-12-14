@@ -49,6 +49,8 @@ namespace ReencGUI
             public string id;
             public string uploader;
             public string title;
+            public string autoFormat;
+            public string autoExt;
             public List<YTDLPFormat> formats;
         }
 
@@ -80,6 +82,8 @@ namespace ReencGUI
                     video.id = root.XPathSelectElement("//id")?.Value;
                     video.title = root.XPathSelectElement("//title")?.Value;
                     video.uploader = root.XPathSelectElement("//uploader")?.Value;
+                    video.autoFormat = root.XPathSelectElement("format_id")?.Value;
+                    video.autoExt = root.XPathSelectElement("ext")?.Value;
                     video.formats = new List<YTDLPFormat>();
                     var descNodes = root.XPathSelectElement("//formats").Elements().ToList();
                     foreach (var format in descNodes)

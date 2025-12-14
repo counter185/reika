@@ -46,6 +46,7 @@ namespace ReencGUI
         public List<FFMPEG.CodecInfo> encoders;
 
         volatile bool downloadingFFMPEG = false;
+        volatile bool downloadingYTDLP = false;
 
         List<EncodeOperation> encodeQueue = new List<EncodeOperation>();
         Queue<OtherOperation> otherOpsQueue = new Queue<OtherOperation>();
@@ -511,19 +512,28 @@ namespace ReencGUI
 
         private void Button_Download_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(YTDLP.GetCommandPath("yt-dlp")))
+            if (!File.Exists(YTDLP.GetCommandPath("yt-dlp")) || downloadingYTDLP)
             {
-                EnqueueOtherOperation((entry) =>
+                if (downloadingYTDLP)
                 {
-                    if (YTDLP.DownloadLatest(entry))
+                    MessageBox.Show("yt-dlp is currently being downloaded.\nPlease wait until it finishes.", "yt-dlp download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    downloadingYTDLP = true;
+                    EnqueueOtherOperation((entry) =>
                     {
-                        MessageBox.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                });
+                        if (YTDLP.DownloadLatest(entry))
+                        {
+                            MessageBox.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        downloadingYTDLP = false;
+                    });
+                }
             } else
             {
                 new WindowYTDLPDownload(this).Show();
