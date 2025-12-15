@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,12 +67,14 @@ namespace ReencGUI.UI
                         Label_VideoTitle.Content = "<fetching media info...>";
                         ListBox_FormatList.Items.Clear();
                         Label_Channel.Content = Label_ID.Content = "";
+                        UpdateFullArgsLabel();
                     });
 
                     currentVideo = YTDLP.GetVideoInfo(nextURL);
                     Dispatcher.Invoke(() =>
                     {
                         SetMetadata(currentVideo);
+                        UpdateFullArgsLabel();
                     });
                     metaURLNow = nextURL;
                 }
@@ -134,10 +137,7 @@ namespace ReencGUI.UI
             {
                 Dispatcher.Invoke(() =>
                 {
-                    if (currentVideo != null)
-                    {
-                        entry.Label_Primary.Text = $"{currentVideo.title}";
-                    }
+                    entry.Label_Primary.Text = currentVideo != null ? $"{currentVideo.title}" : "YT-DLP video";
                 });
                 
                 YTDLP.RunDownload(args, entry);
@@ -187,6 +187,21 @@ namespace ReencGUI.UI
             args.Add($"\"{Input_URL.InputField.Text}\"");
 
             return args;
+        }
+
+        private void Button_OutputFolderPick_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                fbd.Description = "Select output folder for downloads";
+                fbd.SelectedPath = Input_OutputFolder.InputField.Text;
+                fbd.ShowNewFolderButton = true;
+                System.Windows.Forms.DialogResult result = fbd.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    Input_OutputFolder.InputField.Text = fbd.SelectedPath;
+                }
+            }
         }
     }
 }

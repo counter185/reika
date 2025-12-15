@@ -18,7 +18,7 @@
                 <local:UIInputFieldWithName x:Name="Input_URL" InputFieldName="URL" VerticalContentAlignment="Center"/>
                 <Separator Height="10" Background="Transparent"/>
                 <DockPanel LastChildFill="True">
-                    <Button x:Name="Button_OutputFolderPick" Content="..." DockPanel.Dock="Right" Width="30" Style="{StaticResource ReencButtonStyle}"/>
+                    <Button x:Name="Button_OutputFolderPick" Content="..." DockPanel.Dock="Right" Width="30" Style="{StaticResource ReencButtonStyle}" Click="Button_OutputFolderPick_Click"/>
                     <local:UIInputFieldWithName x:Name="Input_OutputFolder" DockPanel.Dock="Left" InputFieldName="Save to" VerticalContentAlignment="Center" />
                 </DockPanel>
                 <Separator Height="10" Background="Transparent"/>
