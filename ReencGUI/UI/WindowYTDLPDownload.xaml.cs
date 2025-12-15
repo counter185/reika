@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,12 +35,48 @@ namespace ReencGUI.UI
             ListBox_FormatList.SelectionChanged += (a,b) => UpdateFullArgsLabel();
 
             SetMetadata(null);
+
+            metaFetchThread = new Thread(MetadataFetchThread);
+            metaFetchThread.Start();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
             WindowUtil.SetWindowDarkMode(this);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            metaFetchThread.Abort();
+            base.OnClosed(e);
+        }
+
+        Thread metaFetchThread;
+        string requestedURLNow = "";
+        string metaURLNow = null;
+        void MetadataFetchThread()
+        {
+            while (true)
+            {
+                if (requestedURLNow != metaURLNow)
+                {
+                    string nextURL = requestedURLNow;
+                    Dispatcher.Invoke(() => {
+                        Label_VideoTitle.Content = "<fetching media info...>";
+                        ListBox_FormatList.Items.Clear();
+                        Label_Channel.Content = Label_ID.Content = "";
+                    });
+
+                    currentVideo = YTDLP.GetVideoInfo(nextURL);
+                    Dispatcher.Invoke(() =>
+                    {
+                        SetMetadata(currentVideo);
+                    });
+                    metaURLNow = nextURL;
+                }
+                Thread.Sleep(500);
+            }
         }
 
         void SetMetadata(YTDLP.YTDLPVideo v)
@@ -87,9 +124,7 @@ namespace ReencGUI.UI
 
         void URLChanged()
         {
-            currentVideo = YTDLP.GetVideoInfo(Input_URL.InputField.Text);
-            SetMetadata(currentVideo);
-            //todo:async this
+            requestedURLNow = Input_URL.InputField.Text;
         }
 
         private void Button_StartDownload_Click(object sender, RoutedEventArgs e)
