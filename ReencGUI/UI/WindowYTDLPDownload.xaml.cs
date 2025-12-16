@@ -132,19 +132,25 @@ namespace ReencGUI.UI
 
         private void Button_StartDownload_Click(object sender, RoutedEventArgs e)
         {
-            var args = MakeYTDLPArgs();
-            caller.EnqueueOtherOperation((entry) =>
+            if (Input_URL.InputField.Text != "")
             {
-                Dispatcher.Invoke(() =>
+                var args = MakeYTDLPArgs();
+                caller.EnqueueOtherOperation((entry) =>
                 {
-                    entry.Label_Primary.Text = currentVideo != null ? $"{currentVideo.title}" : "YT-DLP video";
+                    Dispatcher.Invoke(() =>
+                    {
+                        entry.Label_Primary.Text = currentVideo != null ? $"{currentVideo.title}" : "YT-DLP video";
+                    });
+
+                    YTDLP.RunDownload(args, entry);
                 });
-                
-                YTDLP.RunDownload(args, entry);
-            });
-            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                {
+                    Close();
+                }
+            } else
             {
-                Close();
+                MessageBox.Show("URL cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
