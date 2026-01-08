@@ -123,6 +123,22 @@ namespace ReencGUI
             return null;
         }
 
+        public static string GetOutputFileName(List<string> args)
+        {
+            List<string> aargs = args.Concat(new List<string> { "--quiet", "--no-warnings", "--get-filename" }).ToList();
+            List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), aargs);
+            if (output.Count > 0 
+                && !output.Last().ToLower().StartsWith("error:")
+                && !output.Last().ToLower().StartsWith("warning:"))
+            {
+                return output.Last();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static bool RunDownload(List<string> args, UIFFMPEGOperationEntry progress)
         {
             bool finished = false;

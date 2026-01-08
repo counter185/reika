@@ -50,6 +50,11 @@ namespace ReencGUI
         private void ProcessFile(string path)
         {
             CreateFilePreset pre = presets[Combo_Presets.SelectedIndex];
+            QueueReencodeWithPreset(path, pre, Check_DeleteSourceMedia.IsChecked == true);
+        }
+
+        public static void QueueReencodeWithPreset(string path, CreateFilePreset pre, bool deleteSource)
+        {
             FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(path);
             if (pre is DynamicCreateFilePreset dynamicPreset)
             {
@@ -102,14 +107,15 @@ namespace ReencGUI
                 $"\"{outputPath}\""
             };
             Action<UIFFMPEGOperationEntry, int> onFinished = null;
-            if (Check_DeleteSourceMedia.IsChecked == true)
+            if (deleteSource)
             {
                 onFinished = (ui, exit) =>
                 {
                     try
                     {
                         File.Delete(path);
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         Console.WriteLine($"Error deleting source media: {ex.Message}");
                     }

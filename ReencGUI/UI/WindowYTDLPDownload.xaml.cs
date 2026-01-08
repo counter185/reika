@@ -23,11 +23,13 @@ namespace ReencGUI.UI
     {
         MainWindow caller;
         YTDLP.YTDLPVideo currentVideo = null;
+        List<CreateFilePreset> presets;
 
         public WindowYTDLPDownload(MainWindow caller)
         {
             this.caller = caller;
             InitializeComponent();
+            LoadPresets();
 
             Input_URL.InputField.TextChanged += (a, b) => URLChanged();
 
@@ -80,6 +82,18 @@ namespace ReencGUI.UI
                 }
                 Thread.Sleep(500);
             }
+        }
+
+        private void LoadPresets()
+        {
+            Combo_Presets.Items.Clear();
+            presets = PresetManager.LoadPresets();
+
+            foreach (var preset in presets)
+            {
+                Combo_Presets.Items.Add(preset.name);
+            }
+            Combo_Presets.SelectedIndex = 0;
         }
 
         void SetMetadata(YTDLP.YTDLPVideo v)
@@ -135,6 +149,8 @@ namespace ReencGUI.UI
             if (Input_URL.InputField.Text != "")
             {
                 var args = MakeYTDLPArgs();
+                bool reencodeAfterDownload = Checkbox_RunReenc.IsChecked == true;
+                CreateFilePreset reencPreset = (uint)Combo_Presets.SelectedIndex < presets.Count ? presets[Combo_Presets.SelectedIndex] : null;
                 caller.EnqueueOtherOperation((entry) =>
                 {
                     Dispatcher.Invoke(() =>
@@ -142,7 +158,15 @@ namespace ReencGUI.UI
                         entry.Label_Primary.Text = currentVideo != null ? $"{currentVideo.title}" : "YT-DLP video";
                     });
 
-                    YTDLP.RunDownload(args, entry);
+                    string outputFile = reencodeAfterDownload ? YTDLP.GetOutputFileName(args) : null;
+                    bool downloadResult = YTDLP.RunDownload(args, entry);
+                    if (outputFile != null && downloadResult && reencPreset != null)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            WindowQuickReencode.QueueReencodeWithPreset(outputFile, reencPreset, true);
+                        });
+                    }
                 });
                 if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
                 {
@@ -208,6 +232,12 @@ namespace ReencGUI.UI
                     Input_OutputFolder.InputField.Text = fbd.SelectedPath;
                 }
             }
+        }
+
+        private void LoadPreset_Click(object sender, RoutedEventArgs e)
+        {
+            PresetManager.PromptInstallPreset();
+            LoadPresets();
         }
     }
 }

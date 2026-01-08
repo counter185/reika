@@ -24,7 +24,11 @@
                 <Separator Height="10" Background="Transparent"/>
                 <local:UIInputFieldWithName x:Name="Input_ExtraArgs" InputFieldName="Additional yt-dlp args" VerticalContentAlignment="Center"/>
 
-                <Separator Height="15" Background="Transparent"/>
+                <DockPanel LastChildFill="True" Margin="0,10">
+                    <CheckBox x:Name="Checkbox_RunReenc" DockPanel.Dock="Left" VerticalContentAlignment="Center" Content="Reencode after download" Margin="0,0,10,0" Foreground="White"/>
+                    <Button DockPanel.Dock="Right" Style="{DynamicResource ReencButtonStyle}" Content="Load" Margin="10,0,0,0" Padding="10,5" Click="LoadPreset_Click"/>
+                    <ComboBox DockPanel.Dock="Right" x:Name="Combo_Presets"/>
+                </DockPanel>
 
                 <StackPanel x:Name="Panel_VideoInfo" Orientation="Vertical" >
                     <Label x:Name="Label_VideoTitle" Content="Video title" Foreground="White" FontWeight="Bold" FontSize="23"/>
