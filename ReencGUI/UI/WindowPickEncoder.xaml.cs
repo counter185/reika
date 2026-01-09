@@ -43,17 +43,20 @@ namespace ReencGUI.UI
         //todo move this somewhere
         public static Brush GetGradientForCodecID(string id)
         {
-            if (id.Contains("nvenc"))
+            if (id != null)
             {
-                return nvidiaGradient;
-            }
-            if (id.Contains("amf"))
-            {
-                return amdGradient;
-            }
-            if (id.Contains("qsv"))
-            {
-                return intelGradient;
+                if (id.Contains("nvenc"))
+                {
+                    return nvidiaGradient;
+                }
+                if (id.Contains("amf"))
+                {
+                    return amdGradient;
+                }
+                if (id.Contains("qsv"))
+                {
+                    return intelGradient;
+                }
             }
 
             return Brushes.Transparent;

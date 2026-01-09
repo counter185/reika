@@ -315,7 +315,8 @@ namespace ReencGUI
                 outputDuration = outputDuration,
                 uiQueueEntry = entry,
                 onFinished = onFinished,
-                outputFileName = outFileName
+                outputFileName = outFileName,
+                visualEncoderID = visualEncoderID
             };
 
             encodeQueue.Add(op);
