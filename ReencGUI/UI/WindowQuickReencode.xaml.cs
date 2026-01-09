@@ -50,7 +50,14 @@ namespace ReencGUI
         private void ProcessFile(string path)
         {
             CreateFilePreset pre = presets[Combo_Presets.SelectedIndex];
-            QueueReencodeWithPreset(path, pre, Check_DeleteSourceMedia.IsChecked == true);
+            try
+            {
+                QueueReencodeWithPreset(path, pre, Check_DeleteSourceMedia.IsChecked == true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to process file:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public static void QueueReencodeWithPreset(string path, CreateFilePreset pre, bool deleteSource)
@@ -89,9 +96,13 @@ namespace ReencGUI
             otherArgs = Regex.Replace(otherArgs, regexVFArgs, "").Trim();
 
             string usedVcodec = "";
-            if (pre.vcodecs.Any())
+            var matchingVcodecs = pre.vcodecs.Where(x => MainWindow.instance.encoders.Any(y => y.ID == x));
+            if (matchingVcodecs.Any())
             {
-                usedVcodec = pre.vcodecs.Where(x => MainWindow.instance.encoders.Any(y => y.ID == x)).First();
+                usedVcodec = matchingVcodecs.First();
+            } else if (pre.vcodecs.Where(x=>x.Any()).Any())
+            {
+                throw new ArgumentException($"None of the codecs ({String.Join(",", pre.vcodecs)}) are available.");
             }
             string usedAcodec = pre.acodec;
 
@@ -99,7 +110,7 @@ namespace ReencGUI
             {
                 "-i", $"\"{path}\"",
                 (pre.vbitrate != "" ? $"-b:v {pre.vbitrate}" : ""),
-                (pre.vcodecs.Any() ? $"-c:v {usedVcodec}" : ""),
+                (usedVcodec != "" ? $"-c:v {usedVcodec}" : ""),
                 (pre.abitrate != "" ? $"-b:a {pre.abitrate}" : ""),
                 (pre.acodec != "" ? $"-c:a {pre.acodec}" : ""),
                 (vfArgs.Any() ? $"-vf \"{string.Join(",", vfArgs)}\"" : ""),
