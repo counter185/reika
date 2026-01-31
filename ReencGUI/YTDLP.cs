@@ -159,6 +159,26 @@ namespace ReencGUI
             return exitCode == 0;
         }
 
+        public static bool InstallDeno(UIFFMPEGOperationEntry progress)
+        {
+            bool finished = false;
+            int exitCode = -1;
+            FFMPEG.RunCommandWithAsyncOutput($"{Environment.GetEnvironmentVariable("SYSTEMROOT")}\\Sysnative\\conhost.exe", new List<string> { "winget", "install", "DenoLand.Deno" }, 
+                (s) => {
+                    progress.Dispatcher.Invoke(() => { 
+                        progress.Label_Secondary.Content = s;
+                        //progress.UpdateProgressBasedOnYTDLPLine(s);
+                    });
+                },
+                (ec) => { finished = true; exitCode = ec; });
+
+            while (!finished)
+            {
+                Thread.Sleep(100);
+            }
+            return exitCode == 0;
+        }
+
         public static bool DownloadLatest(UIFFMPEGOperationEntry progressCallback)
         {
             progressCallback.Dispatcher.Invoke(() =>
@@ -236,6 +256,22 @@ namespace ReencGUI
             else
             {
                 return command;
+            }
+        }
+
+        public static string GetDenoVersion()
+        {
+            try
+            {
+                List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("deno"), new List<string> { "-version" });
+                if (output.Count > 0)
+                {
+                    return output[0];
+                }
+                return "";
+            }
+            catch { 
+                return ""; 
             }
         }
     }

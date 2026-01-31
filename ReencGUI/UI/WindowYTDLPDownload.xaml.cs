@@ -147,6 +147,59 @@ namespace ReencGUI.UI
 
         private void Button_StartDownload_Click(object sender, RoutedEventArgs e)
         {
+            string url = Input_URL.InputField.Text;
+            if (url.Contains("youtu.be") || url.Contains("youtube.com"))
+            {
+                string denoVersion = YTDLP.GetDenoVersion();
+                if (String.IsNullOrEmpty(denoVersion))
+                {
+                    MessageBoxResult result = MessageBox.Show(
+                    "yt-dlp may require a JavaScript runtime to download from this site, and Deno was not found on your system.\n"
+                    + "Install it now with winget?\n\n"
+                    + "*This will open a cmd window, where you may need to confirm the installation.",
+                    "YouTube Download Warning",
+                    MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        caller.EnqueueOtherOperation((entry) =>
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                entry.Label_Primary.Text = "Install Deno...";
+                            });
+                            try
+                            {
+                                YTDLP.InstallDeno(entry);
+                            }
+                            catch (Exception ex)
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    MessageBox.Show($"Failed to install Deno:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                });
+                            }
+                        });
+                    }
+                    if (result != MessageBoxResult.Cancel)
+                    {
+                        EnqueueDownload();
+                    }
+
+                } else
+                {
+                    EnqueueDownload();
+                }
+
+            }
+            else
+            {
+                EnqueueDownload();
+            }
+        }
+
+        private void EnqueueDownload()
+        {
             if (Input_URL.InputField.Text != "")
             {
                 var args = MakeYTDLPArgs();
@@ -180,7 +233,8 @@ namespace ReencGUI.UI
                 {
                     Close();
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("URL cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
