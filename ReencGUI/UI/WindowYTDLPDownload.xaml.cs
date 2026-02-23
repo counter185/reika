@@ -111,6 +111,10 @@ namespace ReencGUI.UI
                 autoPick.Label_VideoDetails.Visibility = Visibility.Collapsed;
                 autoPick.Label_AudioDetails.Visibility = Visibility.Collapsed;
                 autoPick.Label_Extension.Content = v.autoExt;
+
+                UIYTDLPFormatEntry customPick = new UIYTDLPFormatEntry();
+                customPick.SetCustomFormatField();
+
                 RadioButton autoRB = new RadioButton();
                 autoRB.Content = autoPick;
                 autoRB.GroupName = "FormatSel";
@@ -118,6 +122,14 @@ namespace ReencGUI.UI
                 autoRB.IsChecked = true;
                 autoRB.Checked += (a,b) => UpdateFullArgsLabel();
                 ListBox_FormatList.Items.Add(autoRB);
+
+                RadioButton customRB = new RadioButton();
+                customRB.Content = customPick;
+                customRB.GroupName = "FormatSel";
+                customRB.VerticalContentAlignment = VerticalAlignment.Center;
+                customRB.Checked += (a,b) => UpdateFullArgsLabel();
+                ListBox_FormatList.Items.Add(customRB);
+                customPick.idTextBox.TextChanged += (a, b) => { if (customRB.IsChecked == true) UpdateFullArgsLabel(); }; 
 
                 var formatListReversed = v.formats.ToList();
                 formatListReversed.Reverse();

@@ -71,7 +71,7 @@ namespace ReencGUI
                     }
                 );
 
-                string json = output.Where(x => x.StartsWith("{\"id\"")).FirstOrDefault();
+                string json = output.Where(x => x.StartsWith("{\"")).FirstOrDefault();
                 if (json != null)
                 {
                     //anything to not add newtonsoft.json
