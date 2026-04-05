@@ -17,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Shell;
 
 namespace ReencGUI
 {
@@ -377,6 +378,7 @@ namespace ReencGUI
 
         private void ProcessEncode(EncodeOperation next)
         {
+            this.TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
             encodesRunning++;
             next.uiQueueEntry.Label_Primary.Text = Path.GetFileName(next.outputFileName);
             bool cancelling = false;
@@ -405,6 +407,7 @@ namespace ReencGUI
                         Dispatcher.Invoke(() =>
                         {
                             next.uiQueueEntry.UpdateProgressBasedOnLogKVs(logOutputKVs, next.outputDuration);
+                            this.TaskbarItemInfo.ProgressValue = next.uiQueueEntry.ProgressBar_Operation.Value / 100d;
                         });
                     }
                     else
@@ -418,6 +421,7 @@ namespace ReencGUI
                 Console.WriteLine($"FFMPEG exited with code {exit:X}");
                 Dispatcher.Invoke(() =>
                 {
+                    this.TaskbarItemInfo.ProgressState = TaskbarItemProgressState.None;
                     if (exit != 0)
                     {
                         EncodeFailed($"Exit code {exit:X}", "", cancelling,

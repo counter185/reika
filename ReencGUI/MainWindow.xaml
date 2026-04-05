@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
         Title="reika" Height="450" Width="800" MinHeight="304" MinWidth="678" AllowDrop="True" Drop="Window_Drop">
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="523*"/>
