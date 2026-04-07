@@ -51,12 +51,13 @@ namespace ReencGUI
             public string title;
             public string autoFormat;
             public string autoExt;
+            public string filename;
             public List<YTDLPFormat> formats;
         }
 
-        public static YTDLPVideo GetVideoInfo(string url)
+        public static YTDLPVideo GetVideoInfo(List<string> args)
         {
-            if (url == "")
+            if (!args.Any() || args.Last() == "")
             {
                 return null;
             }
@@ -66,9 +67,8 @@ namespace ReencGUI
                 List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), 
                     new List<string> {
                         "-j",
-                        "--list-formats",
-                        url
-                    }
+                        "--list-formats"
+                    }.Concat(args)
                 );
 
                 string json = output.Where(x => x.StartsWith("{\"")).FirstOrDefault();
@@ -84,6 +84,7 @@ namespace ReencGUI
                     video.uploader = root.XPathSelectElement("//uploader")?.Value;
                     video.autoFormat = root.XPathSelectElement("format_id")?.Value;
                     video.autoExt = root.XPathSelectElement("ext")?.Value;
+                    video.filename = root.XPathSelectElement("filename")?.Value;
                     video.formats = new List<YTDLPFormat>();
                     var descNodes = root.XPathSelectElement("//formats").Elements().ToList();
                     foreach (var format in descNodes)
@@ -125,18 +126,12 @@ namespace ReencGUI
 
         public static string GetOutputFileName(List<string> args)
         {
-            List<string> aargs = args.Concat(new List<string> { "--quiet", "--no-warnings", "--get-filename" }).ToList();
-            List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), aargs);
-            if (output.Count > 0 
-                && !output.Last().ToLower().StartsWith("error:")
-                && !output.Last().ToLower().StartsWith("warning:"))
-            {
-                return output.Last();
-            }
-            else
+            YTDLPVideo vid = GetVideoInfo(args);
+            if (vid == null || vid.filename == null || vid.filename == "")
             {
                 return null;
             }
+            return vid.filename;
         }
 
         public static bool RunDownload(List<string> args, UIFFMPEGOperationEntry progress)

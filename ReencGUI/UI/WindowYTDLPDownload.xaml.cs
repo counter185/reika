@@ -73,7 +73,7 @@ namespace ReencGUI.UI
                         UpdateFullArgsLabel();
                     });
 
-                    currentVideo = YTDLP.GetVideoInfo(nextURL);
+                    currentVideo = YTDLP.GetVideoInfo(new List<string> { nextURL });
                     Dispatcher.Invoke(() =>
                     {
                         SetMetadata(currentVideo);
