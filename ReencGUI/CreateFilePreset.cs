@@ -281,7 +281,7 @@ namespace ReencGUI
                 name = "H264: Moderate",
                 vbitrate = "12000k",
                 requiredExtension = ".mp4",
-                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                vcodecs = h264HwList.Append("libx264").ToList(),
                 acodec = "copy",
                 abitrate = ""
             });
@@ -290,7 +290,7 @@ namespace ReencGUI
                 name = "H265: Quality",
                 vbitrate = "12000k",
                 requiredExtension = ".mp4",
-                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                vcodecs = h265HwList.Append("libx265").ToList(),
                 acodec = "copy",
                 abitrate = ""
             });
@@ -299,7 +299,7 @@ namespace ReencGUI
                 name = "H265: Moderate",
                 vbitrate = "8000k",
                 requiredExtension = ".mp4",
-                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                vcodecs = h265HwList.Append("libx265").ToList(),
                 acodec = "copy",
                 abitrate = ""
             });
@@ -308,7 +308,7 @@ namespace ReencGUI
                 name = "H265: File size",
                 vbitrate = "4000k",
                 requiredExtension = ".mp4",
-                vcodecs = new List<string> { "hevc_nvenc", "hevc_amf", "libx265" },
+                vcodecs = h265HwList.Append("libx265").ToList(),
                 acodec = "copy",
                 abitrate = ""
             });
@@ -318,6 +318,33 @@ namespace ReencGUI
                 vbitrate = "2000k",
                 requiredExtension = ".mp4",
                 vcodecs = new List<string> { "libvvenc" },
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "AV1: Quality",
+                vbitrate = "9000k",
+                requiredExtension = ".mp4",
+                vcodecs = av1HwList.Append("libsvtav1").ToList(),
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "AV1: Moderate",
+                vbitrate = "6000k",
+                requiredExtension = ".mp4",
+                vcodecs = av1HwList.Append("libsvtav1").ToList(),
+                acodec = "copy",
+                abitrate = ""
+            });
+            presets.Add(new CreateFilePreset
+            {
+                name = "AV1: File size",
+                vbitrate = "2000k",
+                requiredExtension = ".mp4",
+                vcodecs = av1HwList.Append("libsvtav1").ToList(),
                 acodec = "copy",
                 abitrate = ""
             });
