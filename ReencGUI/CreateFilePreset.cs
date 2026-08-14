@@ -246,6 +246,10 @@ namespace ReencGUI
                 discordH264, 
                 Utils.Megabytes(discordAllowHW ? 8.8 : 9.7))
             );
+            presets.Add(new DiscordPreset("Discord 20MB Fast (H264)",
+                discordH264, 
+                Utils.Megabytes(discordAllowHW ? 18.5 : 19.5))
+            );
             presets.Add(new DiscordPreset("Discord 50MB Fast (H264)",
                 discordH264, 
                 Utils.Megabytes(discordAllowHW ? 45 : 48))
@@ -257,6 +261,10 @@ namespace ReencGUI
                 discordH265,
                 Utils.Megabytes(discordAllowHW ? 8.8 : 9.7))
             );
+            presets.Add(new DiscordPreset("Discord 20MB Quality (H265)",
+                discordH265,
+                Utils.Megabytes(discordAllowHW ? 18.5 : 19.5))
+            );
             presets.Add(new DiscordPreset("Discord 50MB Quality (H265)",
                 discordH265,
                 Utils.Megabytes(discordAllowHW ? 45 : 48))
@@ -267,6 +275,10 @@ namespace ReencGUI
             presets.Add(new DiscordPreset("Discord 10MB Extra quality (AV1)",
                 discordAV1,
                 Utils.Megabytes(discordAllowHW ? 8.8 : 9.7))
+            );
+            presets.Add(new DiscordPreset("Discord 20MB Extra quality (AV1)",
+                discordAV1,
+                Utils.Megabytes(discordAllowHW ? 18.5 : 19.5))
             );
             presets.Add(new DiscordPreset("Discord 50MB Extra quality (AV1)",
                 discordAV1,
