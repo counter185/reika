@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
@@ -111,7 +112,7 @@ namespace ReencGUI.UI
             GC.Collect();
             foreach (string uri in disposeUrisOnClose)
             {
-                FFMPEG.ManualDeleteThumbnail(uri);
+                WindowsUtils.FFMPEGManualDeleteThumbnail(uri);
             }
         }
 
@@ -135,7 +136,7 @@ namespace ReencGUI.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    WindowsUtils.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -143,7 +144,7 @@ namespace ReencGUI.UI
                             fromThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_FromThumb.Source = Utils.LoadToMemFromUri(uri);
+                                Image_FromThumb.Source = WindowsUtils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
                             }
                             catch (Exception ex)
@@ -170,7 +171,7 @@ namespace ReencGUI.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
+                    WindowsUtils.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -178,7 +179,7 @@ namespace ReencGUI.UI
                             toThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_ToThumb.Source = Utils.LoadToMemFromUri(uri);
+                                Image_ToThumb.Source = WindowsUtils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
                             } catch (Exception ex)
                             {

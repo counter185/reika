@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
@@ -87,7 +88,7 @@ namespace ReencGUI.UI
             var media = caller.GetPreviewVideoMedia();
             if (media != null)
             {
-                var bmp = FFMPEG.ExtractThumbnail(media.fileName, "00");
+                var bmp = WindowsUtils.FFMPEGExtractThumbnail(media.fileName, "00");
                 if (bmp != null)
                 {
                     Image_Preview.Source = bmp;

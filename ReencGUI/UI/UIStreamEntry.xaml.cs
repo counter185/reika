@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
@@ -36,14 +37,14 @@ namespace ReencGUI.UI
             if (streamTarget.streamInfo.mediaType == FFMPEG.CodecType.Video)
             {
                 ulong durationMS = Utils.LengthToMS(streamTarget.mediaInfo.dH, streamTarget.mediaInfo.dM, streamTarget.mediaInfo.dS, streamTarget.mediaInfo.dMS);
-                FFMPEG.ExtractThumbnailAsync(streamTarget.mediaInfo.fileName, durationMS == 0 ? "00" : "01", (uri)=>
+                WindowsUtils.FFMPEGExtractThumbnailAsync(streamTarget.mediaInfo.fileName, durationMS == 0 ? "00" : "01", (uri)=>
                 {
                     if (uri != null)
                     {
                         Dispatcher.Invoke(() =>
                         {
                             thumbnailUri = uri;
-                            Image_Thumbnail.Source = Utils.LoadToMemFromUri(uri);
+                            Image_Thumbnail.Source = WindowsUtils.LoadToMemFromUri(uri);
                             Image_Thumbnail.Visibility = Visibility.Visible;
                         });
                     }

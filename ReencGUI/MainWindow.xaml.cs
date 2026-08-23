@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shell;
+using reika.Core;
 
 namespace ReencGUI
 {
@@ -85,7 +86,7 @@ namespace ReencGUI
 
             AppData.GetAppDataPath();
             AppData.GetAppDataSubdir("presets");
-            Label_HwInfo.Content = Utils.GetSystemHardwareInfo();
+            Label_HwInfo.Content = WindowsUtils.GetSystemHardwareInfo();
         }
 
         public void StartFFMPEGDownload(bool required)
@@ -95,7 +96,7 @@ namespace ReencGUI
                 downloadingFFMPEG = true;
                 EnqueueOtherOperation((entry) =>
                 {
-                    if (FFMPEG.DownloadLatest(entry))
+                    if (WindowsExternalDownloads.FFMPEGDownloadLatest(entry))
                     {
                         ReloadEncoders();
                         downloadingFFMPEG = false;
@@ -139,7 +140,7 @@ namespace ReencGUI
                     return;
                 }
             }
-            FFMPEG.CleanupThumbnails();
+            WindowsUtils.FFMPEGCleanupThumbnails();
             instance = null;
             Environment.Exit(0);
         }
@@ -528,7 +529,7 @@ namespace ReencGUI
                     downloadingYTDLP = true;
                     EnqueueOtherOperation((entry) =>
                     {
-                        if (YTDLP.DownloadLatest(entry))
+                        if (WindowsExternalDownloads.YTDLPDownloadLatest(entry))
                         {
                             MessageBox.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", MessageBoxButton.OK, MessageBoxImage.Information);
                         }

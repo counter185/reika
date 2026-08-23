@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using ReencGUI.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
+using Microsoft.Win32;
+using ReencGUI.UI;
+using reika.Core;
 
 namespace ReencGUI
 {
@@ -181,7 +182,7 @@ namespace ReencGUI
         {
             this.name = name;
             vcodecs = encoders;
-            requiredExtension = ".mp4";
+            requiredExtension = Settings.settings.FromKey("reika.presets.discord.useWebmInsteadOfMP4").GetBool() ? ".webm" : ".mp4";
             acodec = Settings.settings.FromKey("reika.presets.discord.useOpusInsteadOfAAC").GetBool() ? "libopus" : "aac";
             abitrate = "128k";
         }
