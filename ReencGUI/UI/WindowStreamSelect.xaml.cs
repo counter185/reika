@@ -19,7 +19,7 @@ namespace ReencGUI.UI
     /// <summary>
     /// Logika interakcji dla klasy WindowStreamSelect.xaml
     /// </summary>
-    public partial class WindowStreamSelect : Window
+    public partial class WindowStreamSelect : DarkWindow
     {
 
         public List<StreamTarget> selectedStreams = null;

@@ -1,9 +1,10 @@
-﻿<Window x:Class="ReencGUI.UI.WindowSetCrop"
+﻿<llocal:DarkWindow x:Class="ReencGUI.UI.WindowSetCrop"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReencGUI.UI"
+        xmlns:llocal="clr-namespace:ReencGUI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
         Title="reika: set video crop" Height="435" Width="542">
@@ -34,4 +35,4 @@
             </DockPanel>
         </DockPanel>
     </Grid>
-</Window>
+</llocal:DarkWindow>

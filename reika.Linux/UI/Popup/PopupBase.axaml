@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="reika.Linux.UI.Popup.PopupBase"
+        Title="PopupOK" Width="NaN" Height="NaN" SizeToContent="WidthAndHeight" Classes="reikaWindow">
+  <DockPanel Height="NaN" Width="NaN" >
+        <Grid DockPanel.Dock="Bottom">
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#A0171717"/>
+                        <GradientStop Color="#40000000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <StackPanel x:Name="Panel_Buttons" Orientation="Horizontal" Margin="10,10" Height="25" HorizontalAlignment="Right">
+            </StackPanel>
+
+        </Grid>
+        <StackPanel x:Name="Panel_Content" Orientation="Vertical" Margin="40,30,80,20">
+            <Label x:Name="Label_MainText" DockPanel.Dock="Top" MinWidth="200" Content="pretend there is long text here" Foreground="White" HorizontalAlignment="Left" />
+        </StackPanel>
+    </DockPanel>
+</Window>

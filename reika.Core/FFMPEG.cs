@@ -316,16 +316,25 @@ namespace reika.Core
         }
 
         public static List<CodecInfo> GetAvailableDecoders()
-        {
-            return ParseFFMPEGCodecList(RunFFMPEGCommandlineForOutput(new string[] { "-decoders" }));
-        }
+            => ParseFFMPEGCodecList(RunFFMPEGCommandlineForOutput(new string[] { "-decoders" }));
         public static List<CodecInfo> GetAvailableEncoders()
-        {
-            return ParseFFMPEGCodecList(RunFFMPEGCommandlineForOutput(new string[] { "-encoders" }));
-        }
+            => ParseFFMPEGCodecList(RunFFMPEGCommandlineForOutput(new string[] { "-encoders" }));
+        
         public static MediaInfo GetMediaInfoForFile(string fileName)
+            => ParseFFProbeMediaInfo(RunFFProbeCommandlineForOutput(new string[] { $"\"{fileName}\"" }));
+
+        public static bool TestFFMPEG()
         {
-            return ParseFFProbeMediaInfo(RunFFProbeCommandlineForOutput(new string[] { $"\"{fileName}\"" }));
+            try
+            {
+                FFMPEG.RunFFMPEGCommandlineForOutput(new string[] { "-version" });
+                FFMPEG.RunFFProbeCommandlineForOutput(new string[] { "-version" });
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static string GetFFMPEGVersion()

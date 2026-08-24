@@ -1,0 +1,140 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
+using reika.Core;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+
+namespace reika.Linux.UI
+{
+    public partial class UIFFMPEGOperationEntry : UserControl, IOperationEntryUI
+    {
+        public Action<UIFFMPEGOperationEntry> onRightClick = null;
+
+        public UIFFMPEGOperationEntry()
+        {
+            InitializeComponent();
+
+            LinuxUtils.AddRightMouseButtonDownHandler(this, () => this.onRightClick?.Invoke(this));
+        }
+
+        public static string GetProgressBarStyleForEncoderID(string encID)
+        {
+            if (encID.Contains("nvenc"))
+            {
+                return "ReencProgressBarStyleNVENC";
+            }
+            if (encID.Contains("amf"))
+            {
+                return "ReencProgressBarStyleAMF";
+            }
+            if (encID.Contains("qsv"))
+            {
+                return "ReencProgressBarStyleQSV";
+            }
+            return "ReencProgressBarStyleCPU";
+        }
+
+        public void SetProgressBarStyleForEncoderID(string encID)
+        {
+            string styleKey = GetProgressBarStyleForEncoderID(encID);
+            ProgressBar_Operation.Classes.Clear();
+            ProgressBar_Operation.Classes.Add(styleKey);
+        }
+
+        public void UpdateProgressBasedOnLogKVs(Dictionary<string, string> logOutputKVs, ulong fileDuration)
+        {
+            List<string> secondaryTextDetails = new List<string>();
+            List<string> secondaryText2Details = new List<string>();
+
+            ulong remainingDuration = fileDuration;
+
+            if (logOutputKVs.ContainsKey("time"))
+            {
+                try
+                {
+                    ulong currentTimeMS = Utils.ParseDuration(logOutputKVs["time"]);
+                    remainingDuration = fileDuration - currentTimeMS;
+                    double progress = (double)currentTimeMS / fileDuration;
+                    ProgressBar_Operation.Value = progress * 100;
+                }
+                catch (Exception) { }
+            }
+
+            if (logOutputKVs.ContainsKey("frame"))
+            {
+                secondaryTextDetails.Add($"{logOutputKVs["frame"]} frames");
+            }
+
+            if (logOutputKVs.ContainsKey("fps"))
+            {
+                secondaryTextDetails.Add($"{logOutputKVs["fps"]} FPS");
+            }
+
+            if (logOutputKVs.ContainsKey("size"))
+            {
+                secondaryTextDetails.Add(Utils.KiBStringToFriendlySizeString(logOutputKVs["size"]));
+            }
+
+            if (logOutputKVs.ContainsKey("bitrate"))
+            {
+                secondaryText2Details.Add($"{logOutputKVs["bitrate"]}");
+            }
+
+            if (logOutputKVs.ContainsKey("speed"))
+            {
+                string speedS = logOutputKVs["speed"];
+                secondaryText2Details.Add($"{speedS}");
+                if (fileDuration != 0)
+                {
+                    try
+                    {
+                        Match m = Regex.Match(speedS, @"(\d+\.\d+)x");
+                        if (m.Success)
+                        {
+                            double speedD = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                            ulong msRemaining = (ulong)(remainingDuration / speedD);
+                            secondaryText2Details.Add($"ETA {Utils.FriendlyDurationString(msRemaining)}");
+                        }
+                    }
+                    catch (Exception) { }
+                }
+                else
+                {
+                    secondaryText2Details.Add($"ETA ???");
+                }
+            }
+
+            Label_Secondary.Content = string.Join(", ", secondaryTextDetails);
+            Label_Secondary2.Content = string.Join(", ", secondaryText2Details);
+        }
+
+        public void SetTextPrimary(string title) => Dispatcher.Invoke(() => { Label_Primary.Text = title; });
+        public void SetTextSecondary(string title) => Dispatcher.Invoke(() => { Label_Secondary.Content = title; });
+        public void SetTextSecondary2(string title) => Dispatcher.Invoke(() => { Label_Secondary2.Content = title; });
+        public void SetProgress(double progress) => Dispatcher.Invoke(() => { ProgressBar_Operation.Value = progress; });
+
+        public void UpdateProgressBasedOnYTDLPLine(string line)
+        {
+            if (line != null && line.StartsWith("[download]"))
+            {
+                Match m = Regex.Match(line, @"([\d\.]+)%");
+                if (m.Success)
+                {
+                    double progress = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                    SetProgress(progress);
+                }
+
+                m = Regex.Match(line, @"(ETA [\d\:\.]+)");
+                if (m.Success)
+                {
+                    SetTextSecondary2(m.Groups[1].Value);
+                }
+            }
+        }
+    }
+}

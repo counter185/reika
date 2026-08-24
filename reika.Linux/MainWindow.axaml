@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Height="450" Width="800" MinHeight="304" MinWidth="678"
         x:Class="reika.Linux.MainWindow"
-        Title="reika.Linux">
+        Title="reika.Linux" Classes="reikaWindow" DragDrop.AllowDrop="True" DragDrop.Drop="Window_Drop">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="523*"/>

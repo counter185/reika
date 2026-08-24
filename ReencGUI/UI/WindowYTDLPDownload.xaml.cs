@@ -15,13 +15,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using reika.Core;
+using ReencGUI.UI.Popup;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowYTDLPDownload.xaml
     /// </summary>
-    public partial class WindowYTDLPDownload : Window
+    public partial class WindowYTDLPDownload : DarkWindow
     {
         MainWindow caller;
         YTDLP.YTDLPVideo currentVideo = null;
@@ -43,12 +44,6 @@ namespace ReencGUI.UI
 
             metaFetchThread = new Thread(MetadataFetchThread);
             metaFetchThread.Start();
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -166,14 +161,14 @@ namespace ReencGUI.UI
                 string denoVersion = YTDLP.GetDenoVersion();
                 if (String.IsNullOrEmpty(denoVersion))
                 {
-                    MessageBoxResult result = MessageBox.Show(
+                    PopupResult result = PopupYesNoCancel.Show(
                     "yt-dlp may require a JavaScript runtime to download from this site, and Deno was not found on your system.\n"
                     + "Install it now with winget?\n\n"
                     + "*This will open a cmd window, where you may need to confirm the installation.",
                     "YouTube Download Warning",
-                    MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                    PopupStyle.Warning);
 
-                    if (result == MessageBoxResult.Yes)
+                    if (result == PopupResult.Yes)
                     {
                         caller.EnqueueOtherOperation((entry) =>
                         {
@@ -194,7 +189,7 @@ namespace ReencGUI.UI
                             }
                         });
                     }
-                    if (result != MessageBoxResult.Cancel)
+                    if (result != PopupResult.Cancel)
                     {
                         EnqueueDownload();
                     }
@@ -237,7 +232,7 @@ namespace ReencGUI.UI
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"Failed to process file:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
                             }
                         });
                     }
@@ -249,7 +244,7 @@ namespace ReencGUI.UI
             }
             else
             {
-                MessageBox.Show("URL cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show("URL cannot be empty.", "Error", PopupStyle.Error);
             }
         }
 

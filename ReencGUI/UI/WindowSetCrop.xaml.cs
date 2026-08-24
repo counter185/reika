@@ -19,7 +19,7 @@ namespace ReencGUI.UI
     /// <summary>
     /// Logika interakcji dla klasy WindowSetCrop.xaml
     /// </summary>
-    public partial class WindowSetCrop : Window
+    public partial class WindowSetCrop : DarkWindow
     {
         WindowCreateFile caller;
         int resX;
