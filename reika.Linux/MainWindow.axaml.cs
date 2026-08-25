@@ -340,7 +340,7 @@ public partial class MainWindow : Window
                         (el) =>
                         {
                             File.WriteAllText("ffmpeg_log.txt", string.Join("\n", logLines));
-                            Process.Start("notepad.exe", "ffmpeg_log.txt");
+                            Process.Start(OperatingSystem.IsWindows() ? "notepad.exe" : "xdg-open", "ffmpeg_log.txt");
                         });
                 }
                 else if (!cancelling)
@@ -372,6 +372,7 @@ public partial class MainWindow : Window
                 } else
                 {
                     LinuxUtils.SendProcessSIGTERM(newP);
+                    Thread.Sleep(1000);
                 }
 
                 try

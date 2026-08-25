@@ -21,5 +21,48 @@
             </Setter>
             <Setter Property="Foreground" Value="White"/>
         </Style>
+
+        <Style Selector="Button.reikaButton">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+                        <GradientStop Color="#FF000000" Offset="0"/>
+                        <GradientStop Color="#FF0B0A31" Offset="0.95"/>
+                        <GradientStop Color="#FF1F6AFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FF606060"/>
+
+            <Style Selector="^:pointerover /template/ ContentPresenter">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+                            <GradientStop Color="#FF060F37" Offset="0"/>
+                            <GradientStop Color="#FF1B255A" Offset="0.95"/>
+                            <GradientStop Color="#FF694BFB" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#FF3C7FB1"/>
+            </Style>
+
+            <Style Selector="^:pressed /template/ ContentPresenter">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+                            <GradientStop Color="#FF031A29" Offset="0"/>
+                            <GradientStop Color="#FF1B415A" Offset="0.95"/>
+                            <GradientStop Color="#FF99D2FF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#FF2C628B"/>
+            </Style>
+        </Style>
     </Application.Styles>
 </Application>
