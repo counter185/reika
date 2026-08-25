@@ -88,7 +88,7 @@ namespace ReencGUI.UI
 
         private void Button_AddPresetToList_Click(object sender, RoutedEventArgs e)
         {
-            PresetManager.PromptInstallPreset();
+            PresetUtils.PromptInstallPreset();
         }
 
         private void Button_ForceDLFFMPEG_Click(object sender, RoutedEventArgs e)

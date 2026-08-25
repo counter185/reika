@@ -1,29 +1,19 @@
-﻿using ReencGUI.UI;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using reika.Core;
+using reika.Linux.UI.Popup;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using reika.Core;
-using System.Windows.Controls.Primitives;
-using ReencGUI.UI.Popup;
 
-namespace ReencGUI
+namespace reika.Linux.UI
 {
-    /// <summary>
-    /// Logika interakcji dla klasy WindowQuickReencode.xaml
-    /// </summary>
-    public partial class WindowQuickReencode : DarkWindow
+    public partial class WindowQuickReencode : Window
     {
         List<CreateFilePreset> presets;
 
@@ -97,7 +87,8 @@ namespace ReencGUI
             if (matchingVcodecs.Any())
             {
                 usedVcodec = matchingVcodecs.First();
-            } else if (pre.vcodecs.Where(x=>x.Any()).Any())
+            }
+            else if (pre.vcodecs.Where(x => x.Any()).Any())
             {
                 throw new ArgumentException($"None of the codecs ({String.Join(",", pre.vcodecs)}) are available.");
             }
@@ -134,14 +125,16 @@ namespace ReencGUI
 
         private void Window_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.DataTransfer.TryGetFiles() is { } files)
             {
-                foreach (string file in (string[])e.Data.GetData(DataFormats.FileDrop))
+                foreach (var file in files)
                 {
+                    var path = file.Path.LocalPath;
                     try
                     {
-                        ProcessFile(file);
-                    } catch (Exception ex)
+                        ProcessFile(path);
+                    }
+                    catch (Exception ex)
                     {
                         PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
                     }
@@ -151,7 +144,7 @@ namespace ReencGUI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            PresetUtils.PromptInstallPreset();
+            //PresetUtils.PromptInstallPreset();
             LoadPresets();
         }
     }

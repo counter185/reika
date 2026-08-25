@@ -77,8 +77,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CreateFilePreset.cs" />
     <Compile Include="DarkWindow.cs" />
+    <Compile Include="PresetUtils.cs" />
     <Compile Include="ReleaseInfo.cs" />
     <Compile Include="UI\Popup\PopupBase.xaml.cs">
       <DependentUpon>PopupBase.xaml</DependentUpon>

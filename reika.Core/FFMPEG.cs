@@ -29,7 +29,7 @@ namespace reika.Core
             public CodecType Type;
         }
 
-        public class MediaInfo
+        public class MediaInfo : ICreateFileSession
         {
             public string fileName;
             public string date;
@@ -39,6 +39,8 @@ namespace reika.Core
             public List<StreamInfo> streams = new List<StreamInfo>();
 
             public ulong Duration { get => Utils.LengthToMS(dH, dM, dS, dMS); }
+
+            public ulong GetDuration() => Duration;
         }
 
         public class StreamInfo

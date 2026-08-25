@@ -16,12 +16,13 @@ namespace reika.Linux.UI
     {
         MainWindow caller;
         YTDLP.YTDLPVideo currentVideo = null;
-        //List<CreateFilePreset> presets;
+        List<CreateFilePreset> presets;
 
         public WindowYTDLPDownload(MainWindow caller)
         {
             this.caller = caller;
             InitializeComponent();
+            Input_URL.InputField.Text = "";
             LoadPresets();
 
             Input_URL.InputField.TextChanged += (a, b) => URLChanged();
@@ -79,13 +80,13 @@ namespace reika.Linux.UI
         private void LoadPresets()
         {
             Combo_Presets.Items.Clear();
-            /*presets = PresetManager.LoadPresets();
+            presets = PresetManager.LoadPresets();
 
             foreach (var preset in presets)
             {
                 Combo_Presets.Items.Add(preset.name);
             }
-            Combo_Presets.SelectedIndex = 0;*/
+            Combo_Presets.SelectedIndex = 0;
         }
 
         void SetMetadata(YTDLP.YTDLPVideo v)
@@ -150,7 +151,7 @@ namespace reika.Linux.UI
 
         private void Button_StartDownload_Click(object sender, RoutedEventArgs e)
         {
-            string url = Input_URL.InputField.Text;
+            string url = Input_URL.InputField.Text ?? "";
             if (url.Contains("youtu.be") || url.Contains("youtube.com"))
             {
                 /*string denoVersion = YTDLP.GetDenoVersion();
@@ -208,7 +209,7 @@ namespace reika.Linux.UI
             {
                 var args = MakeYTDLPArgs();
                 bool reencodeAfterDownload = false;// Checkbox_RunReenc.IsChecked == true;
-                //CreateFilePreset reencPreset = (uint)Combo_Presets.SelectedIndex < presets.Count ? presets[Combo_Presets.SelectedIndex] : null;
+                CreateFilePreset reencPreset = (uint)Combo_Presets.SelectedIndex < presets.Count ? presets[Combo_Presets.SelectedIndex] : null;
                 caller.EnqueueOtherOperation((entry) =>
                 {
                     Dispatcher.Invoke(() =>
@@ -218,20 +219,20 @@ namespace reika.Linux.UI
 
                     string outputFile = reencodeAfterDownload ? YTDLP.GetOutputFileName(args) : null;
                     bool downloadResult = YTDLP.RunDownload(args, entry);
-                    /*if (outputFile != null && downloadResult && reencPreset != null)
+                    if (outputFile != null && downloadResult && reencPreset != null)
                     {
                         Dispatcher.Invoke(() =>
                         {
                             try
                             {
-                                //WindowQuickReencode.QueueReencodeWithPreset(outputFile, reencPreset, true);
+                                WindowQuickReencode.QueueReencodeWithPreset(outputFile, reencPreset, true);
                             }
                             catch (Exception ex)
                             {
                                 PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
                             }
                         });
-                    }*/
+                    }
                 });
                 /*if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
                 {
@@ -278,8 +279,8 @@ namespace reika.Linux.UI
                 args.Add($"\"{Input_OutputFolder.InputField.Text}\"");
             }
 
-            args.Add("--ffmpeg-location");
-            args.Add("./ffmpeg");
+            /*args.Add("--ffmpeg-location");
+            args.Add("./ffmpeg");*/
 
             args.Add($"\"{Input_URL.InputField.Text}\"");
 

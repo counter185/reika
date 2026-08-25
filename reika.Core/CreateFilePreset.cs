@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 using Microsoft.Win32;
-using ReencGUI.UI;
 using reika.Core;
 
-namespace ReencGUI
+namespace reika.Core
 {
     public class CreateFilePreset
     {
@@ -109,10 +108,7 @@ namespace ReencGUI
 
     public abstract class DynamicCreateFilePreset : CreateFilePreset
     {
-        //used for windowcreatefile
-        public abstract void Recalculate(WindowCreateFile session);
-        //used for quick reencode
-        public abstract void Recalculate(FFMPEG.MediaInfo singleMedia);
+        public abstract void Recalculate(ICreateFileSession session);
     }
 
     public abstract class TargetFilesizePreset : DynamicCreateFilePreset
@@ -134,45 +130,9 @@ namespace ReencGUI
             vbitrate = $"{Math.Max(1, bps / 1000)}k"; //convert to kbps
         }
 
-        public override void Recalculate(WindowCreateFile session)
+        public override void Recalculate(ICreateFileSession session)
         {
             RecalcFromTime(session.GetDuration());
-        }
-
-        public override void Recalculate(FFMPEG.MediaInfo singleMedia)
-        {
-            RecalcFromTime(singleMedia.Duration);
-        }
-    }
-
-    public class CustomTargetSizePreset : TargetFilesizePreset
-    {
-        static double? sessionDefault = null;
-
-        public CustomTargetSizePreset() : base(1) {
-            name = "Custom file size target";
-            vcodecs = new List<string>() { Settings.settings.FromKey("reika.presets.sizetarget.videoCodec").GetString() };
-            acodec = "aac";
-            abitrate = "128k";
-        }
-
-        protected override void RecalcFromTime(ulong time)
-        {
-            if (sessionDefault == null)
-            {
-                WindowInputTargetFileSize wd = new WindowInputTargetFileSize();
-                wd.ShowDialog();
-                targetSizeBytes = Utils.Megabytes(wd.result != null ? wd.result.Value : Utils.Megabytes(10));
-                if (wd.result != null && wd.Checkbox_DontAskAgain.IsChecked == true)
-                {
-                    sessionDefault = wd.result.Value;
-                }
-            } else
-            {
-                targetSizeBytes = Utils.Megabytes(sessionDefault.Value);
-            }
-            targetSizeBytes = (ulong)(targetSizeBytes * 0.97);
-            base.RecalcFromTime(time);
         }
     }
 
@@ -189,29 +149,7 @@ namespace ReencGUI
     }
     public static class PresetManager
     {
-        public static void PromptInstallPreset()
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                Filter = "reika Preset|*.reikapreset",
-                Title = "reika: install preset",
-                Multiselect = true,
-            };
-            openFileDialog.ShowDialog();
-            var dir = AppData.GetAppDataSubdir("presets");
-            foreach (string file in openFileDialog.FileNames)
-            {
-                try
-                {
-                    File.Copy(file, Path.Combine(dir, Path.GetFileName(file)), true);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Failed to copy preset file {file}:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
+        public static Func<List<CreateFilePreset>> platformSpecificPresetLoader = null;
         public static List<CreateFilePreset> LoadPresets()
         {
             var presets = new List<CreateFilePreset>();
@@ -288,7 +226,6 @@ namespace ReencGUI
 
             presets.Add(new DiscordPreset("Discord 10MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(9.5)));
             presets.Add(new DiscordPreset("Discord 50MB VP9", new List<string> { "libvpx-vp9", "vp9_qsv", "vp9" }, Utils.Megabytes(48)));
-            presets.Add(new CustomTargetSizePreset());
             presets.Add(new CreateFilePreset
             {
                 name = "H264: Moderate",
@@ -378,6 +315,10 @@ namespace ReencGUI
                 abitrate = "128k",
                 otherArgs = "-profile:v main -vf \"scale=480:272,setsar=1:1\""
             });*/
+            if (platformSpecificPresetLoader != null)
+            {
+                presets = presets.Concat(platformSpecificPresetLoader()).ToList();
+            }
             return presets;
         }
     }

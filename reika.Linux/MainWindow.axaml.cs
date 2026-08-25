@@ -357,9 +357,17 @@ public partial class MainWindow : Window
                 {
                     next.uiQueueEntry.Label_Primary.Text = $"Cancelling...";
                 });
-                newP.StandardInput.WriteLine("q");
-                newP.StandardInput.Flush();
-                Thread.Sleep(1000);
+
+                if (OperatingSystem.IsWindows())
+                {
+                    newP.StandardInput.WriteLine("q");
+                    newP.StandardInput.Flush();
+                    Thread.Sleep(1000);
+                } else
+                {
+                    LinuxUtils.SendProcessSIGTERM(newP);
+                }
+
                 try
                 {
                     newP.Kill();
@@ -411,7 +419,7 @@ public partial class MainWindow : Window
             PopupOK.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", PopupStyle.Info);
             return;
         }
-        //new WindowQuickReencode().Show();
+        new WindowQuickReencode().Show();
     }
 
     private void Button_Settings_Click(object sender, RoutedEventArgs e)

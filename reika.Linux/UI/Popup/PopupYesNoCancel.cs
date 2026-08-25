@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace reika.Linux.UI.Popup
 {
@@ -40,7 +41,7 @@ namespace reika.Linux.UI.Popup
             p.Label_MainText.Content = message;
             p.Title = caption;
             p.SetStyle(style);
-            p.ShowDialog(MainWindow.instance);
+            LinuxUtils.ShowDialog(p, MainWindow.instance);
             return p.result;
         }
     }

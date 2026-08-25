@@ -56,6 +56,7 @@ namespace ReencGUI
         public MainWindow()
         {
             instance = this;
+            PresetManager.platformSpecificPresetLoader = PresetUtils.LoadWindowsPresets;
             InitializeComponent();
 
             Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref }); 
