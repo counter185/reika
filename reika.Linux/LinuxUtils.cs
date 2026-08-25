@@ -85,5 +85,10 @@ namespace reika.Linux
                 parent.Close();
             }*/
         }
+
+        public static void FFMPEGManualDeleteThumbnail(string uri)
+        {
+
+        }
     }
 }

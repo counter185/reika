@@ -167,7 +167,7 @@ public partial class MainWindow : Window
         if (media != null)
         {
             //todo
-            /*WindowCreateFile wd = new WindowCreateFile(from x in media.streams
+            WindowCreateFile wd = new WindowCreateFile(from x in media.streams
                                                        select new StreamTarget
                                                        {
                                                            mediaInfo = media,
@@ -176,7 +176,7 @@ public partial class MainWindow : Window
                                                        });
             wd.Input_OutFileName.InputField.Text = fileName + ".reenc";
             wd.Tbox_Extension.Text = ".mp4";
-            wd.Show();*/
+            wd.Show();
         }
         else
         {
@@ -410,7 +410,7 @@ public partial class MainWindow : Window
     {
         if (!downloadingFFMPEG)
         {
-            //new WindowCreateFile().Show();
+            new WindowCreateFile().Show();
         }
         else
         {

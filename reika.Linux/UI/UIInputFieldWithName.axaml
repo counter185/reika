@@ -6,6 +6,6 @@
              x:Class="reika.Linux.UI.UIInputFieldWithName" x:DataType="local:UIInputFieldWithName">
   <DockPanel LastChildFill="True">
         <Label DockPanel.Dock="Left" MinWidth="70" VerticalContentAlignment="Center" Padding="0" Content="{Binding InputFieldName, FallbackValue=Text}" Foreground="White"/>
-        <TextBox Classes="reikaTextBox" Name="InputField" Margin="20,0,0,0" DockPanel.Dock="Right" MinWidth="100"/>
+        <TextBox Classes="reikaTextBox" Name="InputField" Margin="20,0,0,0" DockPanel.Dock="Right" MinWidth="100" Text=""/>
     </DockPanel>
 </UserControl>

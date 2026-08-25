@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:reika.Linux.UI"
+             mc:Ignorable="d" x:DataType="local:UIEncoderEntry"
+             x:Class="reika.Linux.UI.UIEncoderEntry" TextSearch.Text="{Binding PrimaryText}">
+  <StackPanel Orientation="Vertical" Margin="10,5">
+        <Label x:Name="Text_Primary" Margin="0,-5" Content="Primary text" FontSize="18" Foreground="White"/>
+        <TextBlock x:Name="Text_Secondary" Margin="4" Text="Secondary text" FontSize="12" Foreground="#a0a0a0" TextWrapping="Wrap"/>
+    </StackPanel>
+</UserControl>
