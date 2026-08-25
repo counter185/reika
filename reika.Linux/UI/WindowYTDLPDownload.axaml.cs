@@ -267,6 +267,13 @@ namespace reika.Linux.UI
                 args.Add(Input_ExtraArgs.InputField.Text);
             }
 
+            string cookiesFromBrowser = Settings.settings.FromKey("reika.ytdlp.cookiesFromBrowser").GetString();
+            if (cookiesFromBrowser != "")
+            {
+                args.Add("--cookies-from-browser");
+                args.Add(cookiesFromBrowser);
+            }
+
             if (targetID != null)
             {
                 args.Add("-f");

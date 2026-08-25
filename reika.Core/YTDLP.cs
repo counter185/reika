@@ -61,12 +61,20 @@ namespace reika.Core
 
             try
             {
-                List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), 
-                    new List<string> {
-                        "-j",
-                        "--list-formats"
-                    }.Concat(args)
-                );
+
+                List<string> listArgs = new List<string> {
+                    "-j",
+                    "--list-formats"
+                };
+
+                string cookiesFromBrowser = Settings.settings.FromKey("reika.ytdlp.cookiesFromBrowser").GetString();
+                if (cookiesFromBrowser != "")
+                {
+                    listArgs.Add("--cookies-from-browser");
+                    listArgs.Add(cookiesFromBrowser);
+                }
+
+                List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), listArgs.Concat(args));
 
                 string json = output.Where(x => x.StartsWith("{\"")).FirstOrDefault();
                 if (json != null)
