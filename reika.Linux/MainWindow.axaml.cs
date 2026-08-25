@@ -49,7 +49,6 @@ public partial class MainWindow : Window
 
         Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref });
 
-
         if ((!File.Exists("ffmpeg\\ffmpeg.exe")
             || !File.Exists("ffmpeg\\ffprobe.exe"))
             && !FFMPEG.TestFFMPEG())
@@ -420,9 +419,9 @@ public partial class MainWindow : Window
         //new WindowSettings().Show();
     }
 
-    private void Button_Download_Click(object sender, RoutedEventArgs e)
+    private void Button_Download_Click(object? sender, RoutedEventArgs e)
     {
-        if (!File.Exists(YTDLP.GetCommandPath("yt-dlp")) || downloadingYTDLP)
+        if (/*!File.Exists(YTDLP.GetCommandPath("yt-dlp")) ||*/ downloadingYTDLP)
         {
             if (downloadingYTDLP)
             {
@@ -448,7 +447,7 @@ public partial class MainWindow : Window
         }
         else
         {
-            //new WindowYTDLPDownload(this).Show();
+            new WindowYTDLPDownload(this).Show();
         }
     }
 }
