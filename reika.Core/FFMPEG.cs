@@ -10,6 +10,7 @@ using System.Threading;
 using System.Net;
 using System.IO.Compression;
 using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
 namespace reika.Core
 {
@@ -53,12 +54,13 @@ namespace reika.Core
             public List<string> fullRawData = new List<string>();
             public List<string> otherData = new List<string>();
         }
+        static readonly string exeExtension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : "";
 
         public static string GetCommandPath(string command)
         {
-            if (File.Exists($"ffmpeg/{command}.exe"))
+            if (File.Exists($"ffmpeg/{command}{exeExtension}"))
             {
-                return $"ffmpeg/{command}.exe";
+                return $"./ffmpeg/{command}{exeExtension}";
             } 
             else
             {
@@ -66,11 +68,12 @@ namespace reika.Core
             }
         }
 
+
         public static List<string> RunCommandAndGetOutput(string command, IEnumerable<string> args)
         {
-            if (File.Exists($"ffmpeg/{command}.exe"))
+            if (File.Exists($"ffmpeg/{command}{exeExtension}"))
             {
-                command = $"ffmpeg/{command}.exe";
+                command = $"./ffmpeg/{command}{exeExtension}";
             }
             List<string> output = new List<string>();
             try
@@ -130,9 +133,9 @@ namespace reika.Core
             Action<string> outputLineCallback,
             Action<int> exitCallback = null)
         {
-            if (File.Exists($"ffmpeg/{command}.exe"))
+            if (File.Exists($"ffmpeg/{command}{exeExtension}"))
             {
-                command = $"ffmpeg/{command}.exe";
+                command = $"./ffmpeg/{command}{exeExtension}";
             }
 
             try

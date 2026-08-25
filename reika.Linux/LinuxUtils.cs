@@ -65,7 +65,7 @@ namespace reika.Linux
 
         public static void ShowDialog(Window w, Window parent)
         {
-            bool createdPlaceholderWindow = false;
+            /*bool createdPlaceholderWindow = false;
             if (parent == null || !parent.IsVisible)
             {
                 createdPlaceholderWindow = true;
@@ -74,16 +74,16 @@ namespace reika.Linux
                 parent.WindowDecorations = WindowDecorations.None;
                 parent.Background = Brushes.Transparent;
                 parent.Show();
-            }
+            }*/
             using (var source = new CancellationTokenSource())
             {
                 w.ShowDialog(parent).ContinueWith(t => source.Cancel(), TaskScheduler.FromCurrentSynchronizationContext());
                 Dispatcher.UIThread.MainLoop(source.Token);
             }
-            if (createdPlaceholderWindow)
+            /*if (createdPlaceholderWindow)
             {
                 parent.Close();
-            }
+            }*/
         }
     }
 }

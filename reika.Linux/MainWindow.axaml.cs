@@ -95,13 +95,17 @@ public partial class MainWindow : Window
                 {
                     if (required)
                     {
-                        PopupOK.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", PopupStyle.Error);
-                        Environment.Exit(-1);
+                        Dispatcher.Invoke(()=>{
+                            PopupOK.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", PopupStyle.Error);
+                            Environment.Exit(-1);
+                        });
                     }
                     else
                     {
-                        PopupOK.Show("Failed to download FFMPEG.", "FFMPEG Download Failed", PopupStyle.Error);
-                        downloadingFFMPEG = false;
+                        Dispatcher.Invoke(()=>{
+                            PopupOK.Show("Failed to download FFMPEG.", "FFMPEG Download Failed", PopupStyle.Error);
+                            downloadingFFMPEG = false;
+                        });
                     }
                 }
             });

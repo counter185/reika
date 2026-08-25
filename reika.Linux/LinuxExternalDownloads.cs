@@ -74,7 +74,7 @@ namespace reika.Linux
                         int done = 0;
                         foreach (string path in extractTargets)
                         {
-                            FFMPEG.RunCommandAndGetOutput("tar", new string[] {"-xf", "ffmpeg.tar.xz", path, "-C", "ffmpeg", "--strip-components=2"});
+                            FFMPEG.RunCommandAndGetOutput("tar", new string[] {"-C", "./ffmpeg", "-xf", "ffmpeg.tar.xz", path, "--strip-components=2"});
                             progressCallback.SetTextSecondary(path.Split("/").Last());
                             progressCallback.SetTextSecondary2($"{done} / {extractTargets.Count()} files");
                             progressCallback.SetProgress((double)done / extractTargets.Count() * 100);
