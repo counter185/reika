@@ -46,7 +46,12 @@ public partial class MainWindow : Window
     {
         instance = this;
         InitializeComponent();
+    }
 
+    //in avalonia all of this needs to be done in onloaded
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
         Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref });
 
         if (!File.Exists("ffmpeg/ffmpeg") || !File.Exists("ffmpeg/ffprobe"))
