@@ -22,6 +22,18 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
 
+        <Style Selector="TextBox.reikaTextBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="50%,0%" EndPoint="50%,100%">
+                        <GradientStop Color="#FF000000" Offset="0"/>
+                        <GradientStop Color="#FF0A0A1A" Offset="0.95"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style Selector="Button.reikaButton">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Background">
@@ -63,6 +75,74 @@
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="BorderBrush" Value="#FF2C628B"/>
             </Style>
+        </Style>
+
+        <Style Selector="ProgressBar.reikaProgressBarNVENC">
+            <Setter Property="Foreground">
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#FF001701" Offset="0.0"/>
+                    <GradientStop Color="#FF002101" Offset="0.1"/>
+                    <GradientStop Color="#FF148A04" Offset="0.5"/>
+                    <GradientStop Color="#FF93FF97" Offset="0.95"/>
+                    <GradientStop Color="#FF93FF97" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#FF458E3B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ProgressBar.reikaProgressBarAMF">
+            <Setter Property="Foreground">
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#FF170000" Offset="0.0"/>
+                    <GradientStop Color="#FF210000" Offset="0.1"/>
+                    <GradientStop Color="#FF8A0404" Offset="0.5"/>
+                    <GradientStop Color="#FFFF9393" Offset="0.95"/>
+                    <GradientStop Color="#FFFF9393" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#FF8E3B3B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ProgressBar.reikaProgressBarQSV">
+            <Setter Property="Foreground">
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#FF000A17" Offset="0.0"/>
+                    <GradientStop Color="#FF000D21" Offset="0.1"/>
+                    <GradientStop Color="#FF04318A" Offset="0.5"/>
+                    <GradientStop Color="#FF93BCFF" Offset="0.95"/>
+                    <GradientStop Color="#FF93C6FF" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#FF3B538E"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ProgressBar.reikaProgressBarCPU">
+            <Setter Property="Foreground">
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#FF1D1D1D" Offset="0.0"/>
+                    <GradientStop Color="#FF212121" Offset="0.1"/>
+                    <GradientStop Color="#FF8A8A8A" Offset="0.5"/>
+                    <GradientStop Color="#FFCCCCCC" Offset="0.95"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ListBox">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#20FFFFFF"/>
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="3"/>
         </Style>
     </Application.Styles>
 </Application>

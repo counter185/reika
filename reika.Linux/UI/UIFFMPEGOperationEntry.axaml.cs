@@ -26,17 +26,17 @@ namespace reika.Linux.UI
         {
             if (encID.Contains("nvenc"))
             {
-                return "ReencProgressBarStyleNVENC";
+                return "reikaProgressBarNVENC";
             }
             if (encID.Contains("amf"))
             {
-                return "ReencProgressBarStyleAMF";
+                return "reikaProgressBarAMF";
             }
             if (encID.Contains("qsv"))
             {
-                return "ReencProgressBarStyleQSV";
+                return "reikaProgressBarQSV";
             }
-            return "ReencProgressBarStyleCPU";
+            return "reikaProgressBarCPU";
         }
 
         public void SetProgressBarStyleForEncoderID(string encID)

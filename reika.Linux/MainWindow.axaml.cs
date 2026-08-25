@@ -214,7 +214,7 @@ public partial class MainWindow : Window
     {
 
         UIFFMPEGOperationEntry entry = new UIFFMPEGOperationEntry();
-        //entry.Background = WindowPickEncoder.GetGradientForCodecID(visualEncoderID);
+        entry.Background = WindowPickEncoder.GetGradientForCodecID(visualEncoderID);
         entry.Label_Primary.Text = $"In queue";
         entry.Label_Secondary.Content = Utils.SanitizeForXAML(Path.GetFileName(outFileName));
         entry.Label_Secondary2.Content = "";
