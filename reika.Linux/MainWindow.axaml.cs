@@ -54,7 +54,7 @@ public partial class MainWindow : Window
         base.OnLoaded(e);
         Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref });
 
-        if (!File.Exists("ffmpeg/ffmpeg") || !File.Exists("ffmpeg/ffprobe"))
+        if ((!File.Exists("ffmpeg/ffmpeg") || !File.Exists("ffmpeg/ffprobe")) && !FFMPEG.TestFFMPEG())
         {
             if (PopupYesNo.Show("FFMPEG not found. Download it now?" +
                 "\n\n*At least 500MB of free space is required" +
@@ -430,7 +430,7 @@ public partial class MainWindow : Window
 
     private void Button_Settings_Click(object sender, RoutedEventArgs e)
     {
-        //new WindowSettings().Show();
+        new WindowSettings().Show();
     }
 
     private void Button_Download_Click(object? sender, RoutedEventArgs e)
