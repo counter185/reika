@@ -13,6 +13,7 @@ namespace reika.Core
 {
     public class CreateFilePreset
     {
+
         public string name;
         public List<string> vcodecs;
         public string requiredExtension = null;
@@ -149,6 +150,7 @@ namespace reika.Core
     }
     public static class PresetManager
     {
+        static readonly List<string> h264CPUList = new List<String>{"libx264", "libopenh264"};
         public static Func<List<CreateFilePreset>> platformSpecificPresetLoader = null;
         public static List<CreateFilePreset> LoadPresets()
         {
@@ -179,8 +181,8 @@ namespace reika.Core
             var h265HwList = new List<string> { "hevc_nvenc", "hevc_amf", "hevc_qsv" };
             var av1HwList = new List<string> { "av1_nvenc", "av1_amf", "av1_qsv" };
 
-            var discordH264 = discordAllowHW ? h264HwList.Append("libx264").ToList()
-                : new List<string> { "libx264" };
+            var discordH264 = discordAllowHW ? h264HwList.Concat(h264CPUList).ToList()
+                : h264CPUList;
             presets.Add(new DiscordPreset("Discord 10MB Fast (H264)",
                 discordH264, 
                 Utils.Megabytes(discordAllowHW ? 8.8 : 9.7))
@@ -231,7 +233,7 @@ namespace reika.Core
                 name = "H264: Moderate",
                 vbitrate = "12000k",
                 requiredExtension = ".mp4",
-                vcodecs = h264HwList.Append("libx264").ToList(),
+                vcodecs = h264HwList.Concat(h264CPUList).ToList(),
                 acodec = "copy",
                 abitrate = ""
             });

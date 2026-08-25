@@ -49,13 +49,11 @@ public partial class MainWindow : Window
 
         Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref });
 
-        if ((!File.Exists("ffmpeg\\ffmpeg.exe")
-            || !File.Exists("ffmpeg\\ffprobe.exe"))
-            && !FFMPEG.TestFFMPEG())
+        if (!File.Exists("ffmpeg/ffmpeg") || !File.Exists("ffmpeg/ffprobe"))
         {
             if (PopupYesNo.Show("FFMPEG not found. Download it now?" +
                 "\n\n*At least 500MB of free space is required" +
-                "\n*FFMPEG will be downloaded from github.com/GyanD/codexffmpeg/releases",
+                "\n*FFMPEG will be downloaded from github.com/BtbN/FFmpeg-Builds/releases",
                 "FFMPEG Not Found", PopupStyle.Warning) == PopupResult.Yes)
             {
                 StartFFMPEGDownload(true);
@@ -83,8 +81,7 @@ public partial class MainWindow : Window
             downloadingFFMPEG = true;
             EnqueueOtherOperation((entry) =>
             {
-                //todo: download it with the package manager or something
-                /*if (WindowsExternalDownloads.FFMPEGDownloadLatest(entry))
+                if (LinuxExternalDownloads.FFMPEGDownloadLatest(entry))
                 {
                     ReloadEncoders();
                     downloadingFFMPEG = false;
@@ -101,7 +98,7 @@ public partial class MainWindow : Window
                         PopupOK.Show("Failed to download FFMPEG.", "FFMPEG Download Failed", PopupStyle.Error);
                         downloadingFFMPEG = false;
                     }
-                }*/
+                }
             });
         }
         else

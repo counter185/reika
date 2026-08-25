@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Threading;
 using reika.Core;
 using System;
@@ -64,10 +65,24 @@ namespace reika.Linux
 
         public static void ShowDialog(Window w, Window parent)
         {
+            bool createdPlaceholderWindow = false;
+            if (parent == null || !parent.IsVisible)
+            {
+                createdPlaceholderWindow = true;
+                parent = new Window();
+                parent.Width = parent.Height = 1;
+                parent.WindowDecorations = WindowDecorations.None;
+                parent.Background = Brushes.Transparent;
+                parent.Show();
+            }
             using (var source = new CancellationTokenSource())
             {
                 w.ShowDialog(parent).ContinueWith(t => source.Cancel(), TaskScheduler.FromCurrentSynchronizationContext());
                 Dispatcher.UIThread.MainLoop(source.Token);
+            }
+            if (createdPlaceholderWindow)
+            {
+                parent.Close();
             }
         }
     }

@@ -159,9 +159,9 @@ namespace reika.Core
 
         public static string GetCommandPath(string command)
         {
-            if (File.Exists($"yt-dlp\\{command}.exe"))
+            if (File.Exists($"yt-dlp/{command}.exe"))
             {
-                return $"yt-dlp\\{command}.exe";
+                return $"yt-dlp/{command}.exe";
             }
             else
             {

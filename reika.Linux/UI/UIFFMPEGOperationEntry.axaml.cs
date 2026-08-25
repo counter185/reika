@@ -113,10 +113,26 @@ namespace reika.Linux.UI
             Label_Secondary2.Content = string.Join(", ", secondaryText2Details);
         }
 
-        public void SetTextPrimary(string title) => Dispatcher.Invoke(() => { Label_Primary.Text = title; });
-        public void SetTextSecondary(string title) => Dispatcher.Invoke(() => { Label_Secondary.Content = title; });
-        public void SetTextSecondary2(string title) => Dispatcher.Invoke(() => { Label_Secondary2.Content = title; });
-        public void SetProgress(double progress) => Dispatcher.Invoke(() => { ProgressBar_Operation.Value = progress; });
+        public void SetTextPrimary(string title)  {
+            try {
+                Dispatcher.Invoke(() => { Label_Primary.Text = title; });
+            } catch (Exception) {}
+        }
+        public void SetTextSecondary(string title) { 
+            try {
+                Dispatcher.Invoke(() => { Label_Secondary.Content = title; });
+            } catch (Exception) {}
+        }
+        public void SetTextSecondary2(string title) { 
+            try {
+                Dispatcher.Invoke(() => { Label_Secondary2.Content = title; });
+            } catch (Exception) {}
+        }
+        public void SetProgress(double progress) {
+            try {
+            Dispatcher.Invoke(() => { ProgressBar_Operation.Value = progress; });
+            } catch (Exception) {}
+        }
 
         public void UpdateProgressBasedOnYTDLPLine(string line)
         {

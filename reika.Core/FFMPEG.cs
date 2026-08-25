@@ -56,9 +56,9 @@ namespace reika.Core
 
         public static string GetCommandPath(string command)
         {
-            if (File.Exists($"ffmpeg\\{command}.exe"))
+            if (File.Exists($"ffmpeg/{command}.exe"))
             {
-                return $"ffmpeg\\{command}.exe";
+                return $"ffmpeg/{command}.exe";
             } 
             else
             {
@@ -68,9 +68,9 @@ namespace reika.Core
 
         public static List<string> RunCommandAndGetOutput(string command, IEnumerable<string> args)
         {
-            if (File.Exists($"ffmpeg\\{command}.exe"))
+            if (File.Exists($"ffmpeg/{command}.exe"))
             {
-                command = $"ffmpeg\\{command}.exe";
+                command = $"ffmpeg/{command}.exe";
             }
             List<string> output = new List<string>();
             try
@@ -130,9 +130,9 @@ namespace reika.Core
             Action<string> outputLineCallback,
             Action<int> exitCallback = null)
         {
-            if (File.Exists($"ffmpeg\\{command}.exe"))
+            if (File.Exists($"ffmpeg/{command}.exe"))
             {
-                command = $"ffmpeg\\{command}.exe";
+                command = $"ffmpeg/{command}.exe";
             }
 
             try
