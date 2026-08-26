@@ -1,4 +1,5 @@
-﻿using Avalonia.Platform.Storage;
+﻿using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using reika.Core;
 using reika.Linux.UI.Popup;
 using System;
@@ -12,9 +13,10 @@ namespace reika.Linux
 {
     public static class PresetUtils
     {
-        public static string PromptInstallPreset()
+        //this needs to be async on linux
+        public async static Task<string> PromptInstallPreset(Window parent)
         {
-            var filePickerResult = MainWindow.instance.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            var filePickerResult = await parent.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "reika: install preset",
                 AllowMultiple = true,
@@ -22,7 +24,7 @@ namespace reika.Linux
                     new FilePickerFileType("reika Preset") { Patterns = new[] { "*.reikapreset" } }
                 }
 
-            }).GetAwaiter().GetResult();
+            });
 
             var dir = AppData.GetAppDataSubdir("presets");
             string ret = null;

@@ -296,13 +296,13 @@ namespace reika.Linux.UI
             return args;
         }
 
-        private void Button_OutputFolderPick_Click(object sender, RoutedEventArgs e)
+        private async void Button_OutputFolderPick_Click(object sender, RoutedEventArgs e)
         {
-            var filePickerResult = MainWindow.instance.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            var filePickerResult = await MainWindow.instance.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "reika: select output folder for downloads",
                 AllowMultiple = false
-            }).GetAwaiter().GetResult();
+            });
 
             if (filePickerResult.Any())
             {
@@ -310,9 +310,9 @@ namespace reika.Linux.UI
             }
         }
 
-        private void LoadPreset_Click(object sender, RoutedEventArgs e)
+        private async void LoadPreset_Click(object sender, RoutedEventArgs e)
         {
-            PresetUtils.PromptInstallPreset();
+            await PresetUtils.PromptInstallPreset(this);
             LoadPresets();
         }
     }

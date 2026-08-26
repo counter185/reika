@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace reika.Linux.UI
 {
@@ -682,7 +683,7 @@ namespace reika.Linux.UI
             }
         }
 
-        private void Button_OutFileSelect_Click(object sender, RoutedEventArgs e)
+        private async void Button_OutFileSelect_Click(object sender, RoutedEventArgs e)
         {
             IStorageFolder? folder = null;
 
@@ -690,11 +691,11 @@ namespace reika.Linux.UI
             {
                 string dir = Path.GetDirectoryName(Input_OutFileName.InputField.Text);
                 Uri startLocation = new Uri(!String.IsNullOrEmpty(dir) ? dir : "/");
-                folder = StorageProvider.TryGetFolderFromPathAsync(startLocation).GetAwaiter().GetResult();
+                folder = await StorageProvider.TryGetFolderFromPathAsync(startLocation);
             }
             catch (Exception) { }
 
-            var filePickerResult = MainWindow.instance.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            var filePickerResult = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 SuggestedStartLocation = folder,
                 SuggestedFileName = Path.GetFileName(Input_OutFileName.InputField.Text + Tbox_Extension.Text),
@@ -703,7 +704,7 @@ namespace reika.Linux.UI
                     new FilePickerFileType("Video Files") { Patterns = new[] { "*.mp4", "*.mkv", "*.avi", "*.mov", "*.flv", "*.webm", "*.wmv" } },
                     new FilePickerFileType("All Files") { Patterns = new[] { "*.*" } }
                 }
-            }).GetAwaiter().GetResult();
+            });
 
             if (filePickerResult != null)
             {
@@ -714,12 +715,12 @@ namespace reika.Linux.UI
             }
         }
 
-        private void Button_SavePreset_Click(object sender, RoutedEventArgs e)
+        private async void Button_SavePreset_Click(object sender, RoutedEventArgs e)
         {
             CreateFilePreset preset = PresetFromCurrentData();
 
             var reikaPresetFiletype = new FilePickerFileType("reika Preset") { Patterns = new[] { "*.reikapreset" } };
-            var filePickerResult = MainWindow.instance.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            var filePickerResult = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = "reika: load preset",
                 SuggestedFileType = reikaPresetFiletype,
@@ -727,7 +728,7 @@ namespace reika.Linux.UI
                     reikaPresetFiletype
                 }
 
-            }).GetAwaiter().GetResult();
+            });
 
             if (filePickerResult != null)
             {
@@ -743,9 +744,9 @@ namespace reika.Linux.UI
 
         }
 
-        private void Button_LoadPreset_Click(object sender, RoutedEventArgs e)
+        private async void Button_LoadPreset_Click(object sender, RoutedEventArgs e)
         {
-            var filePickerResult = MainWindow.instance.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            var filePickerResult = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = "reika: load preset",
                 AllowMultiple = false,
@@ -753,7 +754,7 @@ namespace reika.Linux.UI
                     new FilePickerFileType("reika Preset") { Patterns = new[] { "*.reikapreset" } }
                 }
 
-            }).GetAwaiter().GetResult();
+            });
 
             if (filePickerResult.Any())
             {
