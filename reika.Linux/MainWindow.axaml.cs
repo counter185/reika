@@ -116,6 +116,30 @@ public partial class MainWindow : Window
         }
     }
 
+    public void StartYTDLPDownload()
+    {
+        if (downloadingYTDLP)
+        {
+            PopupOK.Show("yt-dlp is currently being downloaded.\nPlease wait until it finishes.", "yt-dlp download in progress", PopupStyle.Info);
+        }
+        else
+        {
+            downloadingYTDLP = true;
+            EnqueueOtherOperation((entry) =>
+            {
+                if (LinuxExternalDownloads.YTDLPDownloadLatest(entry))
+                {
+                    Dispatcher.Invoke(() => PopupOK.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", PopupStyle.Info));
+                }
+                else
+                {
+                    Dispatcher.Invoke(() => PopupOK.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", PopupStyle.Error));
+                }
+                downloadingYTDLP = false;
+            });
+        }
+    }
+
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
@@ -436,29 +460,9 @@ public partial class MainWindow : Window
 
     private void Button_Download_Click(object? sender, RoutedEventArgs e)
     {
-        if (/*!File.Exists(YTDLP.GetCommandPath("yt-dlp")) ||*/ downloadingYTDLP)
+        if (downloadingYTDLP || (!File.Exists(YTDLP.GetCommandPath("yt-dlp")) && !YTDLP.TestYTDLP()))
         {
-            if (downloadingYTDLP)
-            {
-                PopupOK.Show("yt-dlp is currently being downloaded.\nPlease wait until it finishes.", "yt-dlp download in progress", PopupStyle.Info);
-            }
-            else
-            {
-                downloadingYTDLP = true;
-                EnqueueOtherOperation((entry) =>
-                {
-                    //download with package manager or something
-                    /*if (WindowsExternalDownloads.YTDLPDownloadLatest(entry))
-                    {
-                        Dispatcher.Invoke(() => PopupOK.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", PopupStyle.Info));
-                    }
-                    else
-                    {
-                        Dispatcher.Invoke(() => PopupOK.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", PopupStyle.Error));
-                    }*/
-                    downloadingYTDLP = false;
-                });
-            }
+            StartYTDLPDownload();
         }
         else
         {

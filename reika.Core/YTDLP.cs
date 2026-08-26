@@ -159,14 +159,32 @@ namespace reika.Core
 
         public static string GetCommandPath(string command)
         {
-            if (File.Exists($"yt-dlp/{command}.exe"))
+            if (File.Exists($"yt-dlp/{command}{FFMPEG.exeExtension}"))
             {
-                return $"yt-dlp/{command}.exe";
+                return $"yt-dlp/{command}{FFMPEG.exeExtension}";
             }
             else
             {
                 return command;
             }
+        }
+
+        static bool? testedYTDLP = null;
+        public static bool TestYTDLP()
+        {
+            if (testedYTDLP == null)
+            {
+                try
+                {
+                    FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), new string[] { "--version" });
+                    testedYTDLP = true;
+                }
+                catch (Exception)
+                {
+                    testedYTDLP = false;
+                }
+            }
+            return testedYTDLP.Value;
         }
 
         public static string GetDenoVersion()

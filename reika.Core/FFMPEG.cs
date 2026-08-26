@@ -54,7 +54,7 @@ namespace reika.Core
             public List<string> fullRawData = new List<string>();
             public List<string> otherData = new List<string>();
         }
-        static readonly string exeExtension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : "";
+        public static readonly string exeExtension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : "";
 
         public static string GetCommandPath(string command)
         {
@@ -116,7 +116,7 @@ namespace reika.Core
                         {
                             exited = true;
                         };
-                        while (!exited)
+                        while (!exited && !process.HasExited)
                         {
                             Thread.Sleep(100);
                         }

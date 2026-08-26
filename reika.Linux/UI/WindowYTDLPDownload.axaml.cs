@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using reika.Core;
 using reika.Linux.UI.Popup;
 using System;
@@ -28,6 +29,7 @@ namespace reika.Linux.UI
             Input_URL.InputField.TextChanged += (a, b) => URLChanged();
 
             Input_URL.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
+            Input_OutputFolder.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
             Input_ExtraArgs.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
             ListBox_FormatList.SelectionChanged += (a, b) => UpdateFullArgsLabel();
 
@@ -296,17 +298,16 @@ namespace reika.Linux.UI
 
         private void Button_OutputFolderPick_Click(object sender, RoutedEventArgs e)
         {
-            /*using (System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog())
+            var filePickerResult = MainWindow.instance.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
-                fbd.Description = "Select output folder for downloads";
-                fbd.SelectedPath = Input_OutputFolder.InputField.Text;
-                fbd.ShowNewFolderButton = true;
-                System.Windows.Forms.DialogResult result = fbd.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                {
-                    Input_OutputFolder.InputField.Text = fbd.SelectedPath;
-                }
-            }*/
+                Title = "reika: select output folder for downloads",
+                AllowMultiple = false
+            }).GetAwaiter().GetResult();
+
+            if (filePickerResult.Any())
+            {
+                Input_OutputFolder.InputField.Text = filePickerResult.First().Path.LocalPath;
+            }
         }
 
         private void LoadPreset_Click(object sender, RoutedEventArgs e)

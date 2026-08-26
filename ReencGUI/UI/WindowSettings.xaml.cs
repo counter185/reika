@@ -95,5 +95,10 @@ namespace ReencGUI.UI
         {
             MainWindow.instance.StartFFMPEGDownload(false);
         }
+
+        private void Button_ForceDLYTDLP_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.instance.StartYTDLPDownload();
+        }
     }
 }
