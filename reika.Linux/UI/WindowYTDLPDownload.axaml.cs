@@ -311,7 +311,7 @@ namespace reika.Linux.UI
 
         private void LoadPreset_Click(object sender, RoutedEventArgs e)
         {
-            //PresetManager.PromptInstallPreset();
+            PresetUtils.PromptInstallPreset();
             LoadPresets();
         }
     }

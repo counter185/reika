@@ -66,6 +66,10 @@ namespace reika.Core
 
         public static CreateFilePreset Load(string path)
         {
+            if (path == null)
+            {
+                return null;
+            }
             try
             {
                 XmlDocument doc = new XmlDocument();

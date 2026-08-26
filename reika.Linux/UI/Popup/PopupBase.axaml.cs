@@ -38,7 +38,7 @@ namespace reika.Linux.UI.Popup
             Button newButton = new Button();
             newButton.Content = text;
             newButton.MinWidth = 70;
-            newButton.Height = 25;
+            newButton.Height = 32;
             newButton.Margin = new Thickness(5, 0, 5, 0);
             newButton.Classes.Add("reikaButton");
             newButton.Click += (a, b) => action();

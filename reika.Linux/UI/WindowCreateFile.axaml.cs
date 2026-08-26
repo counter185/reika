@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using reika.Core;
 using reika.Linux.UI.Popup;
 using System;
@@ -683,57 +684,80 @@ namespace reika.Linux.UI
 
         private void Button_OutFileSelect_Click(object sender, RoutedEventArgs e)
         {
-            /*SaveFileDialog saveFileDialog = new SaveFileDialog
+            IStorageFolder? folder = null;
+
+            try
             {
-                FileName = Input_OutFileName.InputField.Text + Tbox_Extension.Text,
-                Filter = "Video Files|*.mp4;*.mkv;*.avi;*.mov;*.flv;*.webm;*.wmv|All Files|*.*",
+                string dir = Path.GetDirectoryName(Input_OutFileName.InputField.Text);
+                Uri startLocation = new Uri(!String.IsNullOrEmpty(dir) ? dir : "/");
+                folder = StorageProvider.TryGetFolderFromPathAsync(startLocation).GetAwaiter().GetResult();
+            }
+            catch (Exception) { }
+
+            var filePickerResult = MainWindow.instance.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                SuggestedStartLocation = folder,
+                SuggestedFileName = Path.GetFileName(Input_OutFileName.InputField.Text + Tbox_Extension.Text),
                 Title = "reika: save output file",
-                OverwritePrompt = true,
-            };
-            saveFileDialog.ShowDialog();
-            if (!string.IsNullOrEmpty(saveFileDialog.FileName))
+                FileTypeChoices = new[] {
+                    new FilePickerFileType("Video Files") { Patterns = new[] { "*.mp4", "*.mkv", "*.avi", "*.mov", "*.flv", "*.webm", "*.wmv" } },
+                    new FilePickerFileType("All Files") { Patterns = new[] { "*.*" } }
+                }
+            }).GetAwaiter().GetResult();
+
+            if (filePickerResult != null)
             {
-                string extension = Path.GetExtension(saveFileDialog.FileName);
-                Input_OutFileName.InputField.Text = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.Length - extension.Length);
+                string path = filePickerResult.Path.LocalPath;
+                string extension = Path.GetExtension(path);
+                Input_OutFileName.InputField.Text = path.Substring(0, path.Length - extension.Length);
                 Tbox_Extension.Text = extension;
-            }*/
+            }
         }
 
         private void Button_SavePreset_Click(object sender, RoutedEventArgs e)
         {
-            /*CreateFilePreset preset = PresetFromCurrentData();
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            CreateFilePreset preset = PresetFromCurrentData();
+
+            var reikaPresetFiletype = new FilePickerFileType("reika Preset") { Patterns = new[] { "*.reikapreset" } };
+            var filePickerResult = MainWindow.instance.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Filter = "reika Preset|*.reikapreset",
-                Title = "reika: save preset",
-                OverwritePrompt = true,
-            };
-            if (saveFileDialog.ShowDialog() == true)
+                Title = "reika: load preset",
+                SuggestedFileType = reikaPresetFiletype,
+                FileTypeChoices = new[] {
+                    reikaPresetFiletype
+                }
+
+            }).GetAwaiter().GetResult();
+
+            if (filePickerResult != null)
             {
                 try
                 {
-                    preset.Save(saveFileDialog.FileName);
+                    preset.Save(filePickerResult.Path.LocalPath);
                 }
                 catch (Exception ex)
                 {
                     PopupOK.Show($"Failed to save preset: {ex.Message}", "Error", PopupStyle.Error);
                 }
-            }*/
+            }
 
         }
 
         private void Button_LoadPreset_Click(object sender, RoutedEventArgs e)
         {
-            /*OpenFileDialog openFileDialog = new OpenFileDialog
+            var filePickerResult = MainWindow.instance.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Filter = "reika Preset|*.reikapreset",
                 Title = "reika: load preset",
-                Multiselect = false,
-            };
-            openFileDialog.ShowDialog();
-            if (!string.IsNullOrEmpty(openFileDialog.FileName))
+                AllowMultiple = false,
+                FileTypeFilter = new[] {
+                    new FilePickerFileType("reika Preset") { Patterns = new[] { "*.reikapreset" } }
+                }
+
+            }).GetAwaiter().GetResult();
+
+            if (filePickerResult.Any())
             {
-                CreateFilePreset preset = CreateFilePreset.Load(openFileDialog.FileName);
+                CreateFilePreset preset = CreateFilePreset.Load(filePickerResult.FirstOrDefault()?.Path.LocalPath);
                 if (preset != null)
                 {
                     ApplyPreset(preset);
@@ -742,7 +766,7 @@ namespace reika.Linux.UI
                 {
                     PopupOK.Show("Failed to load preset.", "Error", PopupStyle.Error);
                 }
-            }*/
+            }
         }
 
         private void Button_Preview_Click(object sender, RoutedEventArgs e)
