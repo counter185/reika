@@ -130,7 +130,7 @@ public partial class MainWindow : Window
             }
         }
         this.Hide();
-        LinuxUtils.FFMPEGCleanupThumbnails();
+        ThumbnailUtil.FFMPEGCleanupThumbnails();
         instance = null;
         Environment.Exit(0);
     }

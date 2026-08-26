@@ -138,7 +138,7 @@ namespace ReencGUI
                 }
             }
             this.Hide();
-            WindowsUtils.FFMPEGCleanupThumbnails();
+            ThumbnailUtil.FFMPEGCleanupThumbnails();
             instance = null;
             Environment.Exit(0);
         }

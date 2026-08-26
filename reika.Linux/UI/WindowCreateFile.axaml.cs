@@ -96,7 +96,7 @@ namespace reika.Linux.UI
             GC.Collect();
             foreach (string uri in disposeUrisOnClose)
             {
-                LinuxUtils.FFMPEGManualDeleteThumbnail(uri);
+                ThumbnailUtil.FFMPEGManualDeleteThumbnail(uri);
             }
         }
 
@@ -120,7 +120,7 @@ namespace reika.Linux.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    /*LinuxUtils.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -128,7 +128,7 @@ namespace reika.Linux.UI
                             fromThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_FromThumb.Source = WindowsUtils.LoadToMemFromUri(uri);
+                                Image_FromThumb.Source = LinuxUtils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
                             }
                             catch (Exception ex)
@@ -137,7 +137,7 @@ namespace reika.Linux.UI
                             }
                             FetchFromTimeThumbnail();
                         });
-                    });*/
+                    });
                 }
             }
         }
@@ -155,7 +155,7 @@ namespace reika.Linux.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    /*LinuxUtils.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -163,7 +163,7 @@ namespace reika.Linux.UI
                             toThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_ToThumb.Source = WindowsUtils.LoadToMemFromUri(uri);
+                                Image_ToThumb.Source = LinuxUtils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
                             }
                             catch (Exception ex)
@@ -172,7 +172,7 @@ namespace reika.Linux.UI
                             }
                             FetchToTimeThumbnail();
                         });
-                    });*/
+                    });
                 }
             }
         }
@@ -752,7 +752,7 @@ namespace reika.Linux.UI
 
         private void Button_Crop_Click(object sender, RoutedEventArgs e)
         {
-            //new WindowSetCrop(this).ShowDialog();
+            LinuxUtils.ShowDialog(new WindowSetCrop(this), this);
         }
 
         public ulong GetDuration()

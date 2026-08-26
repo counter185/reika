@@ -24,18 +24,18 @@ namespace reika.Linux.UI
             if (streamTarget.streamInfo.mediaType == FFMPEG.CodecType.Video)
             {
                 ulong durationMS = Utils.LengthToMS(streamTarget.mediaInfo.dH, streamTarget.mediaInfo.dM, streamTarget.mediaInfo.dS, streamTarget.mediaInfo.dMS);
-                /*LinuxUtils.FFMPEGExtractThumbnailAsync(streamTarget.mediaInfo.fileName, durationMS == 0 ? "00" : "01", (uri) =>
+                ThumbnailUtil.FFMPEGExtractThumbnailAsync(streamTarget.mediaInfo.fileName, durationMS == 0 ? "00" : "01", (uri) =>
                 {
                     if (uri != null)
                     {
                         Dispatcher.Invoke(() =>
                         {
                             thumbnailUri = uri;
-                            Image_Thumbnail.Source = WindowsUtils.LoadToMemFromUri(uri);
-                            Image_Thumbnail.Visibility = Visibility.Visible;
+                            Image_Thumbnail.Source = LinuxUtils.LoadToMemFromUri(uri);
+                            Image_Thumbnail.IsVisible = true;
                         });
                     }
-                });*/
+                });
             }
         }
     }

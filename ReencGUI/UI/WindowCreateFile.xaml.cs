@@ -106,7 +106,7 @@ namespace ReencGUI.UI
             GC.Collect();
             foreach (string uri in disposeUrisOnClose)
             {
-                WindowsUtils.FFMPEGManualDeleteThumbnail(uri);
+                ThumbnailUtil.FFMPEGManualDeleteThumbnail(uri);
             }
         }
 
@@ -130,7 +130,7 @@ namespace ReencGUI.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    WindowsUtils.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -165,7 +165,7 @@ namespace ReencGUI.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    WindowsUtils.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
                     {
                         Dispatcher.Invoke(() =>
                         {

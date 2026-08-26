@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using reika.Core;
 using System;
@@ -45,11 +47,6 @@ namespace reika.Linux
             }
         }
 
-        public static void FFMPEGCleanupThumbnails()
-        {
-
-        }
-
 
         public static void AddRightMouseButtonDownHandler(Avalonia.Interactivity.Interactive o, Action action)
         {
@@ -86,9 +83,6 @@ namespace reika.Linux
             }*/
         }
 
-        public static void FFMPEGManualDeleteThumbnail(string uri)
-        {
-
-        }
+        public static Bitmap LoadToMemFromUri(Uri u) => new Bitmap(u.LocalPath);
     }
 }

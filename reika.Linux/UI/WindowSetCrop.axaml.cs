@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using reika.Core;
+using System.Text.RegularExpressions;
 
-namespace ReencGUI.UI
+namespace reika.Linux.UI
 {
-    /// <summary>
-    /// Logika interakcji dla klasy WindowSetCrop.xaml
-    /// </summary>
-    public partial class WindowSetCrop : DarkWindow
+    public partial class WindowSetCrop : Window
     {
         WindowCreateFile caller;
         int resX;
         int resY;
         bool initPassed = false;
 
+        bool ignoreTextChanged = false;
         bool dontChangeText = false;
 
         public WindowSetCrop(WindowCreateFile caller)
@@ -81,17 +72,19 @@ namespace ReencGUI.UI
             var media = caller.GetPreviewVideoMedia();
             if (media != null)
             {
-                var bmp = WindowsUtils.LoadToMemFromUri(ThumbnailUtil.FFMPEGExtractThumbnail(media.fileName, "00"));
+                var bmp = LinuxUtils.LoadToMemFromUri(ThumbnailUtil.FFMPEGExtractThumbnail(media.fileName, "00"));
                 if (bmp != null)
                 {
                     Image_Preview.Source = bmp;
-                    resX = bmp.PixelWidth;
-                    resY = bmp.PixelHeight;
-                } else
+                    resX = bmp.PixelSize.Width;
+                    resY = bmp.PixelSize.Height;
+                }
+                else
                 {
                     this.Close();
                 }
-            } else
+            }
+            else
             {
                 this.Close();
             }
@@ -101,11 +94,11 @@ namespace ReencGUI.UI
         {
             Canvas_Preview.Children.Clear();
 
-            Size canvasRenderSize = Canvas_Preview.RenderSize;
-            Size imageRenderSize = Image_Preview.RenderSize;
+            double canvasW = Canvas_Preview.Bounds.Width, canvasH = Canvas_Preview.Bounds.Height;
+            double imageRenderW = Image_Preview.Bounds.Width, imageRenderH = Image_Preview.Bounds.Height;
 
-            int imageRenderX = canvasRenderSize.Width == imageRenderSize.Width ? 0 : (int)((canvasRenderSize.Width - imageRenderSize.Width) / 2);
-            int imageRenderY = canvasRenderSize.Height == imageRenderSize.Height ? 0 : (int)((canvasRenderSize.Height - imageRenderSize.Height) / 2);
+            int imageRenderX = canvasW == imageRenderW ? 0 : (int)((canvasW - imageRenderW) / 2);
+            int imageRenderY = canvasH == imageRenderH ? 0 : (int)((canvasH - imageRenderH) / 2);
 
             double leftPosition = Slider_Top.Value;
             double rightPosition = Slider_Bottom.Value;
@@ -122,21 +115,21 @@ namespace ReencGUI.UI
                 {
                     Fill = new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)),
                     Margin = new Thickness(imageRenderX, imageRenderY, 0, 0),
-                    Width = imageRenderSize.Width * leftPosition,
-                    Height = imageRenderSize.Height
+                    Width = imageRenderW * leftPosition,
+                    Height = imageRenderH
                 };
                 Canvas_Preview.Children.Add(leftCropRect);
             }
 
             if (rightPosition < 1)
             {
-                int rCropW = (int)(imageRenderSize.Width * (1.0-rightPosition));
+                int rCropW = (int)(imageRenderW * (1.0 - rightPosition));
                 Rectangle rightCropRect = new Rectangle
                 {
                     Fill = new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)),
-                    Margin = new Thickness(imageRenderX + imageRenderSize.Width - rCropW, imageRenderY, 0, 0),
+                    Margin = new Thickness(imageRenderX + imageRenderW - rCropW, imageRenderY, 0, 0),
                     Width = rCropW,
-                    Height = imageRenderSize.Height
+                    Height = imageRenderH
                 };
                 Canvas_Preview.Children.Add(rightCropRect);
             }
@@ -155,19 +148,19 @@ namespace ReencGUI.UI
                 {
                     Fill = new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)),
                     Margin = new Thickness(imageRenderX, imageRenderY, 0, 0),
-                    Width = imageRenderSize.Width,
-                    Height = imageRenderSize.Height * topPosition
+                    Width = imageRenderW,
+                    Height = imageRenderH * topPosition
                 };
                 Canvas_Preview.Children.Add(topCropRect);
             }
             if (bottomPosition < 1)
             {
-                int bCropH = (int)(imageRenderSize.Height * (1.0 - bottomPosition));
+                int bCropH = (int)(imageRenderH * (1.0 - bottomPosition));
                 Rectangle bottomCropRect = new Rectangle
                 {
                     Fill = new SolidColorBrush(Color.FromArgb(180, 0, 0, 0)),
-                    Margin = new Thickness(imageRenderX, imageRenderY + imageRenderSize.Height - bCropH, 0, 0),
-                    Width = imageRenderSize.Width,
+                    Margin = new Thickness(imageRenderX, imageRenderY + imageRenderH - bCropH, 0, 0),
+                    Width = imageRenderW,
                     Height = bCropH
                 };
                 Canvas_Preview.Children.Add(bottomCropRect);
@@ -177,8 +170,9 @@ namespace ReencGUI.UI
             {
                 Stroke = Brushes.Red,
                 Margin = new Thickness(imageRenderX, imageRenderY, 0, 0),
-                Width = imageRenderSize.Width,
-                Height = imageRenderSize.Height
+                Width = imageRenderW,
+                Height = imageRenderH,
+                StrokeThickness = 1
             };
             //Canvas_Preview.Children.Add(innerImageRect);
 
@@ -186,12 +180,13 @@ namespace ReencGUI.UI
             {
                 Stroke = Brushes.Lime,
                 Margin = new Thickness(
-                    imageRenderX + imageRenderSize.Width * leftPosition,
-                    imageRenderY + imageRenderSize.Height * topPosition,
+                    imageRenderX + imageRenderW * leftPosition,
+                    imageRenderY + imageRenderH * topPosition,
                     0,
                     0),
-                Width = imageRenderSize.Width * (rightPosition - leftPosition),
-                Height = imageRenderSize.Height * (bottomPosition - topPosition)
+                Width = imageRenderW * (rightPosition - leftPosition),
+                Height = imageRenderH * (bottomPosition - topPosition),
+                StrokeThickness = 1
             };
             Canvas_Preview.Children.Add(innerCropRect);
 
@@ -226,13 +221,15 @@ namespace ReencGUI.UI
 
         public void UpdateCropInputField()
         {
-            if (!dontChangeText)
+            if (!dontChangeText && !ignoreTextChanged)
             {
+                ignoreTextChanged = true;
                 Input_CropArg.InputField.Text = MakeCropString();
+                ignoreTextChanged = false;
             }
         }
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        protected override void OnSizeChanged(SizeChangedEventArgs e)
         {
             if (initPassed)
             {
@@ -240,7 +237,7 @@ namespace ReencGUI.UI
             }
         }
 
-        private void SliderMoved(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderMoved(object sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             if (initPassed)
             {
