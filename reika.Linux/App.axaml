@@ -47,6 +47,7 @@
             </Setter>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="#FF606060"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
 
             <Style Selector="^:pointerover /template/ ContentPresenter">
                 <Setter Property="Background">

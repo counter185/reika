@@ -663,15 +663,15 @@ namespace reika.Linux.UI
                         }
                         else
                         {
-                            /*WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
-                            pickStreams.ShowDialog();
+                            WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
+                            LinuxUtils.ShowDialog(pickStreams, this);
                             if (pickStreams.selectedStreams != null)
                             {
                                 foreach (var stm in pickStreams.selectedStreams)
                                 {
                                     AddStream(stm);
                                 }
-                            }*/
+                            }
                         }
                     }
                     else

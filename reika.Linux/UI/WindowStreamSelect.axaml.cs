@@ -1,27 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Packaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Markup.Xaml;
 using reika.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ReencGUI.UI
+namespace reika.Linux.UI
 {
-    /// <summary>
-    /// Logika interakcji dla klasy WindowStreamSelect.xaml
-    /// </summary>
-    public partial class WindowStreamSelect : DarkWindow
+    public partial class WindowStreamSelect : Window
     {
-
         public List<StreamTarget> selectedStreams = null;
 
         List<CheckBox> checkBoxes = new List<CheckBox>();
@@ -31,7 +21,8 @@ namespace ReencGUI.UI
             int i = 0;
             foreach (var stream in streams)
             {
-                StreamTarget st = new StreamTarget {
+                StreamTarget st = new StreamTarget
+                {
                     mediaInfo = media,
                     streamInfo = stream,
                     indexInStream = i++
