@@ -47,7 +47,7 @@ jobs:
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ReencGUI\reika.csproj
 
     - name: Build (linux)
-      working-directory: ${{env.GITHUB_WORKSPACE}}\reika.Linux
+      working-directory: ${{env.GITHUB_WORKSPACE}}\reika.Linux\
       run: dotnet publish -r linux-x64 -p:PublishSingleFile=true
 
     - name: Remove unnecessary files
