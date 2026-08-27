@@ -12,13 +12,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowStreamSelect.xaml
     /// </summary>
-    public partial class WindowStreamSelect : Window
+    public partial class WindowStreamSelect : DarkWindow
     {
 
         public List<StreamTarget> selectedStreams = null;
@@ -45,12 +46,6 @@ namespace ReencGUI.UI
                 Panel_StreamList.Items.Add(cb);
                 checkBoxes.Add(cb);
             }
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
 
         private void Button_Confirm_Click(object sender, RoutedEventArgs e)

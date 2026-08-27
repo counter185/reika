@@ -12,20 +12,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowSetCrop.xaml
     /// </summary>
-    public partial class WindowSetCrop : Window
+    public partial class WindowSetCrop : DarkWindow
     {
         WindowCreateFile caller;
         int resX;
         int resY;
         bool initPassed = false;
 
-        bool ignoreTextChanged = false;
         bool dontChangeText = false;
 
         public WindowSetCrop(WindowCreateFile caller)
@@ -46,10 +46,10 @@ namespace ReencGUI.UI
 
             Input_CropArg.InputField.TextChanged += (s, e) =>
             {
-                if (ignoreTextChanged) return;
-                dontChangeText = true;
-                ValidateCropStringAndChangeSliders(Input_CropArg.InputField.Text);
-                dontChangeText = false;
+                if (Input_CropArg.InputField.IsFocused)
+                {
+                    ValidateCropStringAndChangeSliders(Input_CropArg.InputField.Text);
+                }
             };
         }
 
@@ -76,18 +76,12 @@ namespace ReencGUI.UI
             return false;
         }
 
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
-        }
-
         void GrabImage()
         {
             var media = caller.GetPreviewVideoMedia();
             if (media != null)
             {
-                var bmp = FFMPEG.ExtractThumbnail(media.fileName, "00");
+                var bmp = WindowsUtils.LoadToMemFromUri(ThumbnailUtil.FFMPEGExtractThumbnail(media.fileName, "00"));
                 if (bmp != null)
                 {
                     Image_Preview.Source = bmp;
@@ -234,9 +228,7 @@ namespace ReencGUI.UI
         {
             if (!dontChangeText)
             {
-                ignoreTextChanged = true;
                 Input_CropArg.InputField.Text = MakeCropString();
-                ignoreTextChanged = false;
             }
         }
 
@@ -248,34 +240,7 @@ namespace ReencGUI.UI
             }
         }
 
-        private void Slider_Left_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (initPassed)
-            {
-                Redraw();
-                UpdateCropInputField();
-            }
-        }
-
-        private void Slider_Bottom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (initPassed)
-            {
-                Redraw();
-                UpdateCropInputField();
-            }
-        }
-
-        private void Slider_Right_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (initPassed)
-            {
-                Redraw();
-                UpdateCropInputField();
-            }
-        }
-
-        private void Slider_Top_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderMoved(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (initPassed)
             {

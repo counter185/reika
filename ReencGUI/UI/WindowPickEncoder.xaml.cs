@@ -12,13 +12,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowPickEncoder.xaml
     /// </summary>
-    public partial class WindowPickEncoder : Window
+    public partial class WindowPickEncoder : DarkWindow
     {
         public string result = null;
 
@@ -114,7 +115,7 @@ namespace ReencGUI.UI
         public WindowPickEncoder(FFMPEG.CodecType type)
         {
             InitializeComponent();
-            var validEncs = (from x in MainWindow.instance.encoders
+            var validEncs = (from x in FFMPEGCodecs.encoders
                              where x.Type == type
                              select x).OrderByDescending(x=>GetPriorityForID(type, x.ID)).ToList();
 
@@ -130,12 +131,6 @@ namespace ReencGUI.UI
 
                 Panel_Encoders.Items.Add(entry);
             }
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
     }
 }

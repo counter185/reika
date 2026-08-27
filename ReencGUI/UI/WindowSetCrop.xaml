@@ -1,9 +1,10 @@
-﻿<Window x:Class="ReencGUI.UI.WindowSetCrop"
+﻿<llocal:DarkWindow x:Class="ReencGUI.UI.WindowSetCrop"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReencGUI.UI"
+        xmlns:llocal="clr-namespace:ReencGUI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
         Title="reika: set video crop" Height="435" Width="542">
@@ -18,15 +19,15 @@
                 <DockPanel DockPanel.Dock="Left" LastChildFill="True">
                     <Rectangle Height="20" DockPanel.Dock="Top"/>
                     <Rectangle Height="20" DockPanel.Dock="Bottom"/>
-                    <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Left" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="Slider_Left_ValueChanged" Maximum="1" Value="1"/>
+                    <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Left" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="SliderMoved" Maximum="1" Value="1"/>
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Right" LastChildFill="True">
                     <Rectangle Height="20" DockPanel.Dock="Top"/>
                     <Rectangle Height="20" DockPanel.Dock="Bottom"/>
-                    <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Right" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="Slider_Right_ValueChanged" Maximum="1" Value="0"/>
+                    <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Right" Orientation="Vertical" DockPanel.Dock="Top" ValueChanged="SliderMoved" Maximum="1" Value="0"/>
                 </DockPanel>
-                <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Top" Orientation="Horizontal" DockPanel.Dock="Top" Height="20" ValueChanged="Slider_Top_ValueChanged" Maximum="1" Value="0"/>
-                <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Bottom" Orientation="Horizontal" DockPanel.Dock="Bottom" Height="20" ValueChanged="Slider_Bottom_ValueChanged" Maximum="1" Value="1"/>
+                <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Top" Orientation="Horizontal" DockPanel.Dock="Top" Height="20" ValueChanged="SliderMoved" Maximum="1" Value="0"/>
+                <Slider Style="{DynamicResource ReencSliderStyle}" x:Name="Slider_Bottom" Orientation="Horizontal" DockPanel.Dock="Bottom" Height="20" ValueChanged="SliderMoved" Maximum="1" Value="1"/>
                 <Grid>
                     <Image x:Name="Image_Preview"/>
                     <Canvas x:Name="Canvas_Preview" DockPanel.Dock="Bottom"/>
@@ -34,4 +35,4 @@
             </DockPanel>
         </DockPanel>
     </Grid>
-</Window>
+</llocal:DarkWindow>

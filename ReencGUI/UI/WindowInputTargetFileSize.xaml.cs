@@ -18,19 +18,13 @@ namespace ReencGUI.UI
     /// <summary>
     /// Logika interakcji dla klasy WindowInputTargetFileSize.xaml
     /// </summary>
-    public partial class WindowInputTargetFileSize : Window
+    public partial class WindowInputTargetFileSize : DarkWindow
     {
         public double? result = null;
 
         public WindowInputTargetFileSize()
         {
             InitializeComponent();
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
 
         private void Button_Confirm_Click(object sender, RoutedEventArgs e)

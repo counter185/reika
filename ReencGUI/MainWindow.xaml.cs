@@ -18,13 +18,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shell;
+using reika.Core;
+using ReencGUI.UI.Popup;
 
 namespace ReencGUI
 {
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : DarkWindow
     {
         struct EncodeOperation
         {
@@ -43,9 +45,6 @@ namespace ReencGUI
 
         public static MainWindow instance;
 
-        public List<FFMPEG.CodecInfo> decoders;
-        public List<FFMPEG.CodecInfo> encoders;
-
         volatile bool downloadingFFMPEG = false;
         volatile bool downloadingYTDLP = false;
 
@@ -57,6 +56,7 @@ namespace ReencGUI
         public MainWindow()
         {
             instance = this;
+            PresetManager.platformSpecificPresetLoader = PresetUtils.LoadWindowsPresets;
             InitializeComponent();
 
             Label_VersionNumber.Content = string.Join(" ", new string[] { ReleaseInfo.Version, ReleaseInfo.Ref }); 
@@ -64,18 +64,18 @@ namespace ReencGUI
 
             if ((!File.Exists("ffmpeg\\ffmpeg.exe")
                 || !File.Exists("ffmpeg\\ffprobe.exe"))
-                && !TestFFMPEG())
+                && !FFMPEG.TestFFMPEG())
             {
-                if (MessageBox.Show("FFMPEG not found. Download it now?" +
+                if (PopupYesNo.Show("FFMPEG not found. Download it now?" +
                     "\n\n*At least 500MB of free space is required" +
                     "\n*FFMPEG will be downloaded from github.com/GyanD/codexffmpeg/releases", 
-                    "FFMPEG Not Found", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    "FFMPEG Not Found", PopupStyle.Warning) == PopupResult.Yes)
                 {
                     StartFFMPEGDownload(true);
                 }
                 else
                 {
-                    MessageBox.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+                    PopupOK.Show($"FFMPEG was not found in PATH.\nClosing.", "FFMPEG Not Found", PopupStyle.Error);
                     Environment.Exit(-1);
                 }
             } else
@@ -85,7 +85,7 @@ namespace ReencGUI
 
             AppData.GetAppDataPath();
             AppData.GetAppDataSubdir("presets");
-            Label_HwInfo.Content = Utils.GetSystemHardwareInfo();
+            Label_HwInfo.Content = WindowsUtils.GetSystemHardwareInfo();
         }
 
         public void StartFFMPEGDownload(bool required)
@@ -95,7 +95,7 @@ namespace ReencGUI
                 downloadingFFMPEG = true;
                 EnqueueOtherOperation((entry) =>
                 {
-                    if (FFMPEG.DownloadLatest(entry))
+                    if (WindowsExternalDownloads.FFMPEGDownloadLatest(entry))
                     {
                         ReloadEncoders();
                         downloadingFFMPEG = false;
@@ -104,26 +104,24 @@ namespace ReencGUI
                     {
                         if (required)
                         {
-                            MessageBox.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                            Environment.Exit(-1);
+                            Dispatcher.Invoke(()=>{
+                                PopupOK.Show("Failed to download FFMPEG.\nClosing.", "FFMPEG Download Failed", PopupStyle.Error);
+                                Environment.Exit(-1);
+                            });
                         }
                         else
                         {
-                            MessageBox.Show("Failed to download FFMPEG.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                            downloadingFFMPEG = false;
+                            Dispatcher.Invoke(()=>{
+                                PopupOK.Show("Failed to download FFMPEG.", "FFMPEG Download Failed", PopupStyle.Error);
+                                downloadingFFMPEG = false;
+                            });
                         }
                     }
                 });
             } else
             {
-                MessageBox.Show("Already downloading FFMPEG.", "FFMPEG Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show("Already downloading FFMPEG.", "FFMPEG Download Failed", PopupStyle.Error);
             }
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -131,15 +129,16 @@ namespace ReencGUI
             base.OnClosing(e);
             if (encodeQueue.Count > 0 || otherOpsQueue.Count > 0 || encodesRunning > 0 || doingOtherOp)
             {
-                if (MessageBox.Show("Operations are still in queue." +
+                if (PopupYesNo.Show("Operations are still in queue." +
                     "\nClosing reika will not stop any running encode operations." +
-                    "\nClose anyway?", "Confirm close", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    "\nClose anyway?", "Confirm close", PopupStyle.Warning) == PopupResult.No)
                 {
                     e.Cancel = true;
                     return;
                 }
             }
-            FFMPEG.CleanupThumbnails();
+            this.Hide();
+            ThumbnailUtil.FFMPEGCleanupThumbnails();
             instance = null;
             Environment.Exit(0);
         }
@@ -148,7 +147,7 @@ namespace ReencGUI
         {
             if (downloadingFFMPEG)
             {
-                MessageBox.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+                PopupOK.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", PopupStyle.Info);
                 return;
             }
 
@@ -166,23 +165,9 @@ namespace ReencGUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error processing file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show($"Error processing file: {ex.Message}", "Error", PopupStyle.Error);
             }
 
-        }
-
-        private bool TestFFMPEG()
-        {
-            try
-            {
-                FFMPEG.RunFFMPEGCommandlineForOutput(new string[] { "-version" });
-                FFMPEG.RunFFProbeCommandlineForOutput(new string[] { "-version" });
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         public void OpenCreateFileWindowForFile(string fileName)
@@ -203,83 +188,17 @@ namespace ReencGUI
             }
             else
             {
-                MessageBox.Show("Failed to identify file.\nCheck if ffmpeg is installed.", "Invalid File", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show("Failed to identify file.\nCheck if ffmpeg is installed.", "Invalid File", PopupStyle.Error);
             }
-        }
-
-        private void TestEncoders(UIFFMPEGOperationEntry progressCallback)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                progressCallback.Label_Primary.Text = "Testing HW encoders";
-                progressCallback.Label_Secondary.Content = "";
-                progressCallback.Label_Secondary2.Content = "";
-            });
-            string[] hwEncKeywords = new string[]
-            {
-                "nvenc", "amf", "qsv", "vaapi", "_mf", "_vulkan", "d3d1"
-            };
-            var targetEncoders = encoders.Where(x => hwEncKeywords.Any(y => x.ID.Contains(y))).ToList();
-            List<string> compatible = new List<string>(), incompatible = new List<string>();
-            int i = 0;
-            foreach (var enc in targetEncoders)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    progressCallback.Label_Secondary.Content = Utils.SanitizeForXAML(enc.ID);
-                    progressCallback.ProgressBar_Operation.Value = 100 * ((double)(i++) / targetEncoders.Count);
-                });
-                string[] args =
-                {
-                    "-loglevel", "error",
-                    "-f", "lavfi",
-                    "-i", (enc.Type == FFMPEG.CodecType.Video ? "color=black:s=640x360" : "sine=frequency=1000:duration=1"),
-                    (enc.Type == FFMPEG.CodecType.Video ? "-vframes 1" : ""),
-                    (enc.Type == FFMPEG.CodecType.Video ? "-an" : ""),
-                    (enc.Type == FFMPEG.CodecType.Video ? "-c:v" : "-c:a"), enc.ID,
-                    "-f", "null",
-                    "-"
-                };
-                List<string> output = FFMPEG.RunFFMPEGCommandlineForOutput(args);
-                if (output.Any(x=>x.ToLower().Contains("error")))
-                {
-                    incompatible.Add(enc.ID);
-                    Dispatcher.Invoke(() =>
-                    {
-                        progressCallback.Label_Secondary2.Content = $"compat. {compatible.Count}/{incompatible.Count} incompat.";
-                        encoders.Remove(enc);
-                    });
-                } else
-                {
-                    compatible.Add(enc.ID);
-                }
-            }
-            Console.WriteLine($"Compatible HW encoders:\n{string.Join("\n", compatible)}");
-            Console.WriteLine($"Incompatible HW encoders:\n{string.Join("\n", incompatible)}");
         }
 
         private void ReloadEncoders()
         {
-            decoders = FFMPEG.GetAvailableDecoders();
-            encoders = FFMPEG.GetAvailableEncoders();
-
-            encoders.Insert(0, new FFMPEG.CodecInfo
-            {
-                Name = "Copy (same as source)",
-                ID = "copy",
-                Type = FFMPEG.CodecType.Video,
-            });
-
-            encoders.Insert(0, new FFMPEG.CodecInfo
-            {
-                Name = "Copy (same as source)",
-                ID = "copy",
-                Type = FFMPEG.CodecType.Audio,
-            });
+            FFMPEGCodecs.LoadCodecList();
 
             Dispatcher.Invoke(() =>
             {
-                EnqueueOtherOperation((entry) => TestEncoders(entry));
+                EnqueueOtherOperation((entry) => FFMPEGCodecs.TestHWEncoders(entry));
                 Label_FFMPEGVersion.Text = FFMPEG.GetFFMPEGVersion();
             });
         }
@@ -324,7 +243,7 @@ namespace ReencGUI
 
             entry.onRightClick = (a) =>
             {
-                if (MessageBox.Show("Run this encode operation now?", "reika", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (PopupYesNo.Show("Run this encode operation now?", "reika") == PopupResult.Yes)
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -447,7 +366,8 @@ namespace ReencGUI
 
             next.uiQueueEntry.onRightClick = (b) =>
             {
-                if (!cancelling && MessageBox.Show("Are you sure you want to cancel this operation?", "Cancel Operation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (!cancelling 
+                    && PopupYesNo.Show("Are you sure you want to cancel this operation?", "Cancel Operation", PopupStyle.Warning) == PopupResult.Yes)
                 {
                     cancelling = true;
                     Dispatcher.Invoke(() =>
@@ -496,7 +416,7 @@ namespace ReencGUI
                 new WindowCreateFile().Show();
             } else
             {
-                MessageBox.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+                PopupOK.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", PopupStyle.Info);
             }
         }
 
@@ -504,7 +424,7 @@ namespace ReencGUI
         {
             if (downloadingFFMPEG)
             {
-                MessageBox.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
+                PopupOK.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", PopupStyle.Info);
                 return;
             }
             new WindowQuickReencode().Show();
@@ -517,31 +437,37 @@ namespace ReencGUI
 
         private void Button_Download_Click(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists(YTDLP.GetCommandPath("yt-dlp")) || downloadingYTDLP)
+            if (downloadingYTDLP || (!File.Exists(YTDLP.GetCommandPath("yt-dlp")) && !YTDLP.TestYTDLP()))
             {
-                if (downloadingYTDLP)
-                {
-                    MessageBox.Show("yt-dlp is currently being downloaded.\nPlease wait until it finishes.", "yt-dlp download in progress", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    downloadingYTDLP = true;
-                    EnqueueOtherOperation((entry) =>
-                    {
-                        if (YTDLP.DownloadLatest(entry))
-                        {
-                            MessageBox.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                        downloadingYTDLP = false;
-                    });
-                }
-            } else
+                StartYTDLPDownload();
+            }
+            else
             {
                 new WindowYTDLPDownload(this).Show();
+            }
+        }
+
+        public void StartYTDLPDownload()
+        {
+            if (downloadingYTDLP)
+            {
+                PopupOK.Show("yt-dlp is currently being downloaded.\nPlease wait until it finishes.", "yt-dlp download in progress", PopupStyle.Info);
+            }
+            else
+            {
+                downloadingYTDLP = true;
+                EnqueueOtherOperation((entry) =>
+                {
+                    if (WindowsExternalDownloads.YTDLPDownloadLatest(entry))
+                    {
+                        Dispatcher.Invoke(() => PopupOK.Show("yt-dlp downloaded successfully.", "yt-dlp Downloaded", PopupStyle.Info));
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => PopupOK.Show("Failed to download yt-dlp.", "yt-dlp Download Failed", PopupStyle.Error));
+                    }
+                    downloadingYTDLP = false;
+                });
             }
         }
     }

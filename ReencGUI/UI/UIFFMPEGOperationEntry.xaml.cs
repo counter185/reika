@@ -14,13 +14,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using reika.Core;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy UIFFMPEGOperationEntry.xaml
     /// </summary>
-    public partial class UIFFMPEGOperationEntry : UserControl
+    public partial class UIFFMPEGOperationEntry : UserControl, IOperationEntryUI
     {
         public Action<UIFFMPEGOperationEntry> onRightClick = null;
 
@@ -55,25 +56,6 @@ namespace ReencGUI.UI
         {
             string styleKey = GetProgressBarStyleForEncoderID(encID);
             ProgressBar_Operation.Style = (Style)FindResource(styleKey);
-        }
-
-        public void UpdateProgressBasedOnYTDLPLine(string line)
-        {
-            if (line != null && line.StartsWith("[download]"))
-            {
-                Match m = Regex.Match(line, @"([\d\.]+)%");
-                if (m.Success)
-                {
-                    double progress = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
-                    ProgressBar_Operation.Value = progress;
-                }
-
-                m = Regex.Match(line, @"(ETA [\d\:\.]+)");
-                if (m.Success)
-                {
-                    Label_Secondary2.Content = m.Groups[1].Value;
-                }
-            }
         }
 
         public void UpdateProgressBasedOnLogKVs(Dictionary<string, string> logOutputKVs, ulong fileDuration)
@@ -140,6 +122,30 @@ namespace ReencGUI.UI
 
             Label_Secondary.Content = string.Join(", ", secondaryTextDetails);
             Label_Secondary2.Content = string.Join(", ", secondaryText2Details);
+        }
+
+        public void SetTextPrimary(string title) => Dispatcher.Invoke(() => { Label_Primary.Text = title; });
+        public void SetTextSecondary(string title) => Dispatcher.Invoke(() => { Label_Secondary.Content = title; });
+        public void SetTextSecondary2(string title) => Dispatcher.Invoke(() => { Label_Secondary2.Content = title; });
+        public void SetProgress(double progress) => Dispatcher.Invoke(() => { ProgressBar_Operation.Value = progress; });
+
+        public void UpdateProgressBasedOnYTDLPLine(string line)
+        {
+            if (line != null && line.StartsWith("[download]"))
+            {
+                Match m = Regex.Match(line, @"([\d\.]+)%");
+                if (m.Success)
+                {
+                    double progress = double.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture);
+                    SetProgress(progress);
+                }
+
+                m = Regex.Match(line, @"(ETA [\d\:\.]+)");
+                if (m.Success)
+                {
+                    SetTextSecondary2(m.Groups[1].Value);
+                }
+            }
         }
     }
 }

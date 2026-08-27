@@ -14,13 +14,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using reika.Core;
+using ReencGUI.UI.Popup;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowYTDLPDownload.xaml
     /// </summary>
-    public partial class WindowYTDLPDownload : Window
+    public partial class WindowYTDLPDownload : DarkWindow
     {
         MainWindow caller;
         YTDLP.YTDLPVideo currentVideo = null;
@@ -44,15 +46,9 @@ namespace ReencGUI.UI
             metaFetchThread.Start();
         }
 
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
-        }
-
         protected override void OnClosed(EventArgs e)
         {
-            metaFetchThread.Abort();
+            metaFetchThread.Interrupt();
             base.OnClosed(e);
         }
 
@@ -61,28 +57,33 @@ namespace ReencGUI.UI
         string metaURLNow = null;
         void MetadataFetchThread()
         {
-            while (true)
+            try
             {
-                if (requestedURLNow != metaURLNow)
+                while (true)
                 {
-                    string nextURL = requestedURLNow;
-                    Dispatcher.Invoke(() => {
-                        Label_VideoTitle.Content = "<fetching media info...>";
-                        ListBox_FormatList.Items.Clear();
-                        Label_Channel.Content = Label_ID.Content = "";
-                        UpdateFullArgsLabel();
-                    });
-
-                    currentVideo = YTDLP.GetVideoInfo(new List<string> { nextURL });
-                    Dispatcher.Invoke(() =>
+                    if (requestedURLNow != metaURLNow)
                     {
-                        SetMetadata(currentVideo);
-                        UpdateFullArgsLabel();
-                    });
-                    metaURLNow = nextURL;
+                        string nextURL = requestedURLNow;
+                        Dispatcher.Invoke(() =>
+                        {
+                            Label_VideoTitle.Content = "<fetching media info...>";
+                            ListBox_FormatList.Items.Clear();
+                            Label_Channel.Content = Label_ID.Content = "";
+                            UpdateFullArgsLabel();
+                        });
+
+                        currentVideo = YTDLP.GetVideoInfo(new List<string> { nextURL });
+                        Dispatcher.Invoke(() =>
+                        {
+                            SetMetadata(currentVideo);
+                            UpdateFullArgsLabel();
+                        });
+                        metaURLNow = nextURL;
+                    }
+                    Thread.Sleep(500);
                 }
-                Thread.Sleep(500);
             }
+            catch (ThreadInterruptedException) { }
         }
 
         private void LoadPresets()
@@ -165,14 +166,14 @@ namespace ReencGUI.UI
                 string denoVersion = YTDLP.GetDenoVersion();
                 if (String.IsNullOrEmpty(denoVersion))
                 {
-                    MessageBoxResult result = MessageBox.Show(
+                    PopupResult result = PopupYesNoCancel.Show(
                     "yt-dlp may require a JavaScript runtime to download from this site, and Deno was not found on your system.\n"
                     + "Install it now with winget?\n\n"
                     + "*This will open a cmd window, where you may need to confirm the installation.",
                     "YouTube Download Warning",
-                    MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                    PopupStyle.Warning);
 
-                    if (result == MessageBoxResult.Yes)
+                    if (result == PopupResult.Yes)
                     {
                         caller.EnqueueOtherOperation((entry) =>
                         {
@@ -182,18 +183,18 @@ namespace ReencGUI.UI
                             });
                             try
                             {
-                                YTDLP.InstallDeno(entry);
+                                WindowsExternalDownloads.DenoInstallLatest(entry);
                             }
                             catch (Exception ex)
                             {
                                 Dispatcher.Invoke(() =>
                                 {
-                                    MessageBox.Show($"Failed to install Deno:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    PopupOK.Show($"Failed to install Deno:\n {ex.Message}", "Error", PopupStyle.Error);
                                 });
                             }
                         });
                     }
-                    if (result != MessageBoxResult.Cancel)
+                    if (result != PopupResult.Cancel)
                     {
                         EnqueueDownload();
                     }
@@ -236,7 +237,7 @@ namespace ReencGUI.UI
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show($"Failed to process file:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
                             }
                         });
                     }
@@ -248,7 +249,7 @@ namespace ReencGUI.UI
             }
             else
             {
-                MessageBox.Show("URL cannot be empty.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show("URL cannot be empty.", "Error", PopupStyle.Error);
             }
         }
 
@@ -271,6 +272,13 @@ namespace ReencGUI.UI
             if (Input_ExtraArgs.InputField.Text != "")
             {
                 args.Add(Input_ExtraArgs.InputField.Text);
+            }
+
+            string cookiesFromBrowser = Settings.settings.FromKey("reika.ytdlp.cookiesFromBrowser").GetString();
+            if (cookiesFromBrowser != "")
+            {
+                args.Add("--cookies-from-browser");
+                args.Add(cookiesFromBrowser);
             }
 
             if (targetID != null)
@@ -310,7 +318,7 @@ namespace ReencGUI.UI
 
         private void LoadPreset_Click(object sender, RoutedEventArgs e)
         {
-            PresetManager.PromptInstallPreset();
+            PresetUtils.PromptInstallPreset();
             LoadPresets();
         }
     }

@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:reika.Linux.UI"
+             x:Class="reika.Linux.UI.UIInputFieldWithName" x:DataType="local:UIInputFieldWithName">
+  <DockPanel LastChildFill="True">
+        <Label DockPanel.Dock="Left" MinWidth="70" VerticalContentAlignment="Center" Padding="0" Content="{Binding InputFieldName, FallbackValue=Text}" Foreground="White"/>
+        <TextBox Classes="reikaTextBox" Name="InputField" Margin="20,0,0,0" DockPanel.Dock="Right" MinWidth="100" Text=""/>
+    </DockPanel>
+</UserControl>

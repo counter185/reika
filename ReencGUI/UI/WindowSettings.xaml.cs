@@ -13,13 +13,15 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using reika.Core;
+using ReencGUI.UI.Popup;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowSettings.xaml
     /// </summary>
-    public partial class WindowSettings : Window
+    public partial class WindowSettings : DarkWindow
     {
         public WindowSettings()
         {
@@ -36,12 +38,6 @@ namespace ReencGUI.UI
         {
             SaveSettings();
             base.OnClosing(e);
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
 
         private void SaveSettings()
@@ -83,21 +79,26 @@ namespace ReencGUI.UI
         {
             if (RegisterContextMenuCommand())
             {
-                MessageBox.Show("Context menu command registered successfully.", "Success", MessageBoxButton.OK);
+                PopupOK.Show("Context menu command registered successfully.", "Success");
             } else
             {
-                MessageBox.Show("Failed to register context menu command.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show("Failed to register context menu command.", "Error", PopupStyle.Error);
             }
         }
 
         private void Button_AddPresetToList_Click(object sender, RoutedEventArgs e)
         {
-            PresetManager.PromptInstallPreset();
+            PresetUtils.PromptInstallPreset();
         }
 
         private void Button_ForceDLFFMPEG_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.instance.StartFFMPEGDownload(false);
+        }
+
+        private void Button_ForceDLYTDLP_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.instance.StartYTDLPDownload();
         }
     }
 }

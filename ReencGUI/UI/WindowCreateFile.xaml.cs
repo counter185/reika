@@ -14,13 +14,15 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using reika.Core;
+using ReencGUI.UI.Popup;
 
 namespace ReencGUI.UI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowCreateFile.xaml
     /// </summary>
-    public partial class WindowCreateFile : Window
+    public partial class WindowCreateFile : DarkWindow, ICreateFileSession
     {
 
         List<StreamTarget> streamTargets = new List<StreamTarget>();
@@ -97,13 +99,6 @@ namespace ReencGUI.UI
                 }
             }
         }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
-        }
-
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
@@ -111,7 +106,7 @@ namespace ReencGUI.UI
             GC.Collect();
             foreach (string uri in disposeUrisOnClose)
             {
-                FFMPEG.ManualDeleteThumbnail(uri);
+                ThumbnailUtil.FFMPEGManualDeleteThumbnail(uri);
             }
         }
 
@@ -135,7 +130,7 @@ namespace ReencGUI.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -143,7 +138,7 @@ namespace ReencGUI.UI
                             fromThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_FromThumb.Source = Utils.LoadToMemFromUri(uri);
+                                Image_FromThumb.Source = WindowsUtils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
                             }
                             catch (Exception ex)
@@ -170,7 +165,7 @@ namespace ReencGUI.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    FFMPEG.ExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri)=>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -178,7 +173,7 @@ namespace ReencGUI.UI
                             toThumbnailTimestampNow = timestamp;
                             try
                             {
-                                Image_ToThumb.Source = Utils.LoadToMemFromUri(uri);
+                                Image_ToThumb.Source = WindowsUtils.LoadToMemFromUri(uri);
                                 disposeUrisOnClose.Add(uri.LocalPath);
                             } catch (Exception ex)
                             {
@@ -214,7 +209,7 @@ namespace ReencGUI.UI
             }
             Tbox_Extension.Text = preset.requiredExtension ?? Tbox_Extension.Text;
             Input_VcodecName.InputField.Text = (from x in preset.vcodecs
-                                                where MainWindow.instance.encoders.Any(y=>y.ID == x)
+                                                where FFMPEGCodecs.encoders.Any(y=>y.ID == x)
                                                 select x).FirstOrDefault() ?? Input_VcodecName.InputField.Text;
             Input_Vbitrate.InputField.Text = preset.vbitrate;
             Input_Vres.InputField.Text = preset.vresolution ?? Input_Vres.InputField.Text;
@@ -305,39 +300,6 @@ namespace ReencGUI.UI
             streamTargets.Add(target);
             CreateStreamsList();
         }
-
-        public ulong GetDuration()
-        {
-            if (!streamTargets.Any())
-            {
-                return 0;
-            }
-
-            ulong wholeDuration = streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS))
-                .Max();
-
-            ulong ret = wholeDuration;
-
-            try
-            {
-                ulong ss = Utils.ParseDuration(Input_TrimFrom.InputField.Text);
-                ret -= ss;
-            }
-            catch (Exception) { }   //invalid -ss
-
-            try
-            {
-                ulong to = Utils.ParseDuration(Input_TrimTo.InputField.Text);
-                if (to <= wholeDuration)
-                {
-                    ret -= (wholeDuration - to);
-                }
-            }
-            catch (Exception) { }   //invalid -to
-
-            return ret;
-        }
-
         public void RunEncode()
         {
             if (streamTargets.Any())
@@ -369,7 +331,7 @@ namespace ReencGUI.UI
             }
             else
             {
-                MessageBox.Show("No streams to encode", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show("No streams to encode", "Error", PopupStyle.Error);
             }
         }
 
@@ -475,7 +437,7 @@ namespace ReencGUI.UI
                 ret.InsertRange(insertAt, toArg);
             }
 
-            var vcodecs = MainWindow.instance.encoders.Where(x => x.Type == FFMPEG.CodecType.Video && x.ID.Contains("264"))
+            var vcodecs = FFMPEGCodecs.encoders.Where(x => x.Type == FFMPEG.CodecType.Video && x.ID.Contains("264"))
                 .OrderByDescending(x=>new string[] { "nvenc", "amf", "qsv", "mf" }.Any(y=>x.ID.Contains(y)) ? 1 : 0);
 
             if (vbitrate != "")
@@ -719,7 +681,7 @@ namespace ReencGUI.UI
                         }
                     } else
                     {
-                        MessageBox.Show($"Failed to get media info for file: {file}\nThe file might not be a valid media file.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        PopupOK.Show($"Failed to get media info for file: {file}\nThe file might not be a valid media file.", "Error", PopupStyle.Error);
                     }
                 }
             }
@@ -760,7 +722,7 @@ namespace ReencGUI.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to save preset: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    PopupOK.Show($"Failed to save preset: {ex.Message}", "Error", PopupStyle.Error);
                 }
             }
 
@@ -784,7 +746,7 @@ namespace ReencGUI.UI
                 }
                 else
                 {
-                    MessageBox.Show("Failed to load preset.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    PopupOK.Show("Failed to load preset.", "Error", PopupStyle.Error);
                 }
             }
         }
@@ -797,6 +759,38 @@ namespace ReencGUI.UI
         private void Button_Crop_Click(object sender, RoutedEventArgs e)
         {
             new WindowSetCrop(this).ShowDialog();
+        }
+
+        public ulong GetDuration()
+        {
+            if (!streamTargets.Any())
+            {
+                return 0;
+            }
+
+            ulong wholeDuration = streamTargets.Select(x => Utils.LengthToMS(x.mediaInfo.dH, x.mediaInfo.dM, x.mediaInfo.dS, x.mediaInfo.dMS))
+                .Max();
+
+            ulong ret = wholeDuration;
+
+            try
+            {
+                ulong ss = Utils.ParseDuration(Input_TrimFrom.InputField.Text);
+                ret -= ss;
+            }
+            catch (Exception) { }   //invalid -ss
+
+            try
+            {
+                ulong to = Utils.ParseDuration(Input_TrimTo.InputField.Text);
+                if (to <= wholeDuration)
+                {
+                    ret -= (wholeDuration - to);
+                }
+            }
+            catch (Exception) { }   //invalid -to
+
+            return ret;
         }
     }
 }
