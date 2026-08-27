@@ -460,6 +460,7 @@ public partial class MainWindow : Window
 
     private void Button_Download_Click(object? sender, RoutedEventArgs e)
     {
+        WindowYTDLPDownload.EnsureLocalYTDLPExecutePermissions();
         if (downloadingYTDLP || (!File.Exists(YTDLP.GetCommandPath("yt-dlp")) && !YTDLP.TestYTDLP()))
         {
             StartYTDLPDownload();

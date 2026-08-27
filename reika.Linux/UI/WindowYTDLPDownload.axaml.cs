@@ -7,6 +7,7 @@ using Avalonia.Platform.Storage;
 using reika.Core;
 using reika.Linux.UI.Popup;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -219,21 +220,29 @@ namespace reika.Linux.UI
                         entry.Label_Primary.Text = currentVideo != null ? $"{currentVideo.title}" : "YT-DLP video";
                     });
 
-                    string outputFile = reencodeAfterDownload ? YTDLP.GetOutputFileName(args) : null;
-                    bool downloadResult = YTDLP.RunDownload(args, entry);
-                    if (outputFile != null && downloadResult && reencPreset != null)
+                    try
                     {
-                        Dispatcher.Invoke(() =>
+                        EnsureLocalYTDLPExecutePermissions();
+
+                        string outputFile = reencodeAfterDownload ? YTDLP.GetOutputFileName(args) : null;
+                        bool downloadResult = YTDLP.RunDownload(args, entry);
+                        if (outputFile != null && downloadResult && reencPreset != null)
                         {
-                            try
+                            Dispatcher.Invoke(() =>
                             {
-                                WindowQuickReencode.QueueReencodeWithPreset(outputFile, reencPreset, true);
-                            }
-                            catch (Exception ex)
-                            {
-                                PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
-                            }
-                        });
+                                try
+                                {
+                                    WindowQuickReencode.QueueReencodeWithPreset(outputFile, reencPreset, true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
+                                }
+                            });
+                        }
+                    } catch (Exception ex)
+                    {
+                        PopupOK.Show($"Failed to process yt-dlp download:\n {ex.Message}", "Error", PopupStyle.Error);
                     }
                 });
                 /*if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
@@ -288,8 +297,11 @@ namespace reika.Linux.UI
                 args.Add($"\"{Input_OutputFolder.InputField.Text}\"");
             }
 
-            /*args.Add("--ffmpeg-location");
-            args.Add("./ffmpeg");*/
+            if (File.Exists("ffmpeg/ffmpeg"))
+            {
+                args.Add("--ffmpeg-location");
+                args.Add("./ffmpeg");
+            }
 
             args.Add($"\"{Input_URL.InputField.Text}\"");
 
@@ -314,6 +326,18 @@ namespace reika.Linux.UI
         {
             await PresetUtils.PromptInstallPreset(this);
             LoadPresets();
+        }
+
+        public static void EnsureLocalYTDLPExecutePermissions()
+        {
+            if (File.Exists("yt-dlp/yt-dlp") && (File.GetUnixFileMode("yt-dlp/yt-dlp") & UnixFileMode.UserExecute) == 0)
+            {
+                File.SetUnixFileMode("yt-dlp/yt-dlp",
+                    UnixFileMode.OtherExecute | UnixFileMode.OtherRead
+                    | UnixFileMode.GroupExecute | UnixFileMode.GroupRead
+                    | UnixFileMode.UserExecute | UnixFileMode.UserRead
+                );
+            }
         }
     }
 }

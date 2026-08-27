@@ -150,6 +150,11 @@ namespace reika.Linux
                         {
                             Thread.Sleep(100);
                         }
+                        File.SetUnixFileMode("yt-dlp/yt-dlp",
+                            UnixFileMode.OtherExecute | UnixFileMode.OtherRead
+                            | UnixFileMode.GroupExecute | UnixFileMode.GroupRead
+                            | UnixFileMode.UserExecute | UnixFileMode.UserRead
+                        );
                         return true;
                     }
                     downloadMatches = downloadMatches.NextMatch();
