@@ -338,9 +338,10 @@ namespace ReencGUI.UI
         public void RunPreview()
         {
             var ffplayArgs = MakeFFPlayPreviewArgs();
-            ffplayArgs = new string[] { "/c", FFMPEG.GetCommandPath("ffmpeg") }.Concat(ffplayArgs).ToList();
+            ffplayArgs = new string[] { "/c", FFMPEG.GetCommandPath("ffmpeg").Replace("/", "\\") }.Concat(ffplayArgs).ToList();
+            Console.WriteLine("preview output:");
             FFMPEG.RunCommandWithAsyncOutput("cmd", ffplayArgs, (line) => {
-                //Console.WriteLine(line);
+                Console.WriteLine(line);
             });
         }
 
@@ -438,7 +439,7 @@ namespace ReencGUI.UI
             }
 
             var vcodecs = FFMPEGCodecs.encoders.Where(x => x.Type == FFMPEG.CodecType.Video && x.ID.Contains("264"))
-                .OrderByDescending(x=>new string[] { "nvenc", "amf", "qsv", "mf" }.Any(y=>x.ID.Contains(y)) ? 1 : 0);
+                .OrderByDescending(x=>new string[] { "nvenc", "amf", "qsv" }.Any(y=>x.ID.Contains(y)) ? 1 : 0);
 
             if (vbitrate != "")
             {
@@ -461,7 +462,7 @@ namespace ReencGUI.UI
             ret.AddRange(new string[] { "-f", "avi" });
             ret.Add("-");
 
-            ret.AddRange(new string[] { "|", FFMPEG.GetCommandPath("ffplay"), "-autoexit", "-" });
+            ret.AddRange(new string[] { "|", FFMPEG.GetCommandPath("ffplay").Replace("/", "\\"), "-autoexit", "-" });
 
             return ret;
         }
