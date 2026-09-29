@@ -18,6 +18,7 @@ namespace reika.Core
             new SettingsValue ( "reika.presets.discord.useWebmInsteadOfMP4", "Discord presets: use .webm instead of .mp4", false ),
             new SettingsValue ( "reika.presets.sizetarget.videoCodec", "Custom file size target: video codec to use", ""),
             new SettingsValue ( "reika.ytdlp.cookiesFromBrowser", "YTDLP: use cookies from browser (firefox, chrome, etc.)", ""),
+            new SettingsValue ( "reika.vulkan.deviceIndex", "Vulkan: device index", 0),
         };
 
         public class SettingsValue
@@ -52,9 +53,16 @@ namespace reika.Core
                 ValidateValueFunc = (val) => val == "0" || val == "1";
                 Value = v ? "1" : "0";
             }
+            public SettingsValue(string k, string n, int v)
+            {
+                Key = k; Name = n;
+                ValidateValueFunc = (val) => int.TryParse(val, out _);
+                Value = v+"";
+            }
 
             public bool GetBool() => Value == "1";
             public string GetString() => Value;
+            public int GetInt() => int.Parse(Value);
         }
 
         private static Settings settingsInstance = null;

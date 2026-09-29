@@ -369,7 +369,7 @@ namespace reika.Core
         }
 
         public static string ExtraPreOptionsForCodec(string c) =>
-            c.Contains("vulkan") ? "-init_hw_device \"vulkan=vk:0\""
+            c.Contains("vulkan") ? $"-init_hw_device \"vulkan=vk:{Settings.settings.FromKey("reika.vulkan.deviceIndex").GetInt()}\""
             : "";
         public static string ExtraVFArgsForCodec(string c) =>
             c.Contains("vulkan") ? "format=nv12,hwupload"
