@@ -76,17 +76,10 @@ namespace reika.Core
                 }
                 return settingsInstance;
             }
-            private set
-            {
-                settingsInstance = value;
-            }
+            private set => settingsInstance = value;
         }
 
-        public static string settingsFilePath { 
-            get {
-                return Path.Combine(AppData.GetAppDataPath(), "settings.xml");
-            }
-        }
+        public static string settingsFilePath => Path.Combine(AppData.GetAppDataPath(), "settings.xml");
 
         public SettingsValue FromKey(string key) => settingsValues.Where(x => x.Key == key).FirstOrDefault() ?? new SettingsValue(key,"","invalid");
 

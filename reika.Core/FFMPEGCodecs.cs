@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -32,6 +33,8 @@ namespace reika.Core
 
         public static void TestHWEncoders(IOperationEntryUI progressCallback)
         {
+            string cachedHWEncsFile = Path.Combine(AppData.GetAppDataPath(), "last_incompatible_hw_encoders.txt");
+
             progressCallback.SetTextPrimary("Testing HW encoders");
             progressCallback.SetTextSecondary("");
             progressCallback.SetTextSecondary2("");
@@ -40,6 +43,16 @@ namespace reika.Core
                 "nvenc", "amf", "qsv", "vaapi", "_mf", "_vulkan", "d3d1"
             };
             List<FFMPEG.CodecInfo> encodersCopy = encoders.ToList();
+            try
+            {
+                if (File.Exists(cachedHWEncsFile))
+                {
+                    var lines = File.ReadAllLines(cachedHWEncsFile).ToList();
+                    encoders = encodersCopy.Where(x => !lines.Contains(x.ID)).ToList();
+                    Console.WriteLine("Loaded cached HW encoders");
+                }
+            }
+            catch (Exception _) { }
             var targetEncoders = encodersCopy.Where(x => hwEncKeywords.Any(y => x.ID.Contains(y))).ToList();
             List<string> compatible = new List<string>(), incompatible = new List<string>();
             int i = 0;
@@ -76,6 +89,11 @@ namespace reika.Core
             Console.WriteLine($"Compatible HW encoders:\n{string.Join("\n", compatible)}");
             Console.WriteLine($"Incompatible HW encoders:\n{string.Join("\n", incompatible)}");
             encoders = encodersCopy;
+            try
+            {
+                File.WriteAllLines(cachedHWEncsFile, incompatible);
+            }
+            catch (Exception _) { }
         }
     }
 }

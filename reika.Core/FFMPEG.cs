@@ -28,6 +28,8 @@ namespace reika.Core
             public string ID;
             public string Name;
             public CodecType Type;
+
+            public override string ToString() => $"{Type.ToString()}: {ID} ({Name})";
         }
 
         public class MediaInfo : ICreateFileSession
@@ -370,9 +372,11 @@ namespace reika.Core
 
         public static string ExtraPreOptionsForCodec(string c) =>
             c.Contains("vulkan") ? $"-init_hw_device \"vulkan=vk:{Settings.settings.FromKey("reika.vulkan.deviceIndex").GetInt()}\""
+            : c.Contains("d3d12va") ? "-init_hw_device d3d12va=hw"
             : "";
         public static string ExtraVFArgsForCodec(string c) =>
             c.Contains("vulkan") ? "format=nv12,hwupload"
+            : c.Contains("d3d12va") ? "format=nv12,hwupload"
             : "";
     }
 }
