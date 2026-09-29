@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:reika.Linux.UI"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="reika.Linux.UI.WindowCreateFile"
+        Classes="reikaWindow"
+        Title="reika: create file" MinHeight="477" Height="570" MinWidth="871" Width="871">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Margin="10" LastChildFill="True">
+            <Label DockPanel.Dock="Top" Content="Create file" Foreground="White" FontSize="25" HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"/>
+            <CheckBox DockPanel.Dock="Bottom" x:Name="Check_DeleteMedia" Foreground="White" IsChecked="False" Content="Delete all used media on successful encode"/>
+            <ListBox DockPanel.Dock="Bottom" x:Name="Panel_Streams" Background="Transparent" BorderBrush="#404040" DragDrop.AllowDrop="True" DragDrop.Drop="Panel_Streams_Drop" Margin="0,5"/>
+        </DockPanel>
+
+        <DockPanel LastChildFill="True" Margin="10,46,10,0" Grid.Column="1" Grid.ColumnSpan="2" Height="32" VerticalAlignment="Top">
+            <Button x:Name="Button_OutFileSelect" DockPanel.Dock="Right" Classes="reikaButton" Content="..." Width="30" Height="32" Click="Button_OutFileSelect_Click"/>
+            <TextBox x:Name="Tbox_Extension" Width="60" Classes="reikaTextBox" DockPanel.Dock="Right" ToolTip.Tip="Output file extension" Text=""/>
+            <local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_OutFileName" InputFieldName="Output file"/>
+        </DockPanel>
+
+
+        <DockPanel Margin="10,80,10,0" Grid.Column="1" MinHeight="19" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White" VerticalContentAlignment="Center"/>
+            <Button DockPanel.Dock="Right" x:Name="Button_SavePreset" Classes="reikaButton" Content="Save" Margin="5,0,0,0" Click="Button_SavePreset_Click"/>
+            <Button DockPanel.Dock="Right" x:Name="Button_LoadPreset" Classes="reikaButton" Content="Load" Margin="5,0,0,0" Click="Button_LoadPreset_Click"/>
+            <ComboBox DockPanel.Dock="Right" x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged"/>
+        </DockPanel>
+        <local:UIInputFieldWithName x:Name="Input_VcodecName" Margin="10,125,36,0" InputFieldName="Video codec" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
+        <Button x:Name="Button_VcodecSelect" Classes="reikaButton" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_VcodecSelect_Click"/>
+        <local:UIInputFieldWithName x:Name="Input_Vbitrate" Margin="10,148,62,0" InputFieldName="Video bitrate" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
+        <local:UIInputFieldWithName x:Name="Input_Vres" Margin="10,173,13,0" InputFieldName="Video resolution" Height="21" VerticalAlignment="Top" Grid.Column="1"/>
+        <local:UIInputFieldWithName x:Name="Input_TrimFrom" Margin="10,222,10,0" InputFieldName="Trim from (HH:MM:SS)" Height="20" VerticalAlignment="Top" Grid.Column="1"/>
+        <ComboBox x:Name="Combo_VbitrateUnits" FontSize="11" Margin="0,149,10,0" SelectedIndex="1" Grid.Column="1" HorizontalAlignment="Right" Width="52" Grid.ColumnSpan="1" Height="20" VerticalAlignment="Top" IsVisible="False">
+            <ComboBoxItem Content="bps"/>
+            <ComboBoxItem Content="kbps" />
+            <ComboBoxItem Content="Mbps" />
+            <ComboBoxItem Content="crf" />
+        </ComboBox>
+        <DockPanel  VerticalAlignment="Bottom" Margin="10,0,10,10" Grid.Column="1" Grid.ColumnSpan="2" LastChildFill="False">
+            <Button DockPanel.Dock="Right" x:Name="Button_Start" Margin="10,0,0,0" Classes="reikaButton"  Content="Start" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinHeight="33" MinWidth="127" Click="Button_Start_Click"/>
+            <Button DockPanel.Dock="Right" x:Name="Button_Preview" Margin="10,0,0,0" Classes="reikaButton"  Content="Preview" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinHeight="33" MinWidth="127" Click="Button_Preview_Click"/>
+            <!--<Button DockPanel.Dock="Right" x:Name="Button_Preview" Margin="10,0,0,0" Classes="reikaButton"  Content="Preview" HorizontalAlignment="Right" VerticalAlignment="Bottom" MinHeight="33" MinWidth="127" Click="Button_Preview_Click"/>-->
+            <Label DockPanel.Dock="Right" x:Name="Label_EstFileSize" Content="" Foreground="#FFB0B0B0" FontStyle="Italic" FontSize="11" VerticalContentAlignment="Bottom" Padding="5,0"/>
+        </DockPanel>
+
+
+        <local:UIInputFieldWithName x:Name="Input_AcodecName" Margin="10,125,36,0" InputFieldName="Audio codec" Height="18" VerticalAlignment="Top" Grid.Column="2"/>
+        <Button x:Name="Button_AcodecSelect" Classes="reikaButton" Content="..." Margin="0,125,10,0" Grid.Column="2" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_AcodecSelect_Click"/>
+        <local:UIInputFieldWithName x:Name="Input_Abitrate" Margin="10,148,62,0" InputFieldName="Audio bitrate" Height="21" VerticalAlignment="Top" Grid.Column="2"/>
+        <ComboBox x:Name="Combo_AbitrateUnits" FontSize="11" Margin="0,149,10,0" SelectedIndex="1" Grid.Column="2" HorizontalAlignment="Right" Width="52" Grid.ColumnSpan="1" Height="20" VerticalAlignment="Top" IsVisible="False">
+            <ComboBoxItem Content="bps"/>
+            <ComboBoxItem Content="kbps" />
+            <ComboBoxItem Content="Mbps" />
+            <ComboBoxItem Content="crf" />
+        </ComboBox>
+        <local:UIInputFieldWithName x:Name="Input_TrimTo" Margin="10,222,10,0" InputFieldName="Trim to (HH:MM:SS)" Height="20" VerticalAlignment="Top" Grid.Column="2"/>
+        <Label  Grid.Column="1" Foreground="#808080" FontSize="9" Margin="10,0,10,48" Grid.ColumnSpan="2" VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" FontStyle="Italic">
+            <TextBlock x:Name="Label_FullCommand" TextWrapping="WrapWithOverflow" Text=""/>
+        </Label>
+        <Grid Grid.Column="1" Margin="10,251,10,147">
+            <Rectangle Stroke="#202020" StrokeThickness="1"/>
+            <Image x:Name="Image_FromThumb" />
+        </Grid>
+        <Grid Grid.Column="2" Margin="10,251,10,147">
+            <Rectangle Stroke="#202020" StrokeThickness="1"/>
+            <Image x:Name="Image_ToThumb" />
+        </Grid>
+        <local:UIInputFieldWithName x:Name="Input_OtherArgs" Margin="10,0,10,105" InputFieldName="Custom FFMPEG Args..." Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom"/>
+        <local:UIInputFieldWithName x:Name="Input_Crop" Margin="10,199,36,0" InputFieldName="Crop" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
+        <Button x:Name="Button_Crop" Classes="reikaButton" Content="..." Margin="0,199,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_Crop_Click"/>
+    </Grid>
+</Window>

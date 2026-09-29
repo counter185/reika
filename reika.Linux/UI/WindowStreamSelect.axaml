@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        x:Class="reika.Linux.UI.WindowStreamSelect"
+        Title="reika: select streams" Height="450" Width="427">
+    <DockPanel Margin="10" LastChildFill="True">
+        <Label DockPanel.Dock="Top" Content="Select streams" Foreground="White" FontSize="30"/>
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+            <Button x:Name="Button_SelectAll" Classes="reikaButton" DockPanel.Dock="Left" Padding="10,0" Margin="0,0,10,0" MinHeight="30" Content="Select all" Click="Button_SelectAll_Click"/>
+            <Button x:Name="Button_Confirm" Classes="reikaButton" DockPanel.Dock="Right" Padding="10,0" MinHeight="30"  Content="Confirm" Click="Button_Confirm_Click"/>
+        </DockPanel>
+        <ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ListBox x:Name="Panel_StreamList" Background="Transparent" BorderBrush="#404040">
+            </ListBox>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

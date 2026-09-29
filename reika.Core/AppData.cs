@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReencGUI
+namespace reika.Core
 {
     public static class AppData
     {
@@ -25,7 +25,9 @@ namespace ReencGUI
         }
         public static string GetAppDataPath()
         {
-            string path = Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "reika");
+            string path = 
+                Utils.IsLinux() ? Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".config", "reika")
+                : Path.Combine(Environment.GetEnvironmentVariable("APPDATA"), "reika");
             EnsureDir(path);
             return path;
         }

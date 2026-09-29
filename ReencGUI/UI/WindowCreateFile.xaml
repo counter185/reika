@@ -1,9 +1,10 @@
-﻿<Window x:Class="ReencGUI.UI.WindowCreateFile"
+﻿<llocal:DarkWindow x:Class="ReencGUI.UI.WindowCreateFile"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ReencGUI.UI"
+        xmlns:llocal="clr-namespace:ReencGUI"
         mc:Ignorable="d"
         Style="{StaticResource ReencWindowStyle}"
         Title="reika: create file" MinHeight="477" Height="570" MinWidth="871" Width="871">
@@ -76,4 +77,4 @@
         <local:UIInputFieldWithName x:Name="Input_Crop" Margin="10,199,36,0" InputFieldName="Crop" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
         <Button x:Name="Button_Crop" Style="{DynamicResource ReencButtonStyle}" Content="..." Margin="0,199,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_Crop_Click"/>
     </Grid>
-</Window>
+</llocal:DarkWindow>

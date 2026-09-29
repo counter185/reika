@@ -1,21 +1,18 @@
-﻿using ReencGUI.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
-using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace ReencGUI
+namespace reika.Core
 {
     public class YTDLP
     {
@@ -64,12 +61,20 @@ namespace ReencGUI
 
             try
             {
-                List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), 
-                    new List<string> {
-                        "-j",
-                        "--list-formats"
-                    }.Concat(args)
-                );
+
+                List<string> listArgs = new List<string> {
+                    "-j",
+                    "--list-formats"
+                };
+
+                string cookiesFromBrowser = Settings.settings.FromKey("reika.ytdlp.cookiesFromBrowser").GetString();
+                if (cookiesFromBrowser != "")
+                {
+                    listArgs.Add("--cookies-from-browser");
+                    listArgs.Add(cookiesFromBrowser);
+                }
+
+                List<string> output = FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), listArgs.Concat(args));
 
                 string json = output.Where(x => x.StartsWith("{\"")).FirstOrDefault();
                 if (json != null)
@@ -134,16 +139,14 @@ namespace ReencGUI
             return vid.filename;
         }
 
-        public static bool RunDownload(List<string> args, UIFFMPEGOperationEntry progress)
+        public static bool RunDownload(List<string> args, IOperationEntryUI progress)
         {
             bool finished = false;
             int exitCode = -1;
             FFMPEG.RunCommandWithAsyncOutput(GetCommandPath("yt-dlp"), args, 
                 (s) => {
-                    progress.Dispatcher.Invoke(() => { 
-                        progress.Label_Secondary.Content = s;
-                        progress.UpdateProgressBasedOnYTDLPLine(s);
-                    });
+                    progress.SetTextSecondary(s);
+                    progress.UpdateProgressBasedOnYTDLPLine(s);
                 },
                 (ec) => { finished = true; exitCode = ec; });
 
@@ -152,106 +155,36 @@ namespace ReencGUI
                 Thread.Sleep(100);
             }
             return exitCode == 0;
-        }
-
-        public static bool InstallDeno(UIFFMPEGOperationEntry progress)
-        {
-            bool finished = false;
-            int exitCode = -1;
-            FFMPEG.RunCommandWithAsyncOutput($"{Environment.GetEnvironmentVariable("SYSTEMROOT")}\\Sysnative\\conhost.exe", new List<string> { "winget", "install", "DenoLand.Deno" }, 
-                (s) => {
-                    progress.Dispatcher.Invoke(() => { 
-                        progress.Label_Secondary.Content = s;
-                        //progress.UpdateProgressBasedOnYTDLPLine(s);
-                    });
-                },
-                (ec) => { finished = true; exitCode = ec; });
-
-            while (!finished)
-            {
-                Thread.Sleep(100);
-            }
-            return exitCode == 0;
-        }
-
-        public static bool DownloadLatest(UIFFMPEGOperationEntry progressCallback)
-        {
-            progressCallback.Dispatcher.Invoke(() =>
-            {
-                progressCallback.Label_Primary.Text = "Finding latest yt-dlp release";
-                progressCallback.Label_Secondary.Content = "";
-            });
-            string releasesURL = "https://api.github.com/repos/yt-dlp/yt-dlp/releases";
-            WebClient client = new WebClient();
-            client.Headers.Add("User-Agent", "ReencGUI/1.0");
-            client.Headers.Add("Accept", "application/json");
-            try
-            {
-                string jsons = client.DownloadString(releasesURL);
-                string nextUrl = Regex.Match(jsons, @"""url"":\s*""(https://api\.github\.com/repos/yt-dlp/yt-dlp/releases/[0-9]+)""").Groups[1].Value;
-
-                client.Headers.Add("User-Agent", "ReencGUI/1.0");
-                string jsonss = client.DownloadString(nextUrl);
-
-                Match downloadMatches = Regex.Match(jsonss,
-                    @"""browser_download_url"":\s*""([^""]+)""");
-                while (downloadMatches.Success)
-                {
-                    string urlNow = downloadMatches.Groups[1].Value;
-                    if (urlNow.Contains("yt-dlp") && urlNow.Contains(".exe")
-                        && !urlNow.Contains("_arm64") && !urlNow.Contains("_x86"))
-                    {
-                        progressCallback.Dispatcher.Invoke(() =>
-                        {
-                            progressCallback.Label_Primary.Text = "Downloading yt-dlp";
-                            progressCallback.Label_Secondary.Content = "";
-                        });
-
-                        Console.WriteLine("Downloading yt-dlp release from: " + urlNow);
-                        client.Headers.Add("User-Agent", "ReencGUI/1.0");
-
-                        bool downloadDone = false;
-                        client.DownloadProgressChanged += (sender, e) =>
-                        {
-                            progressCallback.Dispatcher.Invoke(() =>
-                            {
-                                progressCallback.Label_Secondary.Content = $"{(double)e.BytesReceived / Utils.Megabytes(1):.02}MB / {(double)e.TotalBytesToReceive / Utils.Megabytes(1):.02}MB";
-                                progressCallback.ProgressBar_Operation.Value = e.ProgressPercentage;
-                            });
-                        };
-                        client.DownloadFileCompleted += (sender, e) =>
-                        {
-                            downloadDone = true;
-                        };
-                        Directory.CreateDirectory("yt-dlp");
-                        client.DownloadFileAsync(new Uri(urlNow), "yt-dlp\\yt-dlp.exe");
-
-                        while (!downloadDone)
-                        {
-                            Thread.Sleep(100);
-                        }
-                        return true;
-                    }
-                    downloadMatches = downloadMatches.NextMatch();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error downloading yt-dlp releases: " + ex.Message);
-            }
-            return false;
         }
 
         public static string GetCommandPath(string command)
         {
-            if (File.Exists($"yt-dlp\\{command}.exe"))
+            if (File.Exists($"yt-dlp/{command}{FFMPEG.exeExtension}"))
             {
-                return $"yt-dlp\\{command}.exe";
+                return $"yt-dlp/{command}{FFMPEG.exeExtension}";
             }
             else
             {
                 return command;
             }
+        }
+
+        static bool? testedYTDLP = null;
+        public static bool TestYTDLP()
+        {
+            if (testedYTDLP == null)
+            {
+                try
+                {
+                    FFMPEG.RunCommandAndGetOutput(GetCommandPath("yt-dlp"), new string[] { "--version" });
+                    testedYTDLP = true;
+                }
+                catch (Exception)
+                {
+                    testedYTDLP = false;
+                }
+            }
+            return testedYTDLP.Value;
         }
 
         public static string GetDenoVersion()

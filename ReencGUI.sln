@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36301.6
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12105.206 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "reika", "ReencGUI\reika.csproj", "{787E308C-E1CB-4826-94DB-611516304538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "reika.Linux", "reika.Linux\reika.Linux.csproj", "{8770B8B9-1E17-794E-FD25-E321D1E45C93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "reika.Core", "reika.Core\reika.Core.csproj", "{5ACD0022-E051-426B-BE9C-ACD90836D782}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{787E308C-E1CB-4826-94DB-611516304538}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{787E308C-E1CB-4826-94DB-611516304538}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{787E308C-E1CB-4826-94DB-611516304538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8770B8B9-1E17-794E-FD25-E321D1E45C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8770B8B9-1E17-794E-FD25-E321D1E45C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8770B8B9-1E17-794E-FD25-E321D1E45C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8770B8B9-1E17-794E-FD25-E321D1E45C93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ACD0022-E051-426B-BE9C-ACD90836D782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ACD0022-E051-426B-BE9C-ACD90836D782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ACD0022-E051-426B-BE9C-ACD90836D782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ACD0022-E051-426B-BE9C-ACD90836D782}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

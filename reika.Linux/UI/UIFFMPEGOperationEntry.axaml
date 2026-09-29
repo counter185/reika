@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" Width="NaN"
+             x:Class="reika.Linux.UI.UIFFMPEGOperationEntry">
+  <DockPanel Margin="8,8">
+        <StackPanel DockPanel.Dock="Top" Margin="-3,0,0,0" Orientation="Vertical">
+            <Label Foreground="White" FontSize="16" Margin="0,-5,0,0">
+                <Label.Content>
+                    <TextBlock x:Name="Label_Primary" Text="Primary text" TextWrapping="Wrap"/>
+                </Label.Content>
+            </Label>
+            <Label x:Name="Label_Secondary" Foreground="#D0D0D0" Content="Secondary text" FontSize="12" Margin="0,-3"/>
+            <Label x:Name="Label_Secondary2" Foreground="#D0D0D0" Content="Secondary text 2" FontSize="12" Margin="0,-6"/>
+        </StackPanel>
+        <ProgressBar Classes="reikaProgressBarNVENC" DockPanel.Dock="Bottom" x:Name="ProgressBar_Operation" Height="10" Margin="0,5,0,0" Minimum="0" Maximum="100"/>
+    </DockPanel>
+</UserControl>

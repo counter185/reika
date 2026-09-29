@@ -310,7 +310,6 @@
 
         <!--Window style-->
         <Style x:Key="ReencWindowStyle" TargetType="{x:Type Window}">
-
             <Setter Property="Background">
                 <Setter.Value>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -324,6 +323,36 @@
             </Setter>
             <Setter Property="Foreground" Value="White"/>
         </Style>
+        
+        <Style x:Key="PopupWarning" TargetType="{x:Type Window}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF1B1900" Offset="0"/>
+                        <GradientStop Color="#FF000000" Offset="0.6"/>
+                        <GradientStop Color="#FF000000" Offset="0.8"/>
+                        <GradientStop Color="#FF100000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style x:Key="PopupError" TargetType="{x:Type Window}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF1B0000" Offset="0"/>
+                        <GradientStop Color="#FF000000" Offset="0.6"/>
+                        <GradientStop Color="#FF000000" Offset="0.8"/>
+                        <GradientStop Color="#FF100000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -421,6 +450,15 @@
             <GradientStop Color="#FF93C6FF" Offset="1"/>
         </LinearGradientBrush>
         <SolidColorBrush x:Key="ProgressBar.QSV.Border" Color="#FF3B538E"/>
+        
+        <LinearGradientBrush x:Key="ProgressBar.Vulkan.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#0E0800" Offset="0.0"/>
+            <GradientStop Color="#2C1A00" Offset="0.1"/>
+            <GradientStop Color="#8A5303" Offset="0.5"/>
+            <GradientStop Color="#FFC063" Offset="0.95"/>
+            <GradientStop Color="#FFB152" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ProgressBar.Vulkan.Border" Color="#AE7D2F"/>
 
         <LinearGradientBrush x:Key="ProgressBar.CPU.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
             <GradientStop Color="#FF1D1D1D" Offset="0.0"/>
@@ -450,61 +488,7 @@
             <Setter Property="Foreground" Value="{StaticResource ProgressBar.NVENC.Progress}"/>
             <Setter Property="Background" Value="{StaticResource ProgressBar.Background}"/>
             <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.NVENC.Border}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ProgressBar}">
-                        <Grid x:Name="TemplateRoot">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Determinate"/>
-                                    <VisualState x:Name="Indeterminate">
-                                        <Storyboard RepeatBehavior="Forever">
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Animation" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="0.25"/>
-                                                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.25"/>
-                                                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="0.25"/>
-                                            </DoubleAnimationUsingKeyFrames>
-                                            <PointAnimationUsingKeyFrames Storyboard.TargetName="Animation" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
-                                                <EasingPointKeyFrame KeyTime="0" Value="-0.5,0.5"/>
-                                                <EasingPointKeyFrame KeyTime="0:0:1" Value="0.5,0.5"/>
-                                                <EasingPointKeyFrame KeyTime="0:0:2" Value="1.5,0.5"/>
-                                            </PointAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
-                            <Rectangle x:Name="PART_Track"/>
-                            <Grid Margin="1" x:Name="PART_Indicator" ClipToBounds="true" HorizontalAlignment="Left">
-                                <Rectangle x:Name="Indicator" Fill="{TemplateBinding Foreground}"/>
-                                <Rectangle x:Name="Animation" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="0.5,0.5">
-                                    <Rectangle.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </Rectangle.RenderTransform>
-                                </Rectangle>
-                            </Grid>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Orientation" Value="Vertical">
-                                <Setter Property="LayoutTransform" TargetName="TemplateRoot">
-                                    <Setter.Value>
-                                        <RotateTransform Angle="-90"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <Trigger Property="IsIndeterminate" Value="true">
-                                <Setter Property="Visibility" TargetName="Indicator" Value="Collapsed"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="BorderThickness" Value="1.5"/>
         </Style>
         
         <Style x:Key="ReencProgressBarStyleNVENC" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
@@ -518,6 +502,10 @@
         <Style x:Key="ReencProgressBarStyleQSV" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
             <Setter Property="Foreground" Value="{StaticResource ProgressBar.QSV.Progress}"/>
             <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.QSV.Border}"/>
+        </Style>
+        <Style x:Key="ReencProgressBarStyleVulkan" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.Vulkan.Progress}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.Vulkan.Border}"/>
         </Style>
         <Style x:Key="ReencProgressBarStyleCPU" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
             <Setter Property="Foreground" Value="{StaticResource ProgressBar.CPU.Progress}"/>

@@ -4,12 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Markup;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ReencGUI
+namespace reika.Core
 {
     public class Settings
     {
@@ -17,7 +15,9 @@ namespace ReencGUI
         {
             new SettingsValue ( "reika.presets.discord.useOpusInsteadOfAAC", "Discord presets: use opus audio instead of AAC", false ),
             new SettingsValue ( "reika.presets.discord.allowHW", "Discord presets: allow hardware encoders", false ),
-            new SettingsValue ( "reika.presets.sizetarget.videoCodec", "Custom file size target: video codec to use", "")
+            new SettingsValue ( "reika.presets.discord.useWebmInsteadOfMP4", "Discord presets: use .webm instead of .mp4", false ),
+            new SettingsValue ( "reika.presets.sizetarget.videoCodec", "Custom file size target: video codec to use", ""),
+            new SettingsValue ( "reika.ytdlp.cookiesFromBrowser", "YTDLP: use cookies from browser (firefox, chrome, etc.)", ""),
         };
 
         public class SettingsValue

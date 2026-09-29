@@ -14,13 +14,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using reika.Core;
+using System.Windows.Controls.Primitives;
+using ReencGUI.UI.Popup;
 
 namespace ReencGUI
 {
     /// <summary>
     /// Logika interakcji dla klasy WindowQuickReencode.xaml
     /// </summary>
-    public partial class WindowQuickReencode : Window
+    public partial class WindowQuickReencode : DarkWindow
     {
         List<CreateFilePreset> presets;
 
@@ -28,12 +31,6 @@ namespace ReencGUI
         {
             InitializeComponent();
             LoadPresets();
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            WindowUtil.SetWindowDarkMode(this);
         }
 
         private void LoadPresets()
@@ -56,7 +53,7 @@ namespace ReencGUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to process file:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
             }
         }
 
@@ -67,7 +64,7 @@ namespace ReencGUI
             {
                 dynamicPreset.Recalculate(media);
             }
-            string outputPath = path + ".reenc" + (pre.requiredExtension == null ? ".mp4" : pre.requiredExtension);
+            string outputPath = path + ".reenc" + (pre.requiredExtension ?? ".mp4");
             List<string> vfArgs = new List<string>();
 
             if (pre.cropString != null)
@@ -96,7 +93,7 @@ namespace ReencGUI
             otherArgs = Regex.Replace(otherArgs, regexVFArgs, "").Trim();
 
             string usedVcodec = "";
-            var matchingVcodecs = pre.vcodecs.Where(x => MainWindow.instance.encoders.Any(y => y.ID == x));
+            var matchingVcodecs = pre.vcodecs.Where(x => FFMPEGCodecs.encoders.Any(y => y.ID == x));
             if (matchingVcodecs.Any())
             {
                 usedVcodec = matchingVcodecs.First();
@@ -106,8 +103,12 @@ namespace ReencGUI
             }
             string usedAcodec = pre.acodec;
 
+            vfArgs.Insert(0, FFMPEG.ExtraVFArgsForCodec(usedVcodec));
+            vfArgs = vfArgs.Where(x => x != "").ToList();
+
             List<string> args = new List<string>
             {
+                FFMPEG.ExtraPreOptionsForCodec(usedVcodec),
                 "-i", $"\"{path}\"",
                 (pre.vbitrate != "" ? $"-b:v {pre.vbitrate}" : ""),
                 (usedVcodec != "" ? $"-c:v {usedVcodec}" : ""),
@@ -146,7 +147,7 @@ namespace ReencGUI
                         ProcessFile(file);
                     } catch (Exception ex)
                     {
-                        MessageBox.Show($"Failed to process file:\n {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        PopupOK.Show($"Failed to process file:\n {ex.Message}", "Error", PopupStyle.Error);
                     }
                 }
             }
@@ -154,7 +155,7 @@ namespace ReencGUI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            PresetManager.PromptInstallPreset();
+            PresetUtils.PromptInstallPreset();
             LoadPresets();
         }
     }

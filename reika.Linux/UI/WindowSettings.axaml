@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="reika.Linux.UI.WindowSettings"
+        Classes="reikaWindow"
+        Title="reika: settings" Height="400" Width="425">
+    <DockPanel Margin="10" LastChildFill="True">
+        <Label Content="Settings" DockPanel.Dock="Top" Foreground="White" FontSize="22"/>
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
+            <Button x:Name="Button_OpenAppdataFolder" Content="Open application data directory" Classes="reikaButton" Height="30" Margin="0,5" Click="Button_OpenAppdataFolder_Click"/>
+            <Button x:Name="Button_ForceDLFFMPEG" Content="Force update FFMPEG" Classes="reikaButton" Height="30" Margin="0,5" Click="Button_ForceDLFFMPEG_Click"/>
+            <Button x:Name="Button_ForceDLYTDLP" Content="Force update YT-DLP" Classes="reikaButton" Height="30" Margin="0,5" Click="Button_ForceDLYTDLP_Click"/>
+        </StackPanel>
+        <!--<DataGrid x:Name="DGrid_Settings" Background="Transparent" HorizontalContentAlignment="Stretch" HeadersVisibility="None" RowStyle="{StaticResource ReencDgridRowStyle}" CellStyle="{StaticResource ReencDgridCellStyle}"/>-->
+    </DockPanel>
+</Window>
