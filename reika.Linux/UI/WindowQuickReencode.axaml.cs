@@ -94,8 +94,12 @@ namespace reika.Linux.UI
             }
             string usedAcodec = pre.acodec;
 
+            vfArgs.Insert(0, FFMPEG.ExtraVFArgsForCodec(usedVcodec));
+            vfArgs = vfArgs.Where(x => x != "").ToList();
+
             List<string> args = new List<string>
             {
+                FFMPEG.ExtraPreOptionsForCodec(usedVcodec),
                 "-i", $"\"{path}\"",
                 (pre.vbitrate != "" ? $"-b:v {pre.vbitrate}" : ""),
                 (usedVcodec != "" ? $"-c:v {usedVcodec}" : ""),

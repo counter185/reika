@@ -36,21 +36,11 @@ namespace ReencGUI.UI
         }
 
         public static string GetProgressBarStyleForEncoderID(string encID)
-        {
-            if (encID.Contains("nvenc"))
-            {
-                return "ReencProgressBarStyleNVENC";
-            }
-            if (encID.Contains("amf"))
-            {
-                return "ReencProgressBarStyleAMF";
-            }
-            if (encID.Contains("qsv"))
-            {
-                return "ReencProgressBarStyleQSV";
-            }
-            return "ReencProgressBarStyleCPU";
-        }
+            => encID.Contains("nvenc") ? "ReencProgressBarStyleNVENC"
+                : encID.Contains("amf") ? "ReencProgressBarStyleAMF"
+                : encID.Contains("qsv") ? "ReencProgressBarStyleQSV"
+                : encID.Contains("vulkan") ? "ReencProgressBarStyleVulkan"
+                : "ReencProgressBarStyleCPU";
 
         public void SetProgressBarStyleForEncoderID(string encID)
         {

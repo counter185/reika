@@ -23,21 +23,11 @@ namespace reika.Linux.UI
         }
 
         public static string GetProgressBarStyleForEncoderID(string encID)
-        {
-            if (encID.Contains("nvenc"))
-            {
-                return "reikaProgressBarNVENC";
-            }
-            if (encID.Contains("amf"))
-            {
-                return "reikaProgressBarAMF";
-            }
-            if (encID.Contains("qsv"))
-            {
-                return "reikaProgressBarQSV";
-            }
-            return "reikaProgressBarCPU";
-        }
+            => encID.Contains("nvenc") ? "reikaProgressBarNVENC"
+                : encID.Contains("amf") ? "reikaProgressBarAMF"
+                : encID.Contains("qsv") ? "reikaProgressBarQSV"
+                : encID.Contains("vulkan") ? "reikaProgressBarVulkan"
+                : "reikaProgressBarCPU";
 
         public void SetProgressBarStyleForEncoderID(string encID)
         {

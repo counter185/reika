@@ -450,6 +450,15 @@
             <GradientStop Color="#FF93C6FF" Offset="1"/>
         </LinearGradientBrush>
         <SolidColorBrush x:Key="ProgressBar.QSV.Border" Color="#FF3B538E"/>
+        
+        <LinearGradientBrush x:Key="ProgressBar.Vulkan.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
+            <GradientStop Color="#0E0800" Offset="0.0"/>
+            <GradientStop Color="#2C1A00" Offset="0.1"/>
+            <GradientStop Color="#8A5303" Offset="0.5"/>
+            <GradientStop Color="#FFC063" Offset="0.95"/>
+            <GradientStop Color="#FFB152" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ProgressBar.Vulkan.Border" Color="#AE7D2F"/>
 
         <LinearGradientBrush x:Key="ProgressBar.CPU.Progress" StartPoint="0,0.5" EndPoint="1,0.5">
             <GradientStop Color="#FF1D1D1D" Offset="0.0"/>
@@ -493,6 +502,10 @@
         <Style x:Key="ReencProgressBarStyleQSV" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
             <Setter Property="Foreground" Value="{StaticResource ProgressBar.QSV.Progress}"/>
             <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.QSV.Border}"/>
+        </Style>
+        <Style x:Key="ReencProgressBarStyleVulkan" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.Vulkan.Progress}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.Vulkan.Border}"/>
         </Style>
         <Style x:Key="ReencProgressBarStyleCPU" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ReencProgressBarStyle}">
             <Setter Property="Foreground" Value="{StaticResource ProgressBar.CPU.Progress}"/>

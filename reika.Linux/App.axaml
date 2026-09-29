@@ -121,6 +121,21 @@
             <Setter Property="BorderBrush" Value="#FF3B538E"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="Transparent"/>
+        </Style>        
+        
+        <Style Selector="ProgressBar.reikaProgressBarVulkan">
+            <Setter Property="Foreground">
+                <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#0E0800" Offset="0.0"/>
+                    <GradientStop Color="#2C1A00" Offset="0.1"/>
+                    <GradientStop Color="#8A5303" Offset="0.5"/>
+                    <GradientStop Color="#FFC063" Offset="0.95"/>
+                    <GradientStop Color="#FFB152" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#AE7D2F"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
         </Style>
 
         <Style Selector="ProgressBar.reikaProgressBarCPU">

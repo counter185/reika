@@ -508,6 +508,8 @@ namespace ReencGUI.UI
             ulong duration = GetDuration();
             ffmpegArgs.Add("-y");
 
+            ffmpegArgs.Add(FFMPEG.ExtraPreOptionsForCodec(vcodec));
+
             int i = 0;
             //add -i for all files
             foreach (var fileName in distinctFiles)
@@ -580,6 +582,7 @@ namespace ReencGUI.UI
                 ffmpegArgs.Add("encoding_tool=reika");
             }
 
+            vfArgs.Add(FFMPEG.ExtraVFArgsForCodec(vcodec));
             if (otherArgs != "")
             {
                 string regexVFArgs = @"-vf\s+(?:(?:([^""=]+=[^\s""]+))|(?:""([^=]+=[^""]+)""))\s*";
@@ -594,6 +597,7 @@ namespace ReencGUI.UI
                 ffmpegArgs.Add(otherArgs);
             }
 
+            vfArgs = vfArgs.Where(x => x != "").ToList();
             if (vfArgs.Any())
             {
                 ffmpegArgs.Add("-vf");
@@ -601,7 +605,7 @@ namespace ReencGUI.UI
             }
 
             ffmpegArgs.Add($"\"{outputFileName}\"");
-            return ffmpegArgs;
+            return ffmpegArgs.Where(x=>x != "").ToList();
         }
 
         void UpdateCommandLabel()

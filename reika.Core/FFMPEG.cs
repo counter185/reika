@@ -367,5 +367,12 @@ namespace reika.Core
                 return "";
             }
         }
+
+        public static string ExtraPreOptionsForCodec(string c) =>
+            c.Contains("vulkan") ? "-init_hw_device \"vulkan=vk:0\""
+            : "";
+        public static string ExtraVFArgsForCodec(string c) =>
+            c.Contains("vulkan") ? "format=nv12,hwupload"
+            : "";
     }
 }

@@ -41,27 +41,27 @@ namespace ReencGUI.UI
             new Point(0, 0.5), 
             new Point(1, 0.5));
 
+        static LinearGradientBrush vulkanGradient = new LinearGradientBrush(
+            Color.FromArgb(30, 214, 112, 0), 
+            Color.FromArgb(0, 214, 112, 0), 
+            new Point(0, 0.5), 
+            new Point(1, 0.5));
+
+        static LinearGradientBrush defaultGradient = new LinearGradientBrush(
+            Color.FromArgb(30, 80, 80, 80),
+            Color.FromArgb(0, 80, 80, 80),
+            new Point(0, 0.5),
+            new Point(1, 0.5));
+
         //todo move this somewhere
         public static Brush GetGradientForCodecID(string id)
-        {
-            if (id != null)
-            {
-                if (id.Contains("nvenc"))
-                {
-                    return nvidiaGradient;
-                }
-                if (id.Contains("amf"))
-                {
-                    return amdGradient;
-                }
-                if (id.Contains("qsv"))
-                {
-                    return intelGradient;
-                }
-            }
-
-            return Brushes.Transparent;
-        }
+            => id != null ?
+                (id.Contains("nvenc") ? nvidiaGradient
+                : id.Contains("amf") ? amdGradient
+                : id.Contains("qsv") ? intelGradient
+                : id.Contains("vulkan") ? vulkanGradient
+                : defaultGradient)
+            : defaultGradient;
 
         int GetPriorityForID(FFMPEG.CodecType type, string id)
         {
@@ -71,13 +71,13 @@ namespace ReencGUI.UI
                 List<KeyValuePair<string, int>> videoKeywordPriorities = new List<KeyValuePair<string, int>>()
             {
                 new KeyValuePair<string, int>("copy", 10),
+                new KeyValuePair<string, int>("av1", 6),
                 new KeyValuePair<string, int>("hevc", 5),
                 new KeyValuePair<string, int>("h265", 5),
                 new KeyValuePair<string, int>("264", 4),
                 new KeyValuePair<string, int>("h26", 3),
                 new KeyValuePair<string, int>("x26", 3),
                 new KeyValuePair<string, int>("vp", 2),
-                new KeyValuePair<string, int>("av1", 1),
             };
                 foreach (var kvp in videoKeywordPriorities)
                 {

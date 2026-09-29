@@ -47,15 +47,18 @@ namespace reika.Core
             {
                 progressCallback.SetTextSecondary(Utils.SanitizeForXAML(enc.ID));
                 progressCallback.SetProgress(100 * ((double)(i++) / targetEncoders.Count));
+                string vf = FFMPEG.ExtraVFArgsForCodec(enc.ID);
                 string[] args =
                 {
                     "-loglevel", "error",
+                    FFMPEG.ExtraPreOptionsForCodec(enc.ID),
                     "-f", "lavfi",
                     "-i", (enc.Type == FFMPEG.CodecType.Video ? "color=black:s=640x360" : "sine=frequency=1000:duration=1"),
                     (enc.Type == FFMPEG.CodecType.Video ? "-vframes 1" : ""),
                     (enc.Type == FFMPEG.CodecType.Video ? "-an" : ""),
                     (enc.Type == FFMPEG.CodecType.Video ? "-c:v" : "-c:a"), enc.ID,
                     "-f", "null",
+                    (vf != "" ? $"-vf {vf}" : ""),
                     "-"
                 };
                 List<string> output = FFMPEG.RunFFMPEGCommandlineForOutput(args);
