@@ -339,9 +339,9 @@ namespace ReencGUI.UI
         {
             var ffplayArgs = MakeFFPlayPreviewArgs();
             ffplayArgs = new string[] { "/c", FFMPEG.GetCommandPath("ffmpeg").Replace("/", "\\") }.Concat(ffplayArgs).ToList();
-            Console.WriteLine("preview output:");
+            //Console.WriteLine("preview output:");
             FFMPEG.RunCommandWithAsyncOutput("cmd", ffplayArgs, (line) => {
-                Console.WriteLine(line);
+                //Console.WriteLine(line);
             });
         }
 

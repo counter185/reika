@@ -331,7 +331,8 @@ namespace reika.Linux.UI
         public void RunPreview()
         {
             var ffplayArgs = MakeFFPlayPreviewArgs();
-            ffplayArgs = new string[] { "-c", FFMPEG.GetCommandPath("ffmpeg") }.Concat(ffplayArgs).ToList();
+            string fullShArgs = String.Join(" ", new string[] { FFMPEG.GetCommandPath("ffmpeg") }.Concat(ffplayArgs)).Replace("\"", "\\\"");
+            ffplayArgs = new string[] { "-c", $"\"{fullShArgs}\"" }.ToList();
             FFMPEG.RunCommandWithAsyncOutput("/bin/sh", ffplayArgs, (line) => {
                 //Console.WriteLine(line);
             });
