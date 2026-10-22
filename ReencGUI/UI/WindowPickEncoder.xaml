@@ -9,7 +9,10 @@
         Style="{StaticResource ReencWindowStyle}"
         Title="Choose encoder" Height="496" Width="425">
     <DockPanel Margin="10" LastChildFill="True">
-        <Label DockPanel.Dock="Top" Padding="0,10" Content="Choose encoder" Foreground="White" FontSize="30"/>
+        <Label DockPanel.Dock="Top" Padding="0,0" Content="Choose encoder" Foreground="White" FontSize="30"/>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Top">
+            <local:UIInputFieldWithName InputFieldName="Search" x:Name="Input_Search" Padding="0,5"/>
+        </DockPanel>
         <ListBox DockPanel.Dock="Bottom" IsTextSearchEnabled="True" IsTextSearchCaseSensitive="False" x:Name="Panel_Encoders" Background="Transparent" BorderBrush="#404040" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
     </DockPanel>
 </llocal:DarkWindow>

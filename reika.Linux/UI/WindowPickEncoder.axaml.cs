@@ -132,14 +132,28 @@ namespace reika.Linux.UI
             return 0;
         }
 
+        List<FFMPEG.CodecInfo> unfilteredList;
+
         public WindowPickEncoder(FFMPEG.CodecType type)
         {
             InitializeComponent();
-            var validEncs = (from x in FFMPEGCodecs.encoders
+            unfilteredList = (from x in FFMPEGCodecs.encoders
                              where x.Type == type
-                             select x).OrderByDescending(x => GetPriorityForID(type, x.ID)).ToList();
+                             select x).OrderByDescending(x=>GetPriorityForID(type, x.ID)).ToList();
 
-            foreach (var enc in validEncs)
+            FilterList();
+            Input_Search.InputField.TextChanged += (a, b) => FilterList(Input_Search.InputField.Text);
+
+            
+        }
+
+        void FilterList(string filter = "")
+        {
+            Panel_Encoders.Items.Clear();
+
+            foreach (var enc in unfilteredList.Where( 
+                x=>x.Name.ToLower().Contains(filter) 
+                || x.ID.ToLower().Contains(filter) ))
             {
                 UIEncoderEntry entry = new UIEncoderEntry(Utils.SanitizeForXAML(enc.ID), Utils.SanitizeForXAML(enc.Name));
                 entry.Background = GetGradientForCodecID(enc.ID);
