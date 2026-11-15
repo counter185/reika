@@ -30,9 +30,11 @@ namespace reika.Linux.UI
             Input_URL.InputField.TextChanged += (a, b) => URLChanged();
 
             Input_URL.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
-            Input_OutputFolder.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
             Input_ExtraArgs.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
+            Input_OutputFolder.InputField.TextChanged += (a, b) => UpdateFullArgsLabel();
             ListBox_FormatList.SelectionChanged += (a, b) => UpdateFullArgsLabel();
+
+            Input_OutputFolder.InputField.Text = Settings.settings.FromKey("reika.ytdlp.defaultDLFolder").GetString();
 
             SetMetadata(null);
 

@@ -18,6 +18,7 @@ namespace reika.Core
             new SettingsValue ( "reika.presets.discord.useWebmInsteadOfMP4", "Discord presets: use .webm instead of .mp4", false ),
             new SettingsValue ( "reika.presets.sizetarget.videoCodec", "Custom file size target: video codec to use", ""),
             new SettingsValue ( "reika.ytdlp.cookiesFromBrowser", "YTDLP: use cookies from browser (firefox, chrome, etc.)", ""),
+            new SettingsValue ( "reika.ytdlp.defaultDLFolder", "YTDLP: default downloads folder", ""),
             new SettingsValue ( "reika.vulkan.deviceIndex", "Vulkan: device index", 0),
         };
 
