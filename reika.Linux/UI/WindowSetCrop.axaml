@@ -6,14 +6,31 @@
         mc:Ignorable="d"
         x:Class="reika.Linux.UI.WindowSetCrop"
         Classes="reikaWindow"
-        Title="reika: set video crop" Height="435" Width="542">
+        Title="reika: set video crop" MinHeight="400" Height="435" MinWidth="560" Width="560">
     <Grid Margin="10">
         <DockPanel>
-            <DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
+			<DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
+				<Rectangle DockPanel.Dock="Top" Height="30"/>
+				<StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+					<DockPanel LastChildFill="True">
+						<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+							<TextBox x:Name="Input_FitAspectX" Classes="reikaTextBox" Text="16" Width="20"/>
+							<Label Content=":" Foreground="White"/>
+							<TextBox x:Name="Input_FitAspectY" Classes="reikaTextBox" Text="9" Width="20"/>
+						</StackPanel>
+						<Button x:Name="Button_FitAspect" Margin="5,0,0,0" Classes="reikaButton" DockPanel.Dock="Right" Content="Fit" Click="Button_FitAspect_Click"/>
+					</DockPanel>
+					<Button x:Name="Button_Center" Margin="0,0,0,5" Classes="reikaButton" DockPanel.Dock="Right" Width="180" Content="Center" Click="Button_Center_Click"/>
+					<Button x:Name="Button_Apply" Classes="reikaButton" Width="180" Height="40" Content="Apply" Click="Button_Apply_Click"/>
+				</StackPanel>
+				<local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_CropArg" InputFieldName="Crop" Width="274" VerticalContentAlignment="Bottom"/>
+				<Label Foreground="#808080" FontStyle="Italic" FontSize="10" VerticalContentAlignment="Bottom" Content="width:height:x:y" />
+			</DockPanel>
+            <!--<DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
                 <Rectangle DockPanel.Dock="Top" Height="30"/>
                 <Button x:Name="Button_Apply" Classes="reikaButton" DockPanel.Dock="Right" Width="100" Height="30" Content="Apply" Click="Button_Apply_Click"/>
                 <local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_CropArg" InputFieldName="Crop" Width="274" VerticalContentAlignment="Center"/>
-            </DockPanel>
+            </DockPanel>-->
             <DockPanel DockPanel.Dock="Top" LastChildFill="True">
                 <DockPanel DockPanel.Dock="Left" LastChildFill="True">
                     <Rectangle Height="20" DockPanel.Dock="Top"/>

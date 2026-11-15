@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ReencGUI.UI.Popup;
 using reika.Core;
 
 namespace ReencGUI.UI
@@ -253,6 +254,38 @@ namespace ReencGUI.UI
         {
             caller.Input_Crop.InputField.Text = MakeCropString();
             Close();
+        }
+
+        private void Button_Center_Click(object sender, RoutedEventArgs e)
+        {
+            string currentCrop = Input_CropArg.InputField.Text;
+            Regex regex = new Regex(@"^(\d+):(\d+):(\d+):(\d+)$");
+            Match match = regex.Match(currentCrop);
+            if (match.Success)
+            {
+                int cropWidth = int.Parse(match.Groups[1].Value);
+                int cropHeight = int.Parse(match.Groups[2].Value);
+
+                int cropLeft = (resX - cropWidth) / 2;
+                int cropTop = (resY - cropHeight) / 2;
+
+                string newCropString = $"{cropWidth}:{cropHeight}:{cropLeft}:{cropTop}";
+                ValidateCropStringAndChangeSliders(newCropString);
+            }
+        }
+
+        private void Button_FitAspect_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.RECT outer = new Utils.RECT(0, 0, resX, resY);
+                Utils.RECT inner = new Utils.RECT(0, 0, double.Parse(Input_FitAspectX.Text), double.Parse(Input_FitAspectY.Text));
+                Utils.RECT r = Utils.FitInside(outer, inner);
+                string newCropString = $"{(int)r.w}:{(int)r.h}:{(int)r.x}:{(int)r.y}";
+                ValidateCropStringAndChangeSliders(newCropString);
+            } catch (Exception ex) {
+                PopupOK.Show($"Error fitting aspect: {ex.Message}", "Error", PopupStyle.Error);
+            }
         }
     }
 }

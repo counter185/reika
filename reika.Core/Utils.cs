@@ -154,5 +154,42 @@ namespace reika.Core
         }
 
         public static bool IsLinux() => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+        public struct RECT
+        {
+            public double x, y, w, h;
+            public RECT(double x, double y, double w, double h)
+            { this.x = x; this.y = y; this.w = w; this.h = h; }
+
+        }
+
+        //taken from https://github.com/counter185/voidsprite/blob/main/freesprite/mathops.cpp
+        public static RECT FitInside(RECT outer, RECT inner)
+        {
+            if (outer.w == 0 || outer.h == 0 || inner.w == 0 || inner.h == 0)
+            {
+                return new RECT(0, 0, 0, 0);
+            }
+            double aspectOuter = outer.w / (double)outer.h;
+            double aspectInner = inner.w / (double)inner.h;
+            RECT ret = new RECT(0, 0, 0, 0);
+            if (aspectOuter > aspectInner)
+            {
+                //letterbox sides
+                ret.h = outer.h;
+                ret.w = outer.h * aspectInner;
+                ret.x = outer.x + (outer.w - ret.w) / 2;
+                ret.y = outer.y;
+            }
+            else
+            {
+                //letterbox top/bottom
+                ret.w = outer.w;
+                ret.h = outer.w / aspectInner;
+                ret.x = outer.x;
+                ret.y = outer.y + (outer.h - ret.h) / 2;
+            }
+            return ret;
+        }
     }
 }
