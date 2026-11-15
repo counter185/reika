@@ -277,7 +277,9 @@ namespace reika.Linux.UI
             try
             {
                 Utils.RECT outer = new Utils.RECT(0, 0, resX, resY);
-                Utils.RECT inner = new Utils.RECT(0, 0, double.Parse(Input_FitAspectX.Text), double.Parse(Input_FitAspectY.Text));
+                Utils.RECT inner = new Utils.RECT(0, 0, 
+                    double.Parse(Input_FitAspectX.Text, System.Globalization.CultureInfo.InvariantCulture), 
+                    double.Parse(Input_FitAspectY.Text, System.Globalization.CultureInfo.InvariantCulture));
                 Utils.RECT r = Utils.FitInside(outer, inner);
                 string newCropString = $"{(int)r.w}:{(int)r.h}:{(int)r.x}:{(int)r.y}";
                 ValidateCropStringAndChangeSliders(newCropString);

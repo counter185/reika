@@ -26,11 +26,6 @@
 				<local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_CropArg" InputFieldName="Crop" Width="274" VerticalContentAlignment="Bottom"/>
 				<Label Foreground="#808080" FontStyle="Italic" FontSize="10" VerticalContentAlignment="Bottom" Content="width:height:x:y" />
 			</DockPanel>
-            <!--<DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
-                <Rectangle DockPanel.Dock="Top" Height="30"/>
-                <Button x:Name="Button_Apply" Classes="reikaButton" DockPanel.Dock="Right" Width="100" Height="30" Content="Apply" Click="Button_Apply_Click"/>
-                <local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_CropArg" InputFieldName="Crop" Width="274" VerticalContentAlignment="Center"/>
-            </DockPanel>-->
             <DockPanel DockPanel.Dock="Top" LastChildFill="True">
                 <DockPanel DockPanel.Dock="Left" LastChildFill="True">
                     <Rectangle Height="20" DockPanel.Dock="Top"/>
