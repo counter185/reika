@@ -283,10 +283,41 @@ namespace ReencGUI.UI
                     double.Parse(Input_FitAspectX.Text, System.Globalization.CultureInfo.InvariantCulture), 
                     double.Parse(Input_FitAspectY.Text, System.Globalization.CultureInfo.InvariantCulture));
                 Utils.RECT r = Utils.FitInside(outer, inner);
+
                 string newCropString = $"{(int)r.w}:{(int)r.h}:{(int)r.x}:{(int)r.y}";
                 ValidateCropStringAndChangeSliders(newCropString);
             } catch (Exception ex) {
                 PopupOK.Show($"Error fitting aspect: {ex.Message}", "Error", PopupStyle.Error);
+            }
+        }
+
+        private void Button_FitCurrentAspect_Click(object sender, RoutedEventArgs e)
+        {
+            string currentCrop = Input_CropArg.InputField.Text;
+            Regex regex = new Regex(@"^(\d+):(\d+):(\d+):(\d+)$");
+            Match match = regex.Match(currentCrop);
+            if (match.Success)
+            {
+                int cropWidth = int.Parse(match.Groups[1].Value);
+                int cropHeight = int.Parse(match.Groups[2].Value);
+                int cropLeft = int.Parse(match.Groups[3].Value);
+                int cropTop = int.Parse(match.Groups[4].Value);
+
+                try
+                {
+                    Utils.RECT outer = new Utils.RECT(cropLeft, cropTop, cropWidth, cropHeight);
+                    Utils.RECT inner = new Utils.RECT(0, 0,
+                        double.Parse(Input_FitAspectX.Text, System.Globalization.CultureInfo.InvariantCulture),
+                        double.Parse(Input_FitAspectY.Text, System.Globalization.CultureInfo.InvariantCulture));
+                    Utils.RECT r = Utils.FitInside(outer, inner);
+
+                    string newCropString = $"{(int)r.w}:{(int)r.h}:{(int)r.x}:{(int)r.y}";
+                    ValidateCropStringAndChangeSliders(newCropString);
+                }
+                catch (Exception ex)
+                {
+                    PopupOK.Show($"Error fitting aspect: {ex.Message}", "Error", PopupStyle.Error);
+                }
             }
         }
     }

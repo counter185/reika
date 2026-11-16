@@ -30,7 +30,7 @@
             <Label DockPanel.Dock="Left" Padding="0" MinWidth="90" Content="Preset" Foreground="White" VerticalContentAlignment="Center"/>
             <Button DockPanel.Dock="Right" x:Name="Button_SavePreset" Classes="reikaButton" Content="Save" Margin="5,0,0,0" Click="Button_SavePreset_Click"/>
             <Button DockPanel.Dock="Right" x:Name="Button_LoadPreset" Classes="reikaButton" Content="Load" Margin="5,0,0,0" Click="Button_LoadPreset_Click"/>
-            <ComboBox DockPanel.Dock="Right" x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged"/>
+            <ComboBox DockPanel.Dock="Right" x:Name="Combo_Preset" SelectionChanged="Combo_Preset_SelectionChanged" MinWidth="1" HorizontalAlignment="Stretch"/>
         </DockPanel>
         <local:UIInputFieldWithName x:Name="Input_VcodecName" Margin="10,125,36,0" InputFieldName="Video codec" Height="18" VerticalAlignment="Top" Grid.Column="1"/>
         <Button x:Name="Button_VcodecSelect" Classes="reikaButton" Content="..." Margin="0,125,10,0" Grid.Column="1" HorizontalAlignment="Right" Width="26" Height="18" VerticalAlignment="Top" Click="Button_VcodecSelect_Click"/>

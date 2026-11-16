@@ -13,16 +13,19 @@
             <DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
                 <Rectangle DockPanel.Dock="Top" Height="30"/>
                 <StackPanel Orientation="Vertical" DockPanel.Dock="Right">
-                    <DockPanel LastChildFill="True">
+                    <DockPanel LastChildFill="True" Margin="0,0,0,5">
                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                             <TextBox x:Name="Input_FitAspectX" Style="{StaticResource ReencTextBoxStyle}" Text="16" Width="25" Height="20"/>
                             <Label Content=":" Foreground="White"/>
                             <TextBox x:Name="Input_FitAspectY" Style="{StaticResource ReencTextBoxStyle}" Text="9" Width="25" Height="20"/>
                         </StackPanel>
-                        <Button x:Name="Button_FitAspect" Margin="5,0,0,0" Style="{StaticResource ReencButtonStyle}" DockPanel.Dock="Right" Height="20" Content="Fit" Click="Button_FitAspect_Click"/>
+                        <StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+                            <Button x:Name="Button_FitAspect" Margin="5,0,0,0" Style="{StaticResource ReencButtonStyle}"  Height="20" Content="Fit" Click="Button_FitAspect_Click"/>
+                            <Button x:Name="Button_FitCurrentAspect" Margin="5,0,0,0" Style="{StaticResource ReencButtonStyle}" Height="20" Content="Fit (current)" Click="Button_FitCurrentAspect_Click"/>
+                        </StackPanel>
                     </DockPanel>
-                    <Button x:Name="Button_Center" Margin="0,0,0,5" Style="{StaticResource ReencButtonStyle}" DockPanel.Dock="Right" Width="130" Height="20" Content="Center" Click="Button_Center_Click"/>
-                    <Button x:Name="Button_Apply" Style="{StaticResource ReencButtonStyle}"  Width="130" Height="30" Content="Apply" Click="Button_Apply_Click"/>
+                    <Button x:Name="Button_Center" Margin="0,0,0,5" Style="{StaticResource ReencButtonStyle}" DockPanel.Dock="Right" Width="140" Height="20" Content="Center" Click="Button_Center_Click"/>
+                    <Button x:Name="Button_Apply" Style="{StaticResource ReencButtonStyle}"  Width="140" Height="30" Content="Apply" Click="Button_Apply_Click"/>
                 </StackPanel>
                 <local:UIInputFieldWithName DockPanel.Dock="Left" x:Name="Input_CropArg" InputFieldName="Crop" Width="274" VerticalContentAlignment="Bottom"/>
                 <Label Foreground="#808080" FontStyle="Italic" FontSize="10" VerticalContentAlignment="Bottom" Content="width:height:x:y" />

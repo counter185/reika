@@ -12,13 +12,16 @@
 			<DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
 				<Rectangle DockPanel.Dock="Top" Height="30"/>
 				<StackPanel Orientation="Vertical" DockPanel.Dock="Right">
-					<DockPanel LastChildFill="True">
+					<DockPanel Margin="0,0,0,5" LastChildFill="True">
 						<StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-							<TextBox x:Name="Input_FitAspectX" Classes="reikaTextBox" Text="16" Width="20"/>
-							<Label Content=":" Foreground="White"/>
-							<TextBox x:Name="Input_FitAspectY" Classes="reikaTextBox" Text="9" Width="20"/>
+							<TextBox x:Name="Input_FitAspectX" Classes="reikaTextBox" Text="16" MinWidth="35" Width="35" Height="30"/>
+							<Label Content=":" VerticalContentAlignment="Center" Foreground="White"/>
+							<TextBox x:Name="Input_FitAspectY" Classes="reikaTextBox" Text="9" MinWidth="35" Width="35" Height="30"/>
 						</StackPanel>
-						<Button x:Name="Button_FitAspect" Margin="5,0,0,0" Classes="reikaButton" DockPanel.Dock="Right" Content="Fit" Click="Button_FitAspect_Click"/>
+						<StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+							<Button x:Name="Button_FitAspect" Margin="5,0,0,0" Classes="reikaButton" Height="30" HorizontalAlignment="Stretch" Content="Fit" Click="Button_FitAspect_Click"/>
+							<Button x:Name="Button_FitCurrentAspect" Margin="5,0,0,0" Classes="reikaButton" Height="30" HorizontalAlignment="Stretch" Content="Fit (current)" Click="Button_FitCurrentAspect_Click"/>
+						</StackPanel>
 					</DockPanel>
 					<Button x:Name="Button_Center" Margin="0,0,0,5" Classes="reikaButton" DockPanel.Dock="Right" Width="180" Content="Center" Click="Button_Center_Click"/>
 					<Button x:Name="Button_Apply" Classes="reikaButton" Width="180" Height="40" Content="Apply" Click="Button_Apply_Click"/>
