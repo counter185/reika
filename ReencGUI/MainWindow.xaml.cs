@@ -413,7 +413,7 @@ namespace ReencGUI
         {
             if (!downloadingFFMPEG)
             {
-                new WindowCreateFile().Show();
+                new WindowCreateFile(new List<StreamTarget>()).Show();
             } else
             {
                 PopupOK.Show("FFMPEG is currently being downloaded.\nPlease wait until it finishes.", "FFMPEG download in progress", PopupStyle.Info);

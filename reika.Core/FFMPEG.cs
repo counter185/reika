@@ -43,7 +43,28 @@ namespace reika.Core
 
             public ulong Duration { get => Utils.LengthToMS(dH, dM, dS, dMS); }
 
+            public override bool Equals(object obj)
+                => obj is MediaInfo info &&
+                       fileName == info.fileName;
+            public override int GetHashCode()
+                => -1223983128 + EqualityComparer<string>.Default.GetHashCode(fileName);
+
             public ulong GetDuration() => Duration;
+            public virtual string GetInputArg() => $"-i \"{fileName}\"";
+        }
+
+        public class GeneratedMediaInfo : MediaInfo
+        {
+            public string source;
+            public List<string> extraOptions = new List<string>();
+
+            public GeneratedMediaInfo(string f, string i)
+            {
+                source = f;
+                fileName = i;
+            }
+
+            public override string GetInputArg() => $"-f {source} {string.Join(" ", extraOptions)} -i \"{fileName}\"";
         }
 
         public class StreamInfo
@@ -369,6 +390,46 @@ namespace reika.Core
                 return "";
             }
         }
+
+        public static MediaInfo CreateScreenCaptureMedia() =>
+            Utils.IsLinux() ? new FFMPEG.GeneratedMediaInfo("x11grab", ":0.0+0,0")
+                {
+                    date = "<now>",
+                    dH = 0, dM = 0, dS = 0, dMS = 0,
+                    mediaEncoder = "x11grab",
+                    extraOptions = new List<string> { /*"-framerate 30"*/ },
+                    streams = new List<FFMPEG.StreamInfo> { 
+                        new FFMPEG.StreamInfo
+                        {
+                            bitrate = "<unk.>",
+                            encoderID = "x11grab",
+                            encoderName = "X11 screen capture",
+                            resolution = "<fullscreen>",
+                            fullRawData = new List<string>(),
+                            mediaType = FFMPEG.CodecType.Video,
+                            otherData = new List<string>()
+                        } 
+                    }
+                }
+            :   new FFMPEG.GeneratedMediaInfo("gdigrab", "desktop")
+                {
+                    date = "<now>",
+                    dH = 0, dM = 0, dS = 0, dMS = 0,
+                    mediaEncoder = "gdigrab",
+                    extraOptions = new List<string> { /*"-framerate 30"*/ },
+                    streams = new List<FFMPEG.StreamInfo> { 
+                        new FFMPEG.StreamInfo
+                        {
+                            bitrate = "<unk.>",
+                            encoderID = "gdigrab",
+                            encoderName = "GDI screen capture",
+                            resolution = "<fullscreen>",
+                            fullRawData = new List<string>(),
+                            mediaType = FFMPEG.CodecType.Video,
+                            otherData = new List<string>()
+                        } 
+                    }
+                };
 
         public static string ExtraPreOptionsForCodec(string c) =>
             c.Contains("vulkan") ? $"-init_hw_device \"vulkan=vk:{Settings.settings.FromKey("reika.vulkan.deviceIndex").GetInt()}\""

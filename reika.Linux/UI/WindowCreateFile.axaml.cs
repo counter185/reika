@@ -122,7 +122,7 @@ namespace reika.Linux.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -157,7 +157,7 @@ namespace reika.Linux.UI
                 FFMPEG.MediaInfo targetMedia = GetPreviewVideoMedia();
                 if (targetMedia != null && ValidateTimestamp(timestamp))
                 {
-                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia.fileName, timestamp, (uri) =>
+                    ThumbnailUtil.FFMPEGExtractThumbnailAsync(targetMedia, timestamp, (uri) =>
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -295,7 +295,7 @@ namespace reika.Linux.UI
         }
         public void RunEncode()
         {
-            if (streamTargets.Any())
+            if (streamTargets.Any() || Input_OtherArgs.InputField.Text.Any())
             {
                 ulong duration = GetDuration();
                 List<string> args = MakeFFMPEGArgs();
@@ -304,7 +304,11 @@ namespace reika.Linux.UI
                 {
                     onFinishAction = (ui, exit) =>
                     {
-                        var files = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
+                        var files = streamTargets
+                            .Where(x => !(x.mediaInfo is FFMPEG.GeneratedMediaInfo))
+                            .Select(x => x.mediaInfo.fileName)
+                            .Distinct()
+                            .ToList();
                         foreach (var file in files)
                         {
                             try
@@ -378,8 +382,8 @@ namespace reika.Linux.UI
             string vresolution = Input_Vres.InputField.Text;
             string cropString = Input_Crop.InputField.Text;
 
-            var distinctFiles = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
-            Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
+            var distinctMedias = streamTargets.Select(x => x.mediaInfo).Distinct().ToList();
+            Dictionary<FFMPEG.MediaInfo, int> fileIndexMap = new Dictionary<FFMPEG.MediaInfo, int>();
 
             List<string> vfArgs = new List<string>();
 
@@ -387,21 +391,20 @@ namespace reika.Linux.UI
 
             int i = 0;
             //add -i for all files
-            foreach (var fileName in distinctFiles)
+            foreach (var file in distinctMedias)
             {
-                ret.Add("-i");
-                ret.Add($"\"{fileName}\"");
-                fileIndexMap[fileName] = i++;
+                ret.Add(file.GetInputArg());
+                fileIndexMap[file] = i++;
             }
 
             //-map streams
             foreach (var stream in streamTargets)
             {
                 ret.Add($"-map");
-                ret.Add($"{fileIndexMap[stream.mediaInfo.fileName]}:{stream.indexInStream}");
+                ret.Add($"{fileIndexMap[stream.mediaInfo]}:{stream.indexInStream}");
             }
 
-            bool onlyOneMediaFileAndIsMP4 = distinctFiles.Count == 1 && distinctFiles[0].ToLower().EndsWith(".mp4");
+            bool onlyOneMediaFileAndIsMP4 = distinctMedias.Count == 1 && distinctMedias[0].fileName.ToLower().EndsWith(".mp4");
 
             if (cropString != "")
             {
@@ -497,8 +500,8 @@ namespace reika.Linux.UI
             string otherArgs = Input_OtherArgs.InputField.Text;
 
             List<string> ffmpegArgs = new List<string>();
-            var distinctFiles = streamTargets.Select(x => x.mediaInfo.fileName).Distinct().ToList();
-            Dictionary<string, int> fileIndexMap = new Dictionary<string, int>();
+            var distinctMedias = streamTargets.Select(x => x.mediaInfo).Distinct().ToList();
+            Dictionary<FFMPEG.MediaInfo, int> fileIndexMap = new Dictionary<FFMPEG.MediaInfo, int>();
 
             ulong duration = GetDuration();
             ffmpegArgs.Add("-y");
@@ -507,18 +510,17 @@ namespace reika.Linux.UI
 
             int i = 0;
             //add -i for all files
-            foreach (var fileName in distinctFiles)
+            foreach (var file in distinctMedias)
             {
-                ffmpegArgs.Add("-i");
-                ffmpegArgs.Add($"\"{fileName}\"");
-                fileIndexMap[fileName] = i++;
+                ffmpegArgs.Add(file.GetInputArg());
+                fileIndexMap[file] = i++;
             }
 
             //-map streams
             foreach (var stream in streamTargets)
             {
                 ffmpegArgs.Add($"-map");
-                ffmpegArgs.Add($"{fileIndexMap[stream.mediaInfo.fileName]}:{stream.indexInStream}");
+                ffmpegArgs.Add($"{fileIndexMap[stream.mediaInfo]}:{stream.indexInStream}");
             }
 
             if (vcodec != "")
@@ -556,7 +558,7 @@ namespace reika.Linux.UI
                 ffmpegArgs.Add(abitrate);
             }
 
-            bool onlyOneMediaFileAndIsMP4 = distinctFiles.Count == 1 && distinctFiles[0].ToLower().EndsWith(".mp4");
+            bool onlyOneMediaFileAndIsMP4 = distinctMedias.Count == 1 && distinctMedias[0].fileName.ToLower().EndsWith(".mp4");
 
             if (trimFrom != "")
             {
@@ -648,6 +650,39 @@ namespace reika.Linux.UI
             }
         }
 
+        private void TryAddFile(string file)
+        {
+            FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(file);
+            if (media != null && media.streams.Count != 0)
+            {
+                if (media.streams.Count == 1)
+                {
+                    AddStream(new StreamTarget
+                    {
+                        mediaInfo = media,
+                        streamInfo = media.streams[0],
+                        indexInStream = 0
+                    });
+                }
+                else
+                {
+                    WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
+                    LinuxUtils.ShowDialog(pickStreams, this);
+                    if (pickStreams.selectedStreams != null)
+                    {
+                        foreach (var stm in pickStreams.selectedStreams)
+                        {
+                            AddStream(stm);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                PopupOK.Show($"Failed to get media info for file: {file}\nThe file might not be a valid media file.", "Error", PopupStyle.Error);
+            }
+        }
+
         private void Panel_Streams_Drop(object sender, DragEventArgs e)
         {
             if (e.DataTransfer.TryGetFiles() is { } files)
@@ -655,35 +690,7 @@ namespace reika.Linux.UI
                 foreach (var ffile in files)
                 {
                     var file = ffile.Path.LocalPath;
-                    FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(file);
-                    if (media != null && media.streams.Count != 0)
-                    {
-                        if (media.streams.Count == 1)
-                        {
-                            AddStream(new StreamTarget
-                            {
-                                mediaInfo = media,
-                                streamInfo = media.streams[0],
-                                indexInStream = 0
-                            });
-                        }
-                        else
-                        {
-                            WindowStreamSelect pickStreams = new WindowStreamSelect(file, media, media.streams);
-                            LinuxUtils.ShowDialog(pickStreams, this);
-                            if (pickStreams.selectedStreams != null)
-                            {
-                                foreach (var stm in pickStreams.selectedStreams)
-                                {
-                                    AddStream(stm);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        PopupOK.Show($"Failed to get media info for file: {file}\nThe file might not be a valid media file.", "Error", PopupStyle.Error);
-                    }
+                    TryAddFile(file);
                 }
             }
         }
@@ -815,6 +822,46 @@ namespace reika.Linux.UI
             catch (Exception) { }   //invalid -to
 
             return ret;
+        }
+
+        private async void Button_AddFile_Click(object sender, RoutedEventArgs e)
+        {
+            var filePickerResult = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "reika: add files",
+                AllowMultiple = true,
+                FileTypeFilter = new[] {
+                    new FilePickerFileType("All files") { Patterns = new[] { "*.*" } }
+                }
+            });
+
+            foreach (IStorageFile? f in filePickerResult)
+            {
+                if (f != null && f.Path.LocalPath != null)
+                {
+                    TryAddFile(f.Path.LocalPath);
+                }
+            }
+        }
+
+        void AddScreenRecordSource()
+        {
+            FFMPEG.MediaInfo media = FFMPEG.CreateScreenCaptureMedia();
+
+            if (media != null && media.streams.Any())
+            {
+                AddStream(new StreamTarget
+                {
+                    mediaInfo = media,
+                    streamInfo = media.streams.First(),
+                    indexInStream = 0
+                });
+            }
+        }
+
+        private void Button_AddScreenCapture_Click(object sender, RoutedEventArgs e)
+        {
+            AddScreenRecordSource();
         }
     }
 }

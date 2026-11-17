@@ -60,6 +60,10 @@ namespace ReencGUI
         public static void QueueReencodeWithPreset(string path, CreateFilePreset pre, bool deleteSource)
         {
             FFMPEG.MediaInfo media = FFMPEG.GetMediaInfoForFile(path);
+            if (media is FFMPEG.GeneratedMediaInfo)
+            {
+                deleteSource = false;
+            }
             if (pre is DynamicCreateFilePreset dynamicPreset)
             {
                 dynamicPreset.Recalculate(media);

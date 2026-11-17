@@ -16,6 +16,10 @@
         <DockPanel Margin="10" LastChildFill="True">
             <Label DockPanel.Dock="Top" Content="Create file" Foreground="White" FontSize="25" HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"/>
             <CheckBox DockPanel.Dock="Bottom" x:Name="Check_DeleteMedia" Foreground="White" IsChecked="False" Content="Delete all used media on successful encode"/>
+			<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,0,0,5">
+				<Button x:Name="Button_AddFile" Classes="reikaButton" Content="Add file..." Margin="0,0,5,0" Padding="10,5" Click="Button_AddFile_Click"/>
+				<Button x:Name="Button_AddScreenCapture" Classes="reikaButton" Content="Add screen capture..." Margin="0,0,5,0" Padding="10,5" Click="Button_AddScreenCapture_Click"/>
+			</StackPanel>
             <ListBox DockPanel.Dock="Bottom" x:Name="Panel_Streams" Background="Transparent" BorderBrush="#404040" DragDrop.AllowDrop="True" DragDrop.Drop="Panel_Streams_Drop" Margin="0,5"/>
         </DockPanel>
 

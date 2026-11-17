@@ -32,12 +32,14 @@ namespace ReencGUI.UI
             Label_Secondary.Content = $"{streamTarget.streamInfo.resolution}";
             Label_Details.Content = $"{streamTarget.streamInfo.encoderID} {streamTarget.streamInfo.bitrate} {streamTarget.streamInfo.encoderName}";
             Label_Duration.Content = $"{streamTarget.mediaInfo.dH:D2}:{streamTarget.mediaInfo.dM:D2}:{streamTarget.mediaInfo.dS:D2}.{streamTarget.mediaInfo.dMS:D3}";
-            Label_FileName.Content = System.IO.Path.GetFileName(streamTarget.mediaInfo.fileName);
+            Label_FileName.Content = 
+                streamTarget.mediaInfo is FFMPEG.GeneratedMediaInfo ? streamTarget.mediaInfo.fileName
+                : System.IO.Path.GetFileName(streamTarget.mediaInfo.fileName);
             Image_Thumbnail.Visibility = Visibility.Collapsed;
             if (streamTarget.streamInfo.mediaType == FFMPEG.CodecType.Video)
             {
                 ulong durationMS = Utils.LengthToMS(streamTarget.mediaInfo.dH, streamTarget.mediaInfo.dM, streamTarget.mediaInfo.dS, streamTarget.mediaInfo.dMS);
-                ThumbnailUtil.FFMPEGExtractThumbnailAsync(streamTarget.mediaInfo.fileName, durationMS == 0 ? "00" : "01", (uri)=>
+                ThumbnailUtil.FFMPEGExtractThumbnailAsync(streamTarget.mediaInfo, durationMS == 0 ? "00" : "01", (uri)=>
                 {
                     if (uri != null)
                     {

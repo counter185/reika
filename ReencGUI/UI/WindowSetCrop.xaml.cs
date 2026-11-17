@@ -82,7 +82,7 @@ namespace ReencGUI.UI
             var media = caller.GetPreviewVideoMedia();
             if (media != null)
             {
-                var bmp = WindowsUtils.LoadToMemFromUri(ThumbnailUtil.FFMPEGExtractThumbnail(media.fileName, "00"));
+                var bmp = WindowsUtils.LoadToMemFromUri(ThumbnailUtil.FFMPEGExtractThumbnail(media, "00"));
                 if (bmp != null)
                 {
                     Image_Preview.Source = bmp;

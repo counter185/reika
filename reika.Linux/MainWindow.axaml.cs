@@ -435,7 +435,7 @@ public partial class MainWindow : Window
     {
         if (!downloadingFFMPEG)
         {
-            new WindowCreateFile().Show();
+            new WindowCreateFile(new List<StreamTarget>()).Show();
         }
         else
         {

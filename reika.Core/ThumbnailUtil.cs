@@ -11,6 +11,8 @@ namespace reika.Core
         static List<string> ffmpegCreatedThumbnails = new List<string>();
 
         public static Uri FFMPEGExtractThumbnail(string filename, string timestamp = "00:00:01.000")
+            => FFMPEGExtractThumbnail(new FFMPEG.MediaInfo { fileName = filename }, timestamp);
+        public static Uri FFMPEGExtractThumbnail(FFMPEG.MediaInfo mediaFile, string timestamp = "00:00:01.000")
         {
             //todo: specific stream selection
             Random r = new Random();
@@ -18,8 +20,8 @@ namespace reika.Core
             string[] args = new string[]
             {
                 "-y",
-                "-ss", timestamp,
-                "-i", $"\"{filename}\"",
+                mediaFile is FFMPEG.GeneratedMediaInfo ? "" : $"-ss {timestamp}",
+                mediaFile.GetInputArg(),
                 "-frames:v", "1",
                 $"\"{tempFile}\""
             };
@@ -30,6 +32,8 @@ namespace reika.Core
         }
 
         public static void FFMPEGExtractThumbnailAsync(string filename, string timestamp, Action<Uri> callback)
+            => FFMPEGExtractThumbnailAsync(new FFMPEG.MediaInfo { fileName = filename }, timestamp, callback);
+        public static void FFMPEGExtractThumbnailAsync(FFMPEG.MediaInfo mediaFile, string timestamp, Action<Uri> callback)
         {
             Task.Run(() =>
             {
@@ -38,8 +42,8 @@ namespace reika.Core
                 string[] args = new string[]
                 {
                     "-y",
-                    "-ss", timestamp,
-                    "-i", $"\"{filename}\"",
+                    mediaFile is FFMPEG.GeneratedMediaInfo ? "" : $"-ss {timestamp}",
+                    mediaFile.GetInputArg(),
                     "-frames:v", "1",
                     $"\"{tempFile}\""
                 };
