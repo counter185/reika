@@ -233,8 +233,6 @@ namespace reika.Linux.UI
             {
                 Input_VcodecName.InputField,
                 Input_Vbitrate.InputField,
-                Input_TrimFrom.InputField,
-                Input_TrimTo.InputField,
                 Input_Vres.InputField,
                 Input_Crop.InputField,
                 Button_VcodecSelect,
@@ -248,12 +246,13 @@ namespace reika.Linux.UI
             };
 
             videoAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Video);
+            audioAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
+
             foreach (var vc in videoControls)
             {
                 vc.IsEnabled = videoAvailable;
             }
 
-            audioAvailable = streamTargets.Any(x => x.streamInfo.mediaType == FFMPEG.CodecType.Audio);
             foreach (var ac in audioControls)
             {
                 ac.IsEnabled = audioAvailable;
